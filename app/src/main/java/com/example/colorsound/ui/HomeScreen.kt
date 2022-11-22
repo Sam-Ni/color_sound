@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.colorsound.data.DataSource
-import com.example.colorsound.data.SoundInfo
+import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
 
 @Composable
@@ -39,7 +39,7 @@ fun SearchBar(
 
 @Composable
 fun HomeScreen(
-    soundList: List<SoundInfo>,
+    soundList: List<Sound>,
     modifier: Modifier = Modifier,
 ) {
     Column(

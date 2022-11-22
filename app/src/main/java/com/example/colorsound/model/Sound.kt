@@ -1,11 +1,11 @@
-package com.example.colorsound.data
+package com.example.colorsound.model
 
 import androidx.annotation.DrawableRes
-import com.example.colorsound.R
 
-data class SoundInfo(
+data class Sound(
     @DrawableRes val color: Int,
     val name: String,
     val duration: String,
     val createTime: String,
+    val url: String,
 )

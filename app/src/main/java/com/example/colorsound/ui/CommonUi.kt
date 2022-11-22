@@ -20,50 +20,34 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.colorsound.ColorSoundDestination
+import com.example.colorsound.Home
 import com.example.colorsound.R
+import com.example.colorsound.colorSoundTabRowScreens
 import com.example.colorsound.data.DataSource
-import com.example.colorsound.data.SoundInfo
+import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
 
 
 
 @Composable
-fun ColorSoundBottomNavigation(
+fun ColorSoundTapRow(
+    allScreen: List<ColorSoundDestination>,
+    onTabSelected: (ColorSoundDestination) -> Unit,
+    currentScreen: ColorSoundDestination,
     modifier: Modifier = Modifier
 ) {
     BottomNavigation(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth()
     ) {
-        BottomNavigationItem(
-            selected = true,
-            onClick = { /*TODO*/ },
-            icon = {
-                Icon(imageVector = Icons.Default.Home, contentDescription = null)
-            },
-            label = {
-                Text(text = "Home")
-            },
-        )
-        BottomNavigationItem(
-            selected = false,
-            onClick = { /*TODO*/ },
-            icon = {
-                Icon(imageVector = Icons.Default.Phone, contentDescription = null)
-            },
-            label = {
-                Text(text = "World")
-            },
-        )
-        BottomNavigationItem(
-            selected = false,
-            onClick = { /*TODO*/ },
-            icon = {
-                Icon(imageVector = Icons.Default.Settings, contentDescription = null)
-            },
-            label = {
-                Text(text = "Settings")
-            },
-        )
+        allScreen.forEach { screen ->
+            BottomNavigationItem(
+                selected = currentScreen == screen,
+                onClick = { onTabSelected(screen) },
+                label = { Text(screen.route) },
+                icon = { Icon(imageVector = screen.icon, contentDescription = null) }
+            )
+        }
     }
 }
 
@@ -71,13 +55,13 @@ fun ColorSoundBottomNavigation(
 @Composable
 fun BottomNavigationPreview() {
     ColorSoundTheme {
-        ColorSoundBottomNavigation()
+        ColorSoundTapRow(colorSoundTabRowScreens, {}, Home)
     }
 }
 
 @Composable
 fun SoundList(
-    soundList: List<SoundInfo>,
+    soundList: List<Sound>,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -109,7 +93,7 @@ fun ColorCircle(
 @Composable
 fun SoundCard(
     modifier: Modifier = Modifier,
-    soundInfo: SoundInfo
+    soundInfo: Sound
 ) {
     Row(
         modifier = modifier
@@ -152,7 +136,8 @@ fun SoundInformation(
 fun SoundCardPreview() {
     ColorSoundTheme {
         SoundList(listOf(
-            SoundInfo(R.drawable.circle, "Sound name", "12", "1"))
+            Sound(R.drawable.circle, "Sound name", "12", "1", "1")
+        )
         )
     }
 }
