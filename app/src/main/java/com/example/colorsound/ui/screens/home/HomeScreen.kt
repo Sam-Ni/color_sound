@@ -1,4 +1,4 @@
-package com.example.colorsound.ui
+package com.example.colorsound.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
+import com.example.colorsound.ui.components.SoundList
 import com.example.colorsound.ui.theme.ColorSoundTheme
 
 @Composable
@@ -39,6 +40,7 @@ fun SearchBar(
 
 @Composable
 fun HomeScreen(
+    onClickStartPlay: (String, Int) -> Unit,
     soundList: List<Sound>,
     modifier: Modifier = Modifier,
 ) {
@@ -47,7 +49,7 @@ fun HomeScreen(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
         SearchBar(Modifier.padding(horizontal = 16.dp))
-        SoundList(soundList = soundList)
+        SoundList(soundList = soundList, onClickStartPlay = onClickStartPlay)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -122,13 +124,13 @@ fun ColorSoundFAB(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    ColorSoundTheme {
-        HomeScreen(soundList = DataSource.soundList)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HomeScreenPreview() {
+//    ColorSoundTheme {
+//        HomeScreen(soundList = DataSource.soundList, onClickStartPlay = {})
+//    }
+//}
 
 
 @Preview(showBackground = true)
