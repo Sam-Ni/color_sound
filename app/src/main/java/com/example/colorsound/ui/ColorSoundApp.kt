@@ -1,5 +1,6 @@
 package com.example.colorsound.ui
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
@@ -12,10 +13,9 @@ import com.example.colorsound.*
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.ui.components.ColorSoundTapRow
 import com.example.colorsound.ui.screens.AppViewModel
-import com.example.colorsound.ui.screens.ColorSoundFAB
-import com.example.colorsound.ui.screens.SaveDialog
-import com.example.colorsound.ui.screens.world.WorldViewModel
+import com.example.colorsound.ui.screens.home.SaveDialog
 import com.example.colorsound.ui.theme.ColorSoundTheme
+import com.example.colorsound.util.AskPermission
 import com.example.colorsound.util.SoundInfoFactory
 
 @Composable
@@ -46,7 +46,7 @@ fun ColorSoundApp() {
         val navController = rememberNavController()
 
         val currentBackStack by navController.currentBackStackEntryAsState()
-        val currentDestination  = currentBackStack?.destination
+        val currentDestination = currentBackStack?.destination
 
         val currentScreen = colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
         Scaffold(
@@ -58,20 +58,15 @@ fun ColorSoundApp() {
                     },
                     currentScreen = currentScreen
                 ) },
-            floatingActionButton = {
-                if (appViewModel.enableFAB.value) {
-                    ColorSoundFAB(
-                        /* TODO */
-                        onClick = { soundState++ }
-                    )
-                }
-            }
         ) { paddingValues ->
-            ColorSoundHost(
-                navController = navController,
-                appViewModel = appViewModel,
-                modifier = Modifier.padding(paddingValues)
-            )
+            Column {
+                AskPermission()
+                ColorSoundHost(
+                    navController = navController,
+                    appViewModel = appViewModel,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
     }
 }

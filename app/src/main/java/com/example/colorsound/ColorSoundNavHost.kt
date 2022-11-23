@@ -9,9 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.colorsound.data.DataSource.soundList
 import com.example.colorsound.ui.screens.AppViewModel
-import com.example.colorsound.ui.screens.HomeScreen
+import com.example.colorsound.ui.screens.home.HomeScreen
 import com.example.colorsound.ui.screens.SettingsScreen
 import com.example.colorsound.ui.screens.WorldScreen
+import com.example.colorsound.ui.screens.home.HomeViewModel
 import com.example.colorsound.ui.screens.world.WorldViewModel
 
 
@@ -23,6 +24,8 @@ fun ColorSoundHost(
 ) {
     val worldViewModel: WorldViewModel =
         viewModel(factory = WorldViewModel.Factory)
+    val homeViewModel: HomeViewModel =
+        viewModel(factory = HomeViewModel.Factory)
 
     NavHost(
         navController = navController,
@@ -30,14 +33,13 @@ fun ColorSoundHost(
         modifier = modifier
     ) {
         composable(route = Home.route) {
-            appViewModel.enableFAB()
             HomeScreen(
                 soundList = soundList,
                 onClickStartPlay = appViewModel::play,
+                homeViewModel = homeViewModel
             )
         }
         composable(route = World.route) {
-            appViewModel.disableFAB()
             WorldScreen(
                 worldUiState = worldViewModel.worldUiState,
                 retryAction = worldViewModel::getSounds,
@@ -45,7 +47,6 @@ fun ColorSoundHost(
             )
         }
         composable(route = Setting.route) {
-            appViewModel.disableFAB()
             SettingsScreen()
         }
     }

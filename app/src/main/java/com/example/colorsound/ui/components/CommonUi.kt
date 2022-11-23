@@ -92,8 +92,11 @@ fun SoundCard(
     onClickStartPlay: (String ,Int) -> Unit
 ) {
     Card(
-        modifier = modifier.fillMaxSize(),
-        onClick = {onClickStartPlay(soundInfo.url, soundInfo.id)}
+        onClick = {onClickStartPlay(soundInfo.url, soundInfo.id)},
+        modifier = modifier
+            .fillMaxSize()
+
+        ,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically

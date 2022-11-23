@@ -73,6 +73,8 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.7.2"
 
     // serializable
-
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0"
+
+    // permission
+    implementation "com.google.accompanist:accompanist-permissions:0.27.0"
 }
