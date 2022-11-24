@@ -58,23 +58,43 @@ fun SearchBar(
 fun HomeScreen(
     onClickStartPlay: (String, Int) -> Unit,
     soundList: List<Sound>,
-    homeViewModel: HomeViewModel,
-    modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
 
+    HomeScreen(
+        onClickStartPlay = onClickStartPlay,
+        soundList = soundList,
+        uiState = uiState,
+        onRecordClick = homeViewModel::onClick,
+        onRecordLongClick = homeViewModel::onLongClick,
+        onSaveClick = homeViewModel::onSaveClick,
+        onCancelClick = homeViewModel::onCancelClick)
+}
+
+@Composable
+fun HomeScreen(
+    onClickStartPlay: (String, Int) -> Unit,
+    soundList: List<Sound>,
+    uiState: HomeUiState,
+    onRecordClick: () -> Unit,
+    onRecordLongClick: () -> Unit,
+    onSaveClick: (Sound) -> Unit,
+    onCancelClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     if (uiState.showSaveDialog) {
         SaveDialog(
-            onSaveClick = homeViewModel::onSaveClick,
-            onCancelClick = homeViewModel::onCancelClick,
+            onSaveClick = onSaveClick,
+            onCancelClick = onCancelClick,
         )
     }
 
     Scaffold(
         floatingActionButton = {
             ColorSoundFAB(
-                onClick = homeViewModel::onClick,
-                onLongClick = homeViewModel::onLongClick,
+                onClick = onRecordClick,
+                onLongClick = onRecordLongClick,
                 recordState = uiState.recordState
             )
         }
@@ -92,7 +112,7 @@ fun HomeScreen(
 
 @Composable
 fun SaveDialog(
-    onSaveClick: () -> Unit,
+    onSaveClick: (Sound) -> Unit,
     onCancelClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -131,7 +151,7 @@ fun SaveDialog(
                             Text(text = "Cancel")
                         }
                         Button(
-                            onClick = onSaveClick,
+                            onClick = { onSaveClick(Sound(3, 3, "1", "1", "1")) },
                         ) {
                             Text(text = "Save")
                         }

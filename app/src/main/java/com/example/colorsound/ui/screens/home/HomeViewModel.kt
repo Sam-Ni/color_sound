@@ -14,6 +14,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.local.LocalRepository
+import com.example.colorsound.model.Sound
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +30,7 @@ enum class RecordState {
 data class HomeUiState(
     val recordState: RecordState = RecordState.Normal,
     val showSaveDialog: Boolean = false,
+    val saveName: String = "",
 )
 
 class HomeViewModel(
@@ -36,6 +38,7 @@ class HomeViewModel(
     private val repository: LocalRepository
 ) : ViewModel() {
     private var recorder: MediaRecorder? = null
+    private lateinit var filePath: String
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -43,14 +46,30 @@ class HomeViewModel(
     private val recordState
         get() = uiState.value.recordState
 
-    /* TODO */
-    fun onCancelClick() {
-        _uiState.update { it.copy(showSaveDialog = false) }
+
+    fun updateSaveName(name: String) {
+        _uiState.update { it.copy(saveName = name) }
+    }
+
+    private fun stopAndDelete() {
+        stopRecording()
+        val file = File(filePath)
+        file.delete()
     }
 
     /* TODO */
-    fun onSaveClick() {
+    fun onCancelClick() {
         _uiState.update { it.copy(showSaveDialog = false) }
+        stopAndDelete()
+    }
+
+    /* TODO */
+    fun onSaveClick(sound: Sound) {
+        _uiState.update { it.copy(showSaveDialog = false) }
+        stopRecording()
+        viewModelScope.launch {
+            repository.insertSound(sound)
+        }
     }
 
     private fun pauseRecording() {
@@ -75,7 +94,7 @@ class HomeViewModel(
             else -> {
                 _uiState.update { it.copy(showSaveDialog = true) }
                 updateRecordState(RecordState.Normal)
-                stopRecording()
+//                stopRecording()
             }
         }
     }
@@ -87,7 +106,7 @@ class HomeViewModel(
                 pauseRecording()
             }
             RecordState.Pausing -> {
-                updateRecordState(RecordState.Pausing)
+                updateRecordState(RecordState.Recording)
                 resumeRecording()
             }
             RecordState.Normal -> {
@@ -97,7 +116,10 @@ class HomeViewModel(
         }
     }
 
-    private fun generateFilePath() = filesDir + File.separator + UUID.randomUUID() + ".mp3"
+    private fun generateFilePath(): String {
+        filePath = filesDir + File.separator + UUID.randomUUID() + ".mp3"
+        return filePath
+    }
 
     private fun startRecording() {
         viewModelScope.launch {
