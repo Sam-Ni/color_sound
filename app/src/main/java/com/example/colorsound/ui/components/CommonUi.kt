@@ -21,6 +21,7 @@ import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.util.COLORS
+import com.example.colorsound.util.SoundInfoFactory
 
 
 @Composable
@@ -94,8 +95,7 @@ fun SoundCard(
     Card(
         onClick = {onClickStartPlay(soundInfo.url, soundInfo.id)},
         modifier = modifier
-            .fillMaxSize()
-
+            .fillMaxWidth()
         ,
     ) {
         Row(
@@ -133,15 +133,12 @@ fun SoundInformation(
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun SoundCardPreview() {
     ColorSoundTheme {
-//        SoundList(listOf(
-//            Sound(1, R.drawable.circle, "Sound name", "12", "1")
-//        ),
-////            onClickStartPlay = {}
-//        )
+        SoundCard(soundInfo = SoundInfoFactory(), onClickStartPlay = { _, _ -> })
     }
 }
 
@@ -149,6 +146,6 @@ fun SoundCardPreview() {
 @Composable
 fun SoundListPreview() {
     ColorSoundTheme {
-//        SoundList(soundList = DataSource.soundList, onClickStartPlay = {})
+        SoundList(soundList = DataSource.soundList, onClickStartPlay = {_, _ ->})
     }
 }
