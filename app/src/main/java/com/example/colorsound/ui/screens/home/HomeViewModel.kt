@@ -2,6 +2,7 @@ package com.example.colorsound.ui.screens.home
 
 import android.media.MediaRecorder
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,13 +16,14 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.model.Sound
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import com.example.colorsound.util.COLOR_NUMBER
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.UUID
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.*
 
 enum class RecordState {
     Recording, Pausing, Normal
@@ -31,6 +33,8 @@ data class HomeUiState(
     val recordState: RecordState = RecordState.Normal,
     val showSaveDialog: Boolean = false,
     val saveName: String = "",
+    val color: Int = 0,
+    val soundList: List<Sound> = emptyList(),
 )
 
 class HomeViewModel(
@@ -46,6 +50,19 @@ class HomeViewModel(
     private val recordState
         get() = uiState.value.recordState
 
+    init {
+        viewModelScope.launch {
+            repository.observeSounds().collect { sounds ->
+                _uiState.update { it.copy(soundList = sounds) }
+            }
+        }
+    }
+
+    fun updateChoice(color: Int) {
+        _uiState.update {
+            it.copy(color = color)
+        }
+    }
 
     fun updateSaveName(name: String) {
         _uiState.update { it.copy(saveName = name) }
@@ -63,13 +80,21 @@ class HomeViewModel(
         stopAndDelete()
     }
 
-    /* TODO */
-    fun onSaveClick(sound: Sound) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onSaveClick() {
         _uiState.update { it.copy(showSaveDialog = false) }
         stopRecording()
         viewModelScope.launch {
-            repository.insertSound(sound)
+            val sound = uiState.value
+            repository.insertSound(
+                Sound(0, sound.color, sound.saveName, LocalDate.now().dateToString("yyyy-MM-dd"), filePath)
+            )
         }
+    }
+
+    private fun LocalDate.dateToString(format: String): String {
+        val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
+        return dateFormatter.format(this)
     }
 
     private fun pauseRecording() {

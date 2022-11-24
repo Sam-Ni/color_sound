@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SoundDao {
     @Query("SELECT * FROM sound ORDER BY createTime ASC")
-    fun getSounds(): Flow<List<Sound>>
+    fun getSounds(): List<Sound>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(sound: Sound)

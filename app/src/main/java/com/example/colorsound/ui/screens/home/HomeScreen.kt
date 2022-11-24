@@ -1,8 +1,11 @@
 package com.example.colorsound.ui.screens.home
 
 import android.Manifest
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -13,22 +16,24 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.colorsound.R
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.SoundList
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.util.ButtonWithLongPress
+import com.example.colorsound.util.COLORS
+import com.example.colorsound.util.COLOR_NUMBER
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -51,10 +56,12 @@ fun SearchBar(
         },
         placeholder = {
             Text(text = "Search")
-        }
+        },
+//        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Blue)
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     onClickStartPlay: (String, Int) -> Unit,
@@ -75,6 +82,8 @@ fun HomeScreen(
         onCancelClick = homeViewModel::onCancelClick,
         isGranted = isGranted,
         askPermission = askPermission,
+        onNameChanged = homeViewModel::updateSaveName,
+        chooseColor = homeViewModel::updateChoice,
     )
 }
 
@@ -85,16 +94,21 @@ fun HomeScreen(
     uiState: HomeUiState,
     onRecordClick: () -> Unit,
     onRecordLongClick: () -> Unit,
-    onSaveClick: (Sound) -> Unit,
+    onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,
     isGranted: Boolean,
     askPermission: () -> Unit,
+    onNameChanged: (String) -> Unit,
+    chooseColor: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (uiState.showSaveDialog) {
         SaveDialog(
             onSaveClick = onSaveClick,
             onCancelClick = onCancelClick,
+            onNameChanged = onNameChanged,
+            uiState = uiState,
+            chooseColor = chooseColor,
         )
     }
 
@@ -122,8 +136,11 @@ fun HomeScreen(
 
 @Composable
 fun SaveDialog(
-    onSaveClick: (Sound) -> Unit,
+    onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,
+    onNameChanged: (String) -> Unit,
+    uiState: HomeUiState,
+    chooseColor: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Dialog(onDismissRequest = { /*TODO*/ }) {
@@ -138,19 +155,28 @@ fun SaveDialog(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     TextField(
-                        value = "",
-                        onValueChange = {},
+                        value = uiState.saveName,
+                        onValueChange = { onNameChanged(it) },
                         placeholder = {
                             Text(text = "Name")
                         }
                     )
-                    TextField(
-                        value = "",
-                        onValueChange = {},
-                        placeholder = {
-                            Text(text = "Color")
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        for (i in 0 until COLOR_NUMBER) {
+                            IconButton(
+                                onClick = { chooseColor(i) },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                if (uiState.color == i) { // chosen state
+                                    Image(painter = painterResource(id = R.drawable.circle_orange), contentDescription = null)
+                                } else { // not chosen state
+                                    Image(painter = painterResource(id = R.drawable.circle_black), contentDescription = null)
+                                }
+                            }
                         }
-                    )
+                    }
 
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -161,7 +187,7 @@ fun SaveDialog(
                             Text(text = "Cancel")
                         }
                         Button(
-                            onClick = { onSaveClick(Sound(3, 3, "1", "1", "1")) },
+                            onClick = { onSaveClick() },
                         ) {
                             Text(text = "Save")
                         }
@@ -169,6 +195,14 @@ fun SaveDialog(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SaveDialogPreview() {
+    ColorSoundTheme {
+        SaveDialog(onSaveClick = {}, onCancelClick = { /*TODO*/ }, onNameChanged = {}, uiState = HomeUiState(), chooseColor = {})
     }
 }
 
@@ -207,9 +241,20 @@ fun HomeScreenPreview() {
             uiState = HomeUiState(),
             onRecordClick = { /*TODO*/ },
             onRecordLongClick = { /*TODO*/ },
-            onSaveClick = {_ ->},
+            onSaveClick = {},
             onCancelClick = { /*TODO*/ },
             isGranted = false,
-            askPermission = { /*TODO*/ })
+            askPermission = { /*TODO*/ },
+            onNameChanged = {},
+            chooseColor = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBarPreview() {
+    ColorSoundTheme {
+        SearchBar()
     }
 }

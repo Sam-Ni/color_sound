@@ -20,25 +20,6 @@ import com.example.colorsound.util.SoundInfoFactory
 @Composable
 fun ColorSoundApp() {
 
-    var soundState by remember {
-        mutableStateOf(0)
-    }
-
-    val soundList = remember {
-        mutableStateListOf(*DataSource.soundList.toTypedArray())
-    }
-
-    if (soundState == 2) {
-        /* TODO  */
-        SaveDialog(
-            onCancelClick = { soundState = 0 },
-            onSaveClick = {
-                soundState = 0
-                soundList.add(0, SoundInfoFactory())
-            }
-        )
-    }
-
     val appViewModel: AppViewModel = viewModel()
 
     ColorSoundTheme {
