@@ -1,5 +1,6 @@
 package com.example.colorsound
 
+import android.Manifest
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -14,8 +15,12 @@ import com.example.colorsound.ui.screens.SettingsScreen
 import com.example.colorsound.ui.screens.WorldScreen
 import com.example.colorsound.ui.screens.home.HomeViewModel
 import com.example.colorsound.ui.screens.world.WorldViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ColorSoundHost(
     navController: NavHostController,
@@ -27,6 +32,13 @@ fun ColorSoundHost(
     val homeViewModel: HomeViewModel =
         viewModel(factory = HomeViewModel.Factory)
 
+    val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
+    val askPermission by lazy { {
+        audioPermissionState.launchPermissionRequest()
+    }
+    }
+    val isGranted = audioPermissionState.status.isGranted
+
     NavHost(
         navController = navController,
         startDestination = Home.route,
@@ -36,7 +48,9 @@ fun ColorSoundHost(
             HomeScreen(
                 soundList = soundList,
                 onClickStartPlay = appViewModel::play,
-                homeViewModel = homeViewModel
+                homeViewModel = homeViewModel,
+                isGranted = isGranted,
+                askPermission = askPermission,
             )
         }
         composable(route = World.route) {

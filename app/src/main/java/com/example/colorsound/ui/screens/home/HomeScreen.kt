@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.SoundList
 import com.example.colorsound.ui.theme.ColorSoundTheme
@@ -58,7 +59,9 @@ fun SearchBar(
 fun HomeScreen(
     onClickStartPlay: (String, Int) -> Unit,
     soundList: List<Sound>,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    isGranted: Boolean,
+    askPermission: () -> Unit,
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
 
@@ -69,7 +72,10 @@ fun HomeScreen(
         onRecordClick = homeViewModel::onClick,
         onRecordLongClick = homeViewModel::onLongClick,
         onSaveClick = homeViewModel::onSaveClick,
-        onCancelClick = homeViewModel::onCancelClick)
+        onCancelClick = homeViewModel::onCancelClick,
+        isGranted = isGranted,
+        askPermission = askPermission,
+    )
 }
 
 @Composable
@@ -81,6 +87,8 @@ fun HomeScreen(
     onRecordLongClick: () -> Unit,
     onSaveClick: (Sound) -> Unit,
     onCancelClick: () -> Unit,
+    isGranted: Boolean,
+    askPermission: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (uiState.showSaveDialog) {
@@ -95,7 +103,9 @@ fun HomeScreen(
             ColorSoundFAB(
                 onClick = onRecordClick,
                 onLongClick = onRecordLongClick,
-                recordState = uiState.recordState
+                recordState = uiState.recordState,
+                isGranted = isGranted,
+                askPermission = askPermission,
             )
         }
     ) { paddingValues ->
@@ -170,14 +180,10 @@ fun ColorSoundFAB(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     recordState: RecordState,
+    isGranted: Boolean,
+    askPermission: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
-    val askPermission by lazy { {
-            audioPermissionState.launchPermissionRequest()
-        }
-    }
-    val isGranted = audioPermissionState.status.isGranted
     ButtonWithLongPress(
         onClick = if (isGranted) onClick else  askPermission ,
         onLongClick = if (isGranted) onLongClick else askPermission ,
@@ -187,5 +193,23 @@ fun ColorSoundFAB(
             RecordState.Recording -> Icon(Icons.Filled.Star, contentDescription = null)
             RecordState.Pausing -> Icon(Icons.Filled.ArrowBack, contentDescription = null)
         }
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    ColorSoundTheme {
+        HomeScreen(
+            onClickStartPlay = {_, _->},
+            soundList = DataSource.soundList,
+            uiState = HomeUiState(),
+            onRecordClick = { /*TODO*/ },
+            onRecordLongClick = { /*TODO*/ },
+            onSaveClick = {_ ->},
+            onCancelClick = { /*TODO*/ },
+            isGranted = false,
+            askPermission = { /*TODO*/ })
     }
 }
