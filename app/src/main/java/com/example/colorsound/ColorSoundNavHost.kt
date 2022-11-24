@@ -42,7 +42,7 @@ fun ColorSoundHost(
         composable(route = World.route) {
             WorldScreen(
                 worldUiState = worldViewModel.worldUiState,
-                retryAction = worldViewModel::getSounds,
+                retryAction = worldViewModel::getRandomSounds,
                 onClickStartPlay = appViewModel::play,
             )
         }

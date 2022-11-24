@@ -1,5 +1,10 @@
 package com.example.colorsound.data
 
+import android.content.Context
+import com.example.colorsound.data.local.LocalRepository
+import com.example.colorsound.data.remote.RemoteRepository
+import com.example.colorsound.data.remote.impl.NetworkRepository
+import com.example.colorsound.database.ColorSoundDatabase
 import com.example.colorsound.network.ColorApiService
 import com.example.colorsound.util.BASE_URL
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -8,12 +13,13 @@ import retrofit2.Retrofit
 import okhttp3.MediaType.Companion.toMediaType
 
 interface AppContainer {
-    val colorSoundRepository: ColorSoundRepository
+    val networkRepository: RemoteRepository
+    val databaseRepository: LocalRepository
 }
 
-class DefaultAppContainer : AppContainer {
-//    private val BASE_URL = "http://43.139.148.247:8080"
-
+class DefaultAppContainer(
+                          override val databaseRepository: LocalRepository
+) : AppContainer {
 
     @kotlinx.serialization.ExperimentalSerializationApi
     private val retrofit: Retrofit = Retrofit.Builder()
@@ -21,11 +27,12 @@ class DefaultAppContainer : AppContainer {
         .baseUrl(BASE_URL)
         .build()
 
+    @kotlinx.serialization.ExperimentalSerializationApi
     private val retrofitService: ColorApiService by lazy {
         retrofit.create(ColorApiService::class.java)
     }
 
-    override val colorSoundRepository: ColorSoundRepository by lazy {
-        NetworkColorSoundRepository(retrofitService)
+    override val networkRepository: RemoteRepository by lazy {
+        NetworkRepository(retrofitService)
     }
 }

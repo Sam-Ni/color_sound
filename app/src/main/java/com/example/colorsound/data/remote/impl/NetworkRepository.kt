@@ -1,22 +1,17 @@
-package com.example.colorsound.data
+package com.example.colorsound.data.remote.impl
 
-import android.util.Log
+import com.example.colorsound.data.remote.RemoteRepository
 import com.example.colorsound.model.Sound
 import com.example.colorsound.network.ColorApiService
 
-
-interface ColorSoundRepository {
-    suspend fun getSounds(): List<Sound>
-}
-
-class NetworkColorSoundRepository(
+class NetworkRepository(
     private val colorApiService: ColorApiService
-) : ColorSoundRepository {
-    override suspend fun getSounds(): List<Sound> {
+) : RemoteRepository{
+    override suspend fun getRandomSounds(): List<Sound> {
         val responseSounds =  colorApiService.getSounds()
         return if (responseSounds.status == "SUCCESS") {
             responseSounds.data
-        } else {
+        } else { /* TODO handle failure */
             emptyList()
         }
     }

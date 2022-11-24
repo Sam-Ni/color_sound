@@ -25,17 +25,6 @@ fun SoundInfoFactory(): Sound {
 }
 
 
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-fun AskPermission() {
-    val audioPermissionState = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
-    if (!audioPermissionState.status.isGranted) {
-        Button(onClick = { audioPermissionState.launchPermissionRequest() }) {
-            Text(text = "123")
-        }
-    }
-}
-
 
 @OptIn(ExperimentalMaterialApi::class, androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable

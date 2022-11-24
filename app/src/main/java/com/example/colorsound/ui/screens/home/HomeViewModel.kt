@@ -13,6 +13,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
+import com.example.colorsound.data.local.LocalRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.UUID
@@ -21,10 +26,32 @@ enum class RecordState {
     Recording, Pausing, Normal
 }
 
-class HomeViewModel(private val filesDir: String) : ViewModel() {
+data class HomeUiState(
+    val recordState: RecordState = RecordState.Normal,
+    val showSaveDialog: Boolean = false,
+)
+
+class HomeViewModel(
+    private val filesDir: String,
+    private val repository: LocalRepository
+) : ViewModel() {
     private var recorder: MediaRecorder? = null
-    var recordState by mutableStateOf(RecordState.Normal)
-        private set
+
+    private val _uiState = MutableStateFlow(HomeUiState())
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    private val recordState
+        get() = uiState.value.recordState
+
+    /* TODO */
+    fun onCancelClick() {
+        _uiState.update { it.copy(showSaveDialog = false) }
+    }
+
+    /* TODO */
+    fun onSaveClick() {
+        _uiState.update { it.copy(showSaveDialog = false) }
+    }
 
     private fun pauseRecording() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -38,28 +65,33 @@ class HomeViewModel(private val filesDir: String) : ViewModel() {
         }
     }
 
+    private fun updateRecordState(newState: RecordState) {
+        _uiState.update { it.copy(recordState = newState) }
+    }
+
     fun onLongClick() {
         when (recordState) {
-            RecordState.Recording -> {
-                recordState = RecordState.Normal
+            RecordState.Normal -> onClick()
+            else -> {
+                _uiState.update { it.copy(showSaveDialog = true) }
+                updateRecordState(RecordState.Normal)
                 stopRecording()
             }
-            else -> {}
         }
     }
 
     fun onClick() {
         when (recordState) {
             RecordState.Recording -> {
-                recordState = RecordState.Pausing
+                updateRecordState(RecordState.Pausing)
                 pauseRecording()
             }
             RecordState.Pausing -> {
-                recordState = RecordState.Recording
+                updateRecordState(RecordState.Pausing)
                 resumeRecording()
             }
             RecordState.Normal -> {
-                recordState = RecordState.Recording
+                updateRecordState(RecordState.Recording)
                 startRecording()
             }
         }
@@ -83,6 +115,7 @@ class HomeViewModel(private val filesDir: String) : ViewModel() {
     private fun stopRecording() {
         recorder?.apply {
             stop()
+            reset()
             release()
         }
         recorder = null
@@ -93,7 +126,8 @@ class HomeViewModel(private val filesDir: String) : ViewModel() {
             initializer {
                 val application = (this[APPLICATION_KEY] as ColorSoundApplication)
                 val fileDir = application.filesDir
-                HomeViewModel(filesDir = fileDir)
+                val repository = application.container.databaseRepository
+                HomeViewModel(filesDir = fileDir, repository)
             }
         }
     }

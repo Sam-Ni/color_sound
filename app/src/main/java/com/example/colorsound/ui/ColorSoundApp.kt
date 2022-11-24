@@ -15,7 +15,6 @@ import com.example.colorsound.ui.components.ColorSoundTapRow
 import com.example.colorsound.ui.screens.AppViewModel
 import com.example.colorsound.ui.screens.home.SaveDialog
 import com.example.colorsound.ui.theme.ColorSoundTheme
-import com.example.colorsound.util.AskPermission
 import com.example.colorsound.util.SoundInfoFactory
 
 @Composable
@@ -60,7 +59,6 @@ fun ColorSoundApp() {
                 ) },
         ) { paddingValues ->
             Column {
-                AskPermission()
                 ColorSoundHost(
                     navController = navController,
                     appViewModel = appViewModel,

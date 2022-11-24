@@ -13,7 +13,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
-import com.example.colorsound.data.ColorSoundRepository
+import com.example.colorsound.data.remote.RemoteRepository
 import com.example.colorsound.model.Sound
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -25,21 +25,21 @@ sealed interface WorldUiState {
     object Loading : WorldUiState
 }
 
-class WorldViewModel(private val colorSoundRepository: ColorSoundRepository) : ViewModel() {
+class WorldViewModel(private val colorSoundRepository: RemoteRepository) : ViewModel() {
     var worldUiState: WorldUiState by mutableStateOf(WorldUiState.Loading)
         private set
 
 
     init {
-        getSounds()
+        getRandomSounds()
     }
 
 
-    fun getSounds() {
+    fun getRandomSounds() {
         viewModelScope.launch {
             worldUiState = WorldUiState.Loading
             worldUiState = try {
-                WorldUiState.Success(colorSoundRepository.getSounds())
+                WorldUiState.Success(colorSoundRepository.getRandomSounds())
             } catch (e: IOException) {
                 Log.e("ColorSound" ,e.toString())
                 WorldUiState.Error
@@ -54,7 +54,7 @@ class WorldViewModel(private val colorSoundRepository: ColorSoundRepository) : V
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as ColorSoundApplication)
-                val colorSoundRepository = application.container.colorSoundRepository
+                val colorSoundRepository = application.container.networkRepository
                 WorldViewModel(colorSoundRepository = colorSoundRepository)
             }
         }
