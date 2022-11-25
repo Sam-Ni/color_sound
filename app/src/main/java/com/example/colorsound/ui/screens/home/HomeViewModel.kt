@@ -79,6 +79,7 @@ class HomeViewModel(
     fun onCancelClick() {
         _uiState.update { it.copy(showSaveDialog = false) }
         stopAndDelete()
+        reset()
     }
 
     private fun getDuration(): String {
@@ -105,6 +106,12 @@ class HomeViewModel(
                 Sound(0, sound.color, sound.saveName, getCurrentDate(), filePath, getDuration())
             )
         }
+        reset()
+    }
+
+    private fun reset() {
+        updateSaveName("")
+        updateChoice(0)
     }
 
     private fun getCurrentDate(): String {
