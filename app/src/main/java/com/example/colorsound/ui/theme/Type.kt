@@ -25,6 +25,7 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
+
     headlineLarge = TextStyle(
         fontFamily = Montserrat,
         fontWeight = FontWeight.Bold,
@@ -32,7 +33,7 @@ val Typography = Typography(
     ),
 
     headlineMedium = TextStyle(
-        fontFamily = AbrilFatface,
+        fontFamily = Montserrat,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp
     )

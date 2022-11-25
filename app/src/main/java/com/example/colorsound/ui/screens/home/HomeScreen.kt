@@ -2,6 +2,7 @@ package com.example.colorsound.ui.screens.home
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,7 @@ import com.example.colorsound.ui.components.SoundList
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.util.ButtonWithLongPress
 import com.example.colorsound.util.COLOR_NUMBER
+import com.example.colorsound.util.IndexToColor
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,9 +44,8 @@ fun SearchBar(
         onValueChange = {},
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(56.dp)
-        ,
-        leadingIcon ={
+            .heightIn(56.dp),
+        leadingIcon = {
             Icon(imageVector = Icons.Default.Search, contentDescription = null)
         },
         placeholder = {
@@ -135,7 +137,6 @@ fun SaveDialog(
     onNameChanged: (String) -> Unit,
     uiState: HomeUiState,
     chooseColor: (Int) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Dialog(onDismissRequest = { /*TODO*/ }) {
         Surface(
@@ -152,7 +153,7 @@ fun SaveDialog(
                         value = uiState.saveName,
                         onValueChange = { onNameChanged(it) },
                         placeholder = {
-                            Text(text = "Name")
+                            Text(text = "Sound Name")
                         }
                     )
                     Row(
@@ -164,9 +165,23 @@ fun SaveDialog(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 if (uiState.color == i) { // chosen state
-                                    Image(painter = painterResource(id = R.drawable.circle_orange), contentDescription = null)
+                                    Image(
+                                        painter = painterResource(id = R.drawable.circle),
+                                        contentDescription = null,
+                                        colorFilter = ColorFilter.tint(
+                                            IndexToColor(i)
+                                        ),
+                                        modifier = Modifier.size(60.dp)
+                                    )
                                 } else { // not chosen state
-                                    Image(painter = painterResource(id = R.drawable.circle_black), contentDescription = null)
+                                    Image(
+                                        painter = painterResource(id = R.drawable.circle),
+                                        contentDescription = null,
+                                        colorFilter = ColorFilter.tint(
+                                            IndexToColor(i)
+                                        ),
+                                        modifier = Modifier.size(20.dp)
+                                    )
                                 }
                             }
                         }
@@ -196,11 +211,17 @@ fun SaveDialog(
 @Composable
 fun SaveDialogPreview() {
     ColorSoundTheme {
-        SaveDialog(onSaveClick = {}, onCancelClick = { /*TODO*/ }, onNameChanged = {}, uiState = HomeUiState(), chooseColor = {})
+        SaveDialog(
+            onSaveClick = {},
+            onCancelClick = { /*TODO*/ },
+            onNameChanged = {},
+            uiState = HomeUiState(),
+            chooseColor = {})
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class,
+@OptIn(
+    ExperimentalFoundationApi::class,
     ExperimentalPermissionsApi::class
 )
 @Composable
@@ -213,8 +234,8 @@ fun ColorSoundFAB(
     modifier: Modifier = Modifier
 ) {
     ButtonWithLongPress(
-        onClick = if (isGranted) onClick else  askPermission ,
-        onLongClick = if (isGranted) onLongClick else askPermission ,
+        onClick = if (isGranted) onClick else askPermission,
+        onLongClick = if (isGranted) onLongClick else askPermission,
     ) {
         when (recordState) {
             RecordState.Normal -> Icon(Icons.Filled.Add, contentDescription = null)
@@ -230,7 +251,7 @@ fun ColorSoundFAB(
 fun HomeScreenPreview() {
     ColorSoundTheme {
         HomeScreen(
-            onClickStartPlay = {_, _->},
+            onClickStartPlay = { _, _ -> },
             soundList = DataSource.soundList,
             uiState = HomeUiState(),
             onRecordClick = { /*TODO*/ },

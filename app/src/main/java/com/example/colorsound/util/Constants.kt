@@ -1,10 +1,20 @@
 package com.example.colorsound.util
 
-import com.example.colorsound.R
+import androidx.compose.ui.graphics.Color
 
-const val COLOR_NUMBER = 6
+fun IndexToColor(index: Int): Color {
+    return when (index) {
+        0 -> Color(0xFFed353c)
+        1 -> Color(0xFFf79f38)
+        2 -> Color(0xFFfff151)
+        3 -> Color(0xFF93c650)
+        4 -> Color(0xFF11924f)
+        5 -> Color(0xFF167abc)
+        6 -> Color(0xFF6b3991)
+        else -> Color(0xFFFFFFFF)
+    }
+}
 
-val COLORS
-= List(10) { index -> if (index % 2 == 0) R.drawable.circle_black  else R.drawable.circle_orange}
+const val COLOR_NUMBER = 7
 
 const val BASE_URL = "http://192.168.3.10:8080/"
