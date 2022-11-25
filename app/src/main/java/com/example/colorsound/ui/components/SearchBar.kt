@@ -36,7 +36,7 @@ fun SearchBar(
     ) {
         BasicTextField(
             value = text,
-            onValueChange = onValueChange,
+            onValueChange = { onValueChange(it) },
             textStyle = MaterialTheme.typography.headlineLarge.copy(MaterialTheme.colorScheme.onSurface),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
             decorationBox = {
@@ -91,6 +91,7 @@ fun HomeScreenPreview() {
             onCancelClick = { /*TODO*/ },
             onNameChanged = {},
             chooseColor = {},
+            onSearchValueChanged = {},
         )
     }
 }

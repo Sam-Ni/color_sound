@@ -31,6 +31,7 @@ data class HomeUiState(
     val saveName: String = "",
     val color: Int = 0,
     val soundList: List<Sound> = emptyList(),
+    val search: String = "",
 )
 
 class HomeViewModel(
@@ -52,6 +53,10 @@ class HomeViewModel(
                 _uiState.update { it.copy(soundList = sounds) }
             }
         }
+    }
+
+    fun updateSearch(search: String) {
+        _uiState.update { it.copy(search = search) }
     }
 
     fun updateChoice(color: Int) {

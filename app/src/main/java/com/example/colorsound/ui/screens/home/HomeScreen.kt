@@ -1,5 +1,6 @@
 package com.example.colorsound.ui.screens.home
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,6 +42,7 @@ fun HomeScreen(
         onCancelClick = homeViewModel::onCancelClick,
         onNameChanged = homeViewModel::updateSaveName,
         chooseColor = homeViewModel::updateChoice,
+        onSearchValueChanged = homeViewModel::updateSearch,
     )
 }
 
@@ -54,6 +56,7 @@ fun HomeScreen(
     onCancelClick: () -> Unit,
     onNameChanged: (String) -> Unit,
     chooseColor: (Int) -> Unit,
+    onSearchValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (uiState.showSaveDialog) {
@@ -69,13 +72,16 @@ fun HomeScreen(
     Column(
         modifier = modifier
     ) {
-        SearchBar("", "", {}, {})
+        SearchBar("",
+            text = uiState.search,
+            onValueChange = onSearchValueChanged,
+            onDeleteBtnClick = {onSearchValueChanged("")},
+        )
         SoundList(soundList = soundList, onClickStartPlay = onClickStartPlay)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SaveDialog(
     onSaveClick: () -> Unit,
@@ -112,25 +118,16 @@ fun SaveDialog(
                                 onClick = { chooseColor(i) },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                if (uiState.color == i) { // chosen state
-                                    Image(
-                                        painter = painterResource(id = R.drawable.circle),
-                                        contentDescription = null,
-                                        colorFilter = ColorFilter.tint(
-                                            IndexToColor(i)
-                                        ),
-                                        modifier = Modifier.size(60.dp)
-                                    )
-                                } else { // not chosen state
-                                    Image(
-                                        painter = painterResource(id = R.drawable.circle),
-                                        contentDescription = null,
-                                        colorFilter = ColorFilter.tint(
-                                            IndexToColor(i)
-                                        ),
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
+                                Image(
+                                    painter = painterResource(id = R.drawable.circle),
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(
+                                        IndexToColor(i)
+                                    ),
+                                    modifier = Modifier
+                                        .size(if (uiState.color == i) 60.dp else 20.dp)
+                                        .animateContentSize()
+                                )
                             }
                         }
                     }
@@ -180,6 +177,7 @@ fun HomeScreenPreview() {
             onCancelClick = { /*TODO*/ },
             onNameChanged = {},
             chooseColor = {},
+            onSearchValueChanged = {},
         )
     }
 }
