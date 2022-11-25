@@ -1,5 +1,6 @@
 package com.example.colorsound.ui.screens.home
 
+import android.renderscript.ScriptGroup.Input
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.colorsound.R
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
+import com.example.colorsound.ui.components.InputBar
 import com.example.colorsound.ui.components.SearchBar
 import com.example.colorsound.ui.components.SoundList
 import com.example.colorsound.ui.theme.ColorSoundTheme
@@ -74,7 +76,6 @@ fun HomeScreen(
     Column(
         modifier = modifier
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
         SearchBar("", {}, {})
         SoundList(soundList = soundList, onClickStartPlay = onClickStartPlay)
         Spacer(modifier = Modifier.height(16.dp))
@@ -92,22 +93,24 @@ fun SaveDialog(
 ) {
     Dialog(onDismissRequest = { /*TODO*/ }) {
         Surface(
-            color = Color.White,
+            color = MaterialTheme.colorScheme.background,
             shape = RoundedCornerShape(16.dp)
         ) {
-            Box(contentAlignment = Alignment.Center) {
+            Box(
+                contentAlignment = Alignment.Center,
+            ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    TextField(
-                        value = uiState.saveName,
+                    InputBar(
+                        hint = "Sound Name",
+                        text = uiState.saveName,
                         onValueChange = { onNameChanged(it) },
-                        placeholder = {
-                            Text(text = "Sound Name")
-                        }
+                        onDeleteBtnClick = { onNameChanged("") }
                     )
+
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -194,6 +197,6 @@ fun HomeScreenPreview() {
 @Composable
 fun SearchBarPreview() {
     ColorSoundTheme {
-        SearchBar("", {}, {})
+        SearchBar("", "", {}, {})
     }
 }
