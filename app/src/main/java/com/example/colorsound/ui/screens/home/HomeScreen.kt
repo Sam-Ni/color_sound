@@ -1,21 +1,12 @@
 package com.example.colorsound.ui.screens.home
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,34 +18,14 @@ import androidx.compose.ui.window.Dialog
 import com.example.colorsound.R
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
+import com.example.colorsound.ui.components.SearchBar
 import com.example.colorsound.ui.components.SoundList
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.util.ButtonWithLongPress
 import com.example.colorsound.util.COLOR_NUMBER
 import com.example.colorsound.util.IndexToColor
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBar(
-    modifier: Modifier = Modifier
-) {
-    TextField(
-        value = "",
-        onValueChange = {},
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(56.dp),
-        leadingIcon = {
-            Icon(imageVector = Icons.Default.Search, contentDescription = null)
-        },
-        placeholder = {
-            Text(text = "Search")
-        },
-    )
-}
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     onClickStartPlay: (String, Int) -> Unit,
@@ -121,7 +92,7 @@ fun HomeScreen(
             modifier = modifier.padding(paddingValues)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            SearchBar(Modifier.padding(horizontal = 16.dp))
+            SearchBar("", {}, {})
             SoundList(soundList = soundList, onClickStartPlay = onClickStartPlay)
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -219,10 +190,6 @@ fun SaveDialogPreview() {
     }
 }
 
-@OptIn(
-    ExperimentalFoundationApi::class,
-    ExperimentalPermissionsApi::class
-)
 @Composable
 fun ColorSoundFAB(
     onClick: () -> Unit,
@@ -230,7 +197,6 @@ fun ColorSoundFAB(
     recordState: RecordState,
     isGranted: Boolean,
     askPermission: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     ButtonWithLongPress(
         onClick = if (isGranted) onClick else askPermission,
@@ -269,6 +235,6 @@ fun HomeScreenPreview() {
 @Composable
 fun SearchBarPreview() {
     ColorSoundTheme {
-        SearchBar()
+        SearchBar("", {}, {})
     }
 }
