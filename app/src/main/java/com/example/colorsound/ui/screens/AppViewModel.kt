@@ -8,8 +8,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class AppViewModel : ViewModel() {
-    var enableFAB = mutableStateOf(true)
-        private set
 
     private val mediaPlayer by lazy {
         MediaPlayer().apply {
@@ -62,13 +60,5 @@ class AppViewModel : ViewModel() {
             currentPlaying = soundId
             _play(url)
         }
-    }
-
-    fun disableFAB() {
-        enableFAB.value = false
-    }
-
-    fun enableFAB() {
-        enableFAB.value = true
     }
 }

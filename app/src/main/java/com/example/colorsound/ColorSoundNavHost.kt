@@ -28,19 +28,10 @@ import com.google.accompanist.permissions.rememberPermissionState
 fun ColorSoundHost(
     navController: NavHostController,
     appViewModel: AppViewModel,
+    homeViewModel: HomeViewModel,
+    worldViewModel: WorldViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val worldViewModel: WorldViewModel =
-        viewModel(factory = WorldViewModel.Factory)
-    val homeViewModel: HomeViewModel =
-        viewModel(factory = HomeViewModel.Factory)
-
-    val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
-    val askPermission by lazy { {
-        audioPermissionState.launchPermissionRequest()
-    }
-    }
-    val isGranted = audioPermissionState.status.isGranted
 
     NavHost(
         navController = navController,
@@ -52,8 +43,6 @@ fun ColorSoundHost(
                 soundList = soundList,
                 onClickStartPlay = appViewModel::play,
                 homeViewModel = homeViewModel,
-                isGranted = isGranted,
-                askPermission = askPermission,
             )
         }
         composable(route = World.route) {

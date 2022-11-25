@@ -31,8 +31,6 @@ fun HomeScreen(
     onClickStartPlay: (String, Int) -> Unit,
     soundList: List<Sound>,
     homeViewModel: HomeViewModel,
-    isGranted: Boolean,
-    askPermission: () -> Unit,
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
 
@@ -44,8 +42,6 @@ fun HomeScreen(
         onRecordLongClick = homeViewModel::onLongClick,
         onSaveClick = homeViewModel::onSaveClick,
         onCancelClick = homeViewModel::onCancelClick,
-        isGranted = isGranted,
-        askPermission = askPermission,
         onNameChanged = homeViewModel::updateSaveName,
         chooseColor = homeViewModel::updateChoice,
     )
@@ -61,8 +57,6 @@ fun HomeScreen(
     onRecordLongClick: () -> Unit,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,
-    isGranted: Boolean,
-    askPermission: () -> Unit,
     onNameChanged: (String) -> Unit,
     chooseColor: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -77,25 +71,13 @@ fun HomeScreen(
         )
     }
 
-    Scaffold(
-        floatingActionButton = {
-            ColorSoundFAB(
-                onClick = onRecordClick,
-                onLongClick = onRecordLongClick,
-                recordState = uiState.recordState,
-                isGranted = isGranted,
-                askPermission = askPermission,
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = modifier.padding(paddingValues)
-        ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            SearchBar("", {}, {})
-            SoundList(soundList = soundList, onClickStartPlay = onClickStartPlay)
-            Spacer(modifier = Modifier.height(16.dp))
-        }
+    Column(
+        modifier = modifier
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        SearchBar("", {}, {})
+        SoundList(soundList = soundList, onClickStartPlay = onClickStartPlay)
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -190,27 +172,6 @@ fun SaveDialogPreview() {
     }
 }
 
-@Composable
-fun ColorSoundFAB(
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-    recordState: RecordState,
-    isGranted: Boolean,
-    askPermission: () -> Unit,
-) {
-    ButtonWithLongPress(
-        onClick = if (isGranted) onClick else askPermission,
-        onLongClick = if (isGranted) onLongClick else askPermission,
-    ) {
-        when (recordState) {
-            RecordState.Normal -> Icon(Icons.Filled.Add, contentDescription = null)
-            RecordState.Recording -> Icon(Icons.Filled.Star, contentDescription = null)
-            RecordState.Pausing -> Icon(Icons.Filled.ArrowBack, contentDescription = null)
-        }
-    }
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
@@ -223,8 +184,6 @@ fun HomeScreenPreview() {
             onRecordLongClick = { /*TODO*/ },
             onSaveClick = {},
             onCancelClick = { /*TODO*/ },
-            isGranted = false,
-            askPermission = { /*TODO*/ },
             onNameChanged = {},
             chooseColor = {},
         )

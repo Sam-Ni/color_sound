@@ -90,8 +90,6 @@ fun HomeScreenPreview() {
             onRecordLongClick = { /*TODO*/ },
             onSaveClick = {},
             onCancelClick = { /*TODO*/ },
-            isGranted = false,
-            askPermission = { /*TODO*/ },
             onNameChanged = {},
             chooseColor = {},
         )

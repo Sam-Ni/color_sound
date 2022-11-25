@@ -2,10 +2,6 @@ package com.example.colorsound.ui.screens.home
 
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
-import android.net.Uri
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -15,10 +11,12 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.model.Sound
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
-import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
