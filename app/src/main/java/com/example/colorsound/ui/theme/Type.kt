@@ -1,6 +1,6 @@
 package com.example.colorsound.ui.theme
 
-import androidx.compose.material.Typography
+import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -20,18 +20,18 @@ val Montserrat = FontFamily(
 
 // Set of Material typography styles to start with
 val Typography = Typography(
-    body1 = TextStyle(
+    bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
-    h1 = TextStyle(
+    headlineLarge = TextStyle(
         fontFamily = Montserrat,
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp
     ),
 
-    h2 = TextStyle(
+    headlineMedium = TextStyle(
         fontFamily = AbrilFatface,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp

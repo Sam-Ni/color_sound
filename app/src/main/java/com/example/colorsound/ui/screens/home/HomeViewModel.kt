@@ -2,11 +2,7 @@ package com.example.colorsound.ui.screens.home
 
 import android.media.MediaRecorder
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -16,13 +12,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.model.Sound
-import com.example.colorsound.util.COLOR_NUMBER
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
-import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 enum class RecordState {
@@ -87,14 +81,16 @@ class HomeViewModel(
         viewModelScope.launch {
             val sound = uiState.value
             repository.insertSound(
-                Sound(0, sound.color, sound.saveName, LocalDate.now().dateToString("yyyy-MM-dd"), filePath)
+                Sound(0, sound.color, sound.saveName, getCurrentDate(), filePath)
             )
         }
     }
 
-    private fun LocalDate.dateToString(format: String): String {
-        val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
-        return dateFormatter.format(this)
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getCurrentDate(): String {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return current.format(formatter)
     }
 
     private fun pauseRecording() {

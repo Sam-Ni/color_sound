@@ -2,7 +2,9 @@ package com.example.colorsound.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
+//import androidx.compose.material.Scaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,6 +19,7 @@ import com.example.colorsound.ui.screens.home.SaveDialog
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.util.SoundInfoFactory
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorSoundApp() {
 

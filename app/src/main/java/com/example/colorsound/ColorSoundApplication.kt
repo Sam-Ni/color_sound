@@ -7,7 +7,6 @@ import com.example.colorsound.data.local.impl.DatabaseRepository
 import com.example.colorsound.database.ColorSoundDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import java.io.File
 
 class ColorSoundApplication : Application() {
 

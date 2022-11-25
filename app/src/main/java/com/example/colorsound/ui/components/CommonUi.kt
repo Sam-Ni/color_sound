@@ -6,7 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,18 +31,26 @@ fun ColorSoundTapRow(
     onTabSelected: (ColorSoundDestination) -> Unit,
     currentScreen: ColorSoundDestination,
 ) {
-    BottomNavigation(
+//    BottomNavigation()
+    BottomAppBar(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        allScreen.forEach { screen ->
-            BottomNavigationItem(
-                selected = currentScreen == screen,
-                onClick = { onTabSelected(screen) },
-                label = { Text(screen.route) },
-                icon = { Icon(imageVector = screen.icon, contentDescription = null) }
-            )
+        Row {
+            allScreen.forEach { screen ->
+                IconButton(onClick = { onTabSelected(screen) }) {
+                    Icon(imageVector = screen.icon, contentDescription = null)
+                }
+            }
         }
+//        allScreen.forEach { screen ->
+//            BottomNavigationItem(
+//                selected = currentScreen == screen,
+//                onClick = { onTabSelected(screen) },
+//                label = { Text(screen.route) },
+//                icon = { Icon(imageVector = screen.icon, contentDescription = null) }
+//            )
+//        }
     }
 }
 
@@ -60,7 +68,7 @@ fun SoundList(
     onClickStartPlay: (String, Int) -> Unit,
 ) {
     LazyColumn(
-        modifier = Modifier.background(MaterialTheme.colors.background),
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
     ) {
         items(soundList) { item ->
             SoundCard(soundInfo = item, onClickStartPlay = onClickStartPlay)
@@ -80,7 +88,8 @@ fun ColorCircle(@DrawableRes drawableRes: Int) {
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+//@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SoundCard(
     soundInfo: Sound,
@@ -89,10 +98,10 @@ fun SoundCard(
     Card(
         onClick = { onClickStartPlay(soundInfo.url, soundInfo.id) },
         modifier = Modifier.padding(15.dp, top = 10.dp, bottom = 8.dp, end = 15.dp),
-        elevation = 6.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
-            modifier = Modifier.background(MaterialTheme.colors.surface)
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -125,8 +134,8 @@ fun SoundName(name: String) {
         overflow = TextOverflow.Ellipsis,
         maxLines = 3,
         text = name,
-        style = MaterialTheme.typography.h1,
-        color = MaterialTheme.colors.onSurface,
+        style = MaterialTheme.typography.headlineLarge,
+        color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier.width(200.dp)
     )
 }
@@ -134,8 +143,8 @@ fun SoundName(name: String) {
 @Composable
 fun SoundInformation(createTime: String) {
     Text(
-        text = createTime, style = MaterialTheme.typography.h2,
-        color = MaterialTheme.colors.onSurface,
+        text = createTime, style = MaterialTheme.typography.headlineMedium,
+        color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier.padding(end = 10.dp)
     )
 }

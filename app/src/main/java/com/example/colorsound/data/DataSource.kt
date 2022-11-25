@@ -1,6 +1,5 @@
 package com.example.colorsound.data
 
-import com.example.colorsound.R
 import com.example.colorsound.model.Sound
 
 object DataSource {

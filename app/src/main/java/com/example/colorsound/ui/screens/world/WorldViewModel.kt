@@ -1,7 +1,5 @@
 package com.example.colorsound.ui.screens.world
 
-import android.media.AudioAttributes
-import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
