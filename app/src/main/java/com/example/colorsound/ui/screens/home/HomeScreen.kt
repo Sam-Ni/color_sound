@@ -51,7 +51,6 @@ fun SearchBar(
         placeholder = {
             Text(text = "Search")
         },
-//        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Blue)
     )
 }
 
