@@ -1,16 +1,14 @@
 package com.example.colorsound.ui.screens.home
 
-import android.renderscript.ScriptGroup.Input
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,7 +21,6 @@ import com.example.colorsound.ui.components.InputBar
 import com.example.colorsound.ui.components.SearchBar
 import com.example.colorsound.ui.components.SoundList
 import com.example.colorsound.ui.theme.ColorSoundTheme
-import com.example.colorsound.util.ButtonWithLongPress
 import com.example.colorsound.util.COLOR_NUMBER
 import com.example.colorsound.util.IndexToColor
 
@@ -40,8 +37,6 @@ fun HomeScreen(
         onClickStartPlay = onClickStartPlay,
         soundList = soundList,
         uiState = uiState,
-        onRecordClick = homeViewModel::onClick,
-        onRecordLongClick = homeViewModel::onLongClick,
         onSaveClick = homeViewModel::onSaveClick,
         onCancelClick = homeViewModel::onCancelClick,
         onNameChanged = homeViewModel::updateSaveName,
@@ -55,8 +50,6 @@ fun HomeScreen(
     onClickStartPlay: (String, Int) -> Unit,
     soundList: List<Sound>,
     uiState: HomeUiState,
-    onRecordClick: () -> Unit,
-    onRecordLongClick: () -> Unit,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,
     onNameChanged: (String) -> Unit,
@@ -76,7 +69,7 @@ fun HomeScreen(
     Column(
         modifier = modifier
     ) {
-        SearchBar("", {}, {})
+        SearchBar("", "", {}, {})
         SoundList(soundList = soundList, onClickStartPlay = onClickStartPlay)
         Spacer(modifier = Modifier.height(16.dp))
     }
@@ -183,8 +176,6 @@ fun HomeScreenPreview() {
             onClickStartPlay = { _, _ -> },
             soundList = DataSource.soundList,
             uiState = HomeUiState(),
-            onRecordClick = { /*TODO*/ },
-            onRecordLongClick = { /*TODO*/ },
             onSaveClick = {},
             onCancelClick = { /*TODO*/ },
             onNameChanged = {},

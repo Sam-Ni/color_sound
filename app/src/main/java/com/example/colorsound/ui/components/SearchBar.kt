@@ -87,8 +87,6 @@ fun HomeScreenPreview() {
             onClickStartPlay = { _, _ -> },
             soundList = DataSource.soundList,
             uiState = HomeUiState(),
-            onRecordClick = { /*TODO*/ },
-            onRecordLongClick = { /*TODO*/ },
             onSaveClick = {},
             onCancelClick = { /*TODO*/ },
             onNameChanged = {},
