@@ -11,4 +11,5 @@ data class Sound(
     val name: String,
     val createTime: String,
     val url: String,
+    val duration: String,
 )

@@ -1,7 +1,10 @@
 package com.example.colorsound.ui.screens.home
 
+import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +18,7 @@ import com.example.colorsound.model.Sound
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -74,19 +78,32 @@ class HomeViewModel(
         stopAndDelete()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getDuration(): String {
+        val mmr = MediaMetadataRetriever().apply {
+            setDataSource(filePath)
+        }
+        val durationInMill: String =
+            mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toString()
+        val second = durationInMill.toInt() / 1000
+        return if (second < 3600) {
+            String.format("%01d:%02d", second / 60, second % 60)
+        } else {
+            String.format("%d:%02d:%02d", second / 3600, second % 300 / 60, second % 60)
+        }
+    }
+
     fun onSaveClick() {
         _uiState.update { it.copy(showSaveDialog = false) }
         stopRecording()
+        getDuration()
         viewModelScope.launch {
             val sound = uiState.value
             repository.insertSound(
-                Sound(0, sound.color, sound.saveName, getCurrentDate(), filePath)
+                Sound(0, sound.color, sound.saveName, getCurrentDate(), filePath, getDuration())
             )
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getCurrentDate(): String {
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -94,15 +111,11 @@ class HomeViewModel(
     }
 
     private fun pauseRecording() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            recorder?.pause()
-        }
+        recorder?.pause()
     }
 
     private fun resumeRecording() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            recorder?.resume()
-        }
+        recorder?.resume()
     }
 
     private fun updateRecordState(newState: RecordState) {
@@ -113,6 +126,7 @@ class HomeViewModel(
         when (recordState) {
             RecordState.Normal -> onClick()
             else -> {
+                pauseRecording()
                 _uiState.update { it.copy(showSaveDialog = true) }
                 updateRecordState(RecordState.Normal)
 //                stopRecording()
