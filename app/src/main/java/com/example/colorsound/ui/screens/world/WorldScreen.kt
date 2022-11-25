@@ -15,7 +15,7 @@ import com.example.colorsound.util.BASE_URL
 
 @Composable
 fun WorldScreen(
-    onClickStartPlay: (String, Int) -> Unit,
+    onPlayOrPause: (String, Int) -> Unit,
     worldUiState: WorldUiState,
     retryAction: () -> Unit,
 ) {
@@ -27,7 +27,8 @@ fun WorldScreen(
             }
             SoundList(
                 soundList = sounds,
-                onClickStartPlay = onClickStartPlay
+                onPlayOrPause = onPlayOrPause,
+                onLongClick = {},
             )
         }
         is WorldUiState.Error -> ErrorScreen(retryAction = retryAction)

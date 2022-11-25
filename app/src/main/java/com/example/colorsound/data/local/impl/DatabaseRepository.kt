@@ -24,4 +24,10 @@ class DatabaseRepository(
     }
 
     override fun observeSounds(): Flow<List<Sound>> = sounds
+
+    override suspend fun deleteSound(sound: Sound) {
+        withContext(Dispatchers.IO) {
+            soundDao.delete(sound)
+        }
+    }
 }

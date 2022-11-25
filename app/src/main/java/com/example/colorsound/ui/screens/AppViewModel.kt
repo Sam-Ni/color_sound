@@ -25,6 +25,7 @@ class AppViewModel : ViewModel() {
 
     private fun _play(url: String) {
         viewModelScope.launch {
+            mediaPlayer.reset()
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepare()
             mediaPlayer.start()

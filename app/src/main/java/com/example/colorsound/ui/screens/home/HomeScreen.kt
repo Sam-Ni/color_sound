@@ -19,15 +19,14 @@ import com.example.colorsound.ui.theme.ColorSoundTheme
 
 @Composable
 fun HomeScreen(
-    onClickStartPlay: (String, Int) -> Unit,
-    soundList: List<Sound>,
+    onPlayOrPause: (String, Int) -> Unit,
     homeViewModel: HomeViewModel,
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
 
     HomeScreen(
-        onClickStartPlay = onClickStartPlay,
-        soundList = soundList,
+        onPlayOrPause = onPlayOrPause,
+        onCardLongClick = homeViewModel::onSoundLongClick,
         uiState = uiState,
         onSaveClick = homeViewModel::onSaveClick,
         onCancelClick = homeViewModel::onCancelClick,
@@ -40,8 +39,8 @@ fun HomeScreen(
 
 @Composable
 fun HomeScreen(
-    onClickStartPlay: (String, Int) -> Unit,
-    soundList: List<Sound>,
+    onPlayOrPause: (String, Int) -> Unit,
+    onCardLongClick: (Sound) -> Unit,
     uiState: HomeUiState,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,
@@ -69,7 +68,7 @@ fun HomeScreen(
             onValueChange = onSearchValueChanged,
             onDeleteBtnClick = { onSearchValueChanged("") },
         )
-        SoundList(soundList = soundList, onClickStartPlay = onClickStartPlay)
+        SoundList(soundList = uiState.soundList, onPlayOrPause = onPlayOrPause, onLongClick = onCardLongClick)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -80,9 +79,9 @@ fun HomeScreen(
 fun HomeScreenPreview() {
     ColorSoundTheme {
         HomeScreen(
-            onClickStartPlay = { _, _ -> },
-            soundList = DataSource.soundList,
-            uiState = HomeUiState(),
+            onPlayOrPause = { _, _ -> },
+            onCardLongClick = {},
+            uiState = HomeUiState(soundList = DataSource.soundList),
             onSaveClick = {},
             onCancelClick = { /*TODO*/ },
             onNameChanged = {},

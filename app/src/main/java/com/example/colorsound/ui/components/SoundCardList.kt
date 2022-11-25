@@ -14,15 +14,16 @@ import com.example.colorsound.ui.theme.ColorSoundTheme
 
 @Composable
 fun SoundList(
-    soundList: List<Sound>,
-    onClickStartPlay: (String, Int) -> Unit,
+    soundList: List<Sound> = DataSource.soundList,
+    onPlayOrPause: (String, Int) -> Unit,
+    onLongClick: (Sound) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
     ) {
 
         items(soundList) { item ->
-            SoundCard(soundInfo = item, onClickStartPlay = onClickStartPlay)
+            SoundCard(soundInfo = item, onPlayOrPause = onPlayOrPause, onLongClick = onLongClick)
         }
 
     }
@@ -33,7 +34,7 @@ fun SoundList(
 @Composable
 fun SoundListPreview() {
     ColorSoundTheme {
-        SoundList(soundList = DataSource.soundList, onClickStartPlay = { _, _ -> })
+        SoundList(soundList = DataSource.soundList, onPlayOrPause = { _, _ -> }, onLongClick = {})
     }
 }
 
@@ -41,6 +42,6 @@ fun SoundListPreview() {
 @Composable
 fun DarkSoundListPreview() {
     ColorSoundTheme(darkTheme = true) {
-        SoundList(soundList = DataSource.soundList, onClickStartPlay = { _, _ -> })
+        SoundList(soundList = DataSource.soundList, onPlayOrPause = { _, _ -> }, onLongClick = {})
     }
 }

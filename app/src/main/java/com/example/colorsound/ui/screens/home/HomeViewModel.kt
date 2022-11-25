@@ -48,10 +48,13 @@ class HomeViewModel(
         get() = uiState.value.recordState
 
     init {
+        getSounds()
+    }
+
+    private fun getSounds() {
         viewModelScope.launch {
-            repository.observeSounds().collect { sounds ->
-                _uiState.update { it.copy(soundList = sounds) }
-            }
+            val sounds = repository.getAllSounds()
+            _uiState.update { it.copy(soundList = sounds) }
         }
     }
 
@@ -71,7 +74,11 @@ class HomeViewModel(
 
     private fun stopAndDelete() {
         stopRecording()
-        val file = File(filePath)
+        deleteAudio(filePath)
+    }
+
+    private fun deleteAudio(fileUrl: String) {
+        val file = File(fileUrl)
         file.delete()
     }
 
@@ -96,6 +103,14 @@ class HomeViewModel(
         }
     }
 
+    fun onSoundLongClick(sound: Sound) {
+        viewModelScope.launch {
+            repository.deleteSound(sound)
+            deleteAudio(sound.url)
+            getSounds()
+        }
+    }
+
     fun onSaveClick() {
         _uiState.update { it.copy(showSaveDialog = false) }
         stopRecording()
@@ -103,8 +118,9 @@ class HomeViewModel(
         viewModelScope.launch {
             val sound = uiState.value
             repository.insertSound(
-                Sound(0, sound.color, sound.saveName, getCurrentDate(), filePath, getDuration())
+                Sound(0, sound.color, sound.saveName, getCurrentDateTime(), filePath, getDuration())
             )
+            getSounds()
         }
         reset()
     }
@@ -114,9 +130,9 @@ class HomeViewModel(
         updateChoice(0)
     }
 
-    private fun getCurrentDate(): String {
+    private fun getCurrentDateTime(): String {
         val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         return current.format(formatter)
     }
 

@@ -9,4 +9,6 @@ interface LocalRepository {
     suspend fun insertSound(sound: Sound)
 
     fun observeSounds(): Flow<List<Sound>>
+
+    suspend fun deleteSound(sound: Sound)
 }

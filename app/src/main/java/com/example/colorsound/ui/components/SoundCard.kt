@@ -1,7 +1,9 @@
 package com.example.colorsound.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,18 +24,22 @@ import com.example.colorsound.util.SoundInfoFactory
 
 
 @OptIn(
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
 )
 @Composable
 fun SoundCard(
     soundInfo: Sound,
-    onClickStartPlay: (String, Int) -> Unit
+    onPlayOrPause: (String, Int) -> Unit,
+    onLongClick: (Sound) -> Unit,
 ) {
 
     Card(
-        onClick = { onClickStartPlay(soundInfo.url, soundInfo.id) },
         modifier = Modifier
-            .padding(15.dp, top = 10.dp, bottom = 8.dp, end = 15.dp),
+            .padding(15.dp, top = 10.dp, bottom = 8.dp, end = 15.dp)
+            .combinedClickable(
+                onClick = { onPlayOrPause(soundInfo.url, soundInfo.id) },
+                onLongClick = { onLongClick(soundInfo) }
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
@@ -56,12 +62,17 @@ fun SoundCard(
                     Row() {
                         Spacer(modifier = Modifier.weight(1f))
                         SoundDuration(duration = soundInfo.duration)
-                        SoundCreateTime(createTime = soundInfo.createTime)
+                        SoundCreateTime(createTime = soundInfo.getDate())
                     }
                 }
             }
         }
     }
+}
+
+private fun Sound.getDate(): String {
+    val endIndex = this.createTime.indexOf(" ")
+    return this.createTime.substring(0 until endIndex)
 }
 
 @Composable
@@ -114,6 +125,6 @@ fun SoundDuration(duration: String) {
 @Composable
 fun SoundCardPreview() {
     ColorSoundTheme {
-        SoundCard(soundInfo = SoundInfoFactory(), onClickStartPlay = { _, _ -> })
+        SoundCard(soundInfo = SoundInfoFactory(), onPlayOrPause = { _, _ -> }, onLongClick = {})
     }
 }

@@ -85,8 +85,8 @@ fun SearchBar(
 fun HomeScreenPreview() {
     ColorSoundTheme {
         HomeScreen(
-            onClickStartPlay = { _, _ -> },
-            soundList = DataSource.soundList,
+            onPlayOrPause = { _, _ -> },
+            onCardLongClick = {},
             uiState = HomeUiState(),
             onSaveClick = {},
             onCancelClick = { /*TODO*/ },
