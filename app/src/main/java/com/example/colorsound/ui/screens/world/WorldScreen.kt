@@ -22,7 +22,6 @@ fun WorldScreen(
     onClickStartPlay: (String, Int) -> Unit,
     worldUiState: WorldUiState,
     retryAction: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     when (worldUiState) {
         is WorldUiState.Loading -> LoadingScreen()
@@ -31,7 +30,7 @@ fun WorldScreen(
                 sound.copy(url = BASE_URL + sound.url)
             }
             SoundList(
-                soundList = sounds, modifier,
+                soundList = sounds,
                 onClickStartPlay = onClickStartPlay
             )
         }

@@ -2,6 +2,7 @@ package com.example.colorsound.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,11 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.colorsound.ColorSoundDestination
 import com.example.colorsound.Home
-import com.example.colorsound.R
 import com.example.colorsound.colorSoundTabRowScreens
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
@@ -29,10 +30,10 @@ fun ColorSoundTapRow(
     allScreen: List<ColorSoundDestination>,
     onTabSelected: (ColorSoundDestination) -> Unit,
     currentScreen: ColorSoundDestination,
-    modifier: Modifier = Modifier
 ) {
     BottomNavigation(
-        modifier = modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
         allScreen.forEach { screen ->
             BottomNavigationItem(
@@ -56,13 +57,10 @@ fun BottomNavigationPreview() {
 @Composable
 fun SoundList(
     soundList: List<Sound>,
-    modifier: Modifier = Modifier,
     onClickStartPlay: (String, Int) -> Unit,
 ) {
     LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
+        modifier = Modifier.background(MaterialTheme.colors.background),
     ) {
         items(soundList) { item ->
             SoundCard(soundInfo = item, onClickStartPlay = onClickStartPlay)
@@ -71,16 +69,13 @@ fun SoundList(
 }
 
 @Composable
-fun ColorCircle(
-    @DrawableRes drawableRes: Int,
-    modifier: Modifier = Modifier
-) {
+fun ColorCircle(@DrawableRes drawableRes: Int) {
     Image(
         painter = painterResource(drawableRes),
         contentDescription = null,
-        modifier = modifier
-            .size(56.dp)
-        ,
+        modifier = Modifier
+            .padding(8.dp)
+            .size(36.dp),
         contentScale = ContentScale.Crop
     )
 }
@@ -88,49 +83,61 @@ fun ColorCircle(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SoundCard(
-    modifier: Modifier = Modifier,
     soundInfo: Sound,
-    onClickStartPlay: (String ,Int) -> Unit
+    onClickStartPlay: (String, Int) -> Unit
 ) {
     Card(
-        onClick = {onClickStartPlay(soundInfo.url, soundInfo.id)},
-        modifier = modifier
-            .fillMaxWidth()
-        ,
+        onClick = { onClickStartPlay(soundInfo.url, soundInfo.id) },
+        modifier = Modifier.padding(15.dp, top = 10.dp, bottom = 8.dp, end = 15.dp),
+        elevation = 6.dp
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.background(MaterialTheme.colors.surface)
         ) {
-            ColorCircle(
-                drawableRes = COLORS[soundInfo.color],
-                modifier = Modifier.padding(8.dp)
-            )
-            Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-            Text(
-                text = soundInfo.name,
-                modifier = Modifier.weight(1f)
-            )
-            SoundInformation(
-//            duration = soundInfo.duration,
-                createTime = soundInfo.createTime,
-                modifier = Modifier.padding(end = 16.dp)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(12.dp)
+            ) {
+                ColorCircle(drawableRes = COLORS[soundInfo.color])
+                Spacer(modifier = Modifier.padding(horizontal = 6.dp))
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Row() {
+                        SoundName(name = soundInfo.name)
+                    }
+                    Row() {
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+                    Row() {
+                        Spacer(modifier = Modifier.weight(1f))
+                        SoundInformation(createTime = soundInfo.createTime)
+                    }
+                }
+            }
         }
+
     }
 }
 
 @Composable
-fun SoundInformation(
-    modifier: Modifier = Modifier,
-//    duration: String,
-    createTime: String,
-) {
-    Column(
-        modifier = modifier
-    ) {
-//        Text(text = duration)
-        Text(text = createTime)
-    }
+fun SoundName(name: String) {
+    Text(
+        overflow = TextOverflow.Ellipsis,
+        maxLines = 3,
+        text = name,
+        style = MaterialTheme.typography.h1,
+        color = MaterialTheme.colors.onSurface,
+        modifier = Modifier.width(200.dp)
+    )
+}
+
+@Composable
+fun SoundInformation(createTime: String) {
+    Text(
+        text = createTime, style = MaterialTheme.typography.h2,
+        color = MaterialTheme.colors.onSurface,
+        modifier = Modifier.padding(end = 10.dp)
+    )
 }
 
 
@@ -146,6 +153,14 @@ fun SoundCardPreview() {
 @Composable
 fun SoundListPreview() {
     ColorSoundTheme {
-        SoundList(soundList = DataSource.soundList, onClickStartPlay = {_, _ ->})
+        SoundList(soundList = DataSource.soundList, onClickStartPlay = { _, _ -> })
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DarkSoundListPreview() {
+    ColorSoundTheme(darkTheme = true) {
+        SoundList(soundList = DataSource.soundList, onClickStartPlay = { _, _ -> })
     }
 }
