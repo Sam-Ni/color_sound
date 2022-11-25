@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,8 @@ fun SoundCard(
                     }
                     Row() {
                         Spacer(modifier = Modifier.weight(1f))
-                        SoundInformation(createTime = soundInfo.createTime)
+                        SoundDuration(duration = soundInfo.duration)
+                        SoundCreateTime(createTime = soundInfo.createTime)
                     }
                 }
             }
@@ -89,9 +91,19 @@ fun SoundName(name: String) {
 }
 
 @Composable
-fun SoundInformation(createTime: String) {
+fun SoundCreateTime(createTime: String) {
     Text(
         text = createTime, style = MaterialTheme.typography.headlineMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.padding(end = 10.dp)
+    )
+}
+
+@Composable
+fun SoundDuration(duration: String) {
+    Text(
+        text = duration,
+        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
         color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier.padding(end = 10.dp)
     )
