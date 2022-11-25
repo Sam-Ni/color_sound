@@ -35,6 +35,7 @@ fun SearchBar(
             .padding(10.dp)
     ) {
         BasicTextField(
+            singleLine = true,
             value = text,
             onValueChange = { onValueChange(it) },
             textStyle = MaterialTheme.typography.headlineLarge.copy(MaterialTheme.colorScheme.onSurface),

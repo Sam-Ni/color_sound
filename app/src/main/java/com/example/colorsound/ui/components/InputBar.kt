@@ -29,6 +29,7 @@ fun InputBar(
             .padding(10.dp)
     ) {
         BasicTextField(
+            singleLine = true,
             value = text,
             onValueChange = onValueChange,
             textStyle = MaterialTheme.typography.headlineLarge.copy(MaterialTheme.colorScheme.onSurface),

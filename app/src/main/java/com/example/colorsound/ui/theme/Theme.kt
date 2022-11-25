@@ -10,17 +10,17 @@ private val DarkColorPalette = darkColorScheme(
     background = Black,
     surface = DarkGrey,
     onSurface = White,
-//    primary = Grey50,
-//    onPrimary = Grey900,
+    primary = DarkBlack,
+    onPrimary = White,
 //    secondary = Grey700
 )
 
 private val LightColorPalette = lightColorScheme(
-    background = Grey,
+    background = LightGrey,
     surface = White,
     onSurface = LightBlack,
-//    primary = White,
-//    onPrimary = LightBlack,
+    primary = Grey,
+    onPrimary = Black,
 //    secondary = Grey
 )
 
