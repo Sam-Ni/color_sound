@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.colorsound.ui.RouteDestination
 import com.example.colorsound.ui.Home
-import com.example.colorsound.ui.screens.home.RecordState
+import com.example.colorsound.ui.vm.data.RecordState
 
 
 @SuppressLint("UnusedTransitionTargetStateParameter")

@@ -20,12 +20,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.colorsound.ui.components.bottomBar.ScreenBar
 import com.example.colorsound.ui.components.bottomBar.ScreenBarVM
-import com.example.colorsound.ui.screens.AppViewModel
 import com.example.colorsound.ui.screens.home.HomeScreenVM
-import com.example.colorsound.ui.screens.home.HomeViewModel
 import com.example.colorsound.ui.screens.world.WorldScreenVM
-import com.example.colorsound.ui.screens.world.WorldViewModel
 import com.example.colorsound.ui.theme.ColorSoundTheme
+import com.example.colorsound.ui.vm.service.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -34,12 +32,20 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun ColorSoundApp() {
+    val getDataService: GetDataService = viewModel(factory = GetDataService.Factory)
+    val recordService: RecordService = viewModel(factory = RecordService.Factory)
+    val localSoundListService: LocalSoundListService =
+        viewModel(factory = LocalSoundListService.Factory)
+    val playSoundService = PlaySoundService()
+    val worldService: WorldService = viewModel(factory = WorldService.Factory)
 
-    val appViewModel: AppViewModel = viewModel()
-    val worldViewModel: WorldViewModel = viewModel(factory = WorldViewModel.Factory)
-    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
+    val saveSoundDialogData by getDataService.saveSoundDialogData.collectAsState()
+    val localSoundListData by getDataService.localSoundListData.collectAsState()
+    val worldData by getDataService.worldData.collectAsState()
+    val recordData by getDataService.recordData.collectAsState()
+    val searchBarData by getDataService.searchBarData.collectAsState()
+    val maskData by getDataService.maskData.collectAsState()
 
-    val homeUiState by homeViewModel.uiState.collectAsState()
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
     val askPermission by lazy {
         {
@@ -53,58 +59,50 @@ fun ColorSoundApp() {
         systemUiController.setStatusBarColor(
             MaterialTheme.colorScheme.background, darkIcons = !isSystemInDarkTheme()
         )
-
         val navController = rememberNavController()
-
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
-
         val currentScreen =
             colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
 
-        val screenBarVM = ScreenBarVM(allScreen = colorSoundTabRowScreens,
+        val screenBarVM = ScreenBarVM(
+            allScreen = colorSoundTabRowScreens,
             onTabSelected = { newScreen ->
                 navController.navigateSingleTopTo(newScreen.route)
             },
             currentScreen = currentScreen,
-            onClick = { homeViewModel.onClick(appViewModel::updateMask) },
-            onLongClick = { homeViewModel.onLongClick(appViewModel::updateMask) },
-            recordState = homeUiState.recordState,
+            onClick = recordService::onRecordBtnClick,
+            onLongClick = recordService::onRecordBtnLongClick,
+            recordState = recordData.recordState,
             isGranted = isGranted,
             askPermission = askPermission,
-            isHighlightMode = homeUiState.highlightMode,
-            onDelete = {
-                homeViewModel.onDelete()
-                appViewModel.updateMask(false)
-            })
+            isHighlightMode = localSoundListData.highlightMode,
+            onDelete = localSoundListService::onDelete
+        )
         val coroutineScope = rememberCoroutineScope()
         val routeContentHostVM = RouteContentHostVM(
-            navController = navController,
-            homeScreenVM = HomeScreenVM(
-                onPlayOrPause = appViewModel::play,
-                onCardLongClick = {
-                    homeViewModel.onCardLongClick(it)
-                    appViewModel.updateMask(true)
-                },
+            navController = navController, homeScreenVM = HomeScreenVM(
+                onPlayOrPause = playSoundService::play,
+                onCardLongClick = { localSoundListService.onCardLongClick(it) },
                 onSaveDialogSaveBtnClick = {
-                    homeViewModel.onSaveClick()
-                    homeViewModel.scrollToTop(coroutineScope)
+                    recordService.onSaveClick()
+                    localSoundListService.scrollToTop(coroutineScope)
                 },
-                onSaveDialogCancelBtnClick = homeViewModel::onCancelClick,
-                onSaveDialogSoundNameChanged = homeViewModel::updateSaveName,
-                saveDialogChooseSoundColor = homeViewModel::updateChoice,
-                onSearchBarValueChanged = homeViewModel::updateSearch,
-                searchBarText = homeUiState.search,
-                soundListState = homeUiState.listState,
-                soundList = homeUiState.soundList,
-                highlightSound = homeUiState.highlightSound,
-                isShowSaveDialog = homeUiState.showSaveDialog,
-                saveDialogSoundNameText = homeUiState.saveName,
-                saveDialogChosenColor = homeUiState.color,
+                onSaveDialogCancelBtnClick = recordService::onCancelClick,
+                onSaveDialogSoundNameChanged = recordService::updateSaveName,
+                saveDialogChooseSoundColor = recordService::updateChoice,
+                onSearchBarValueChanged = localSoundListService::updateSearch,
+                searchBarText = searchBarData.search,
+                soundListState = localSoundListData.listState,
+                soundList = localSoundListData.soundList,
+                highlightSound = localSoundListData.highlightSound,
+                isShowSaveDialog = saveSoundDialogData.showSaveDialog,
+                saveDialogSoundNameText = saveSoundDialogData.saveName,
+                saveDialogChosenColor = saveSoundDialogData.color,
             ), worldScreenVM = WorldScreenVM(
-                worldUiState = worldViewModel.worldUiState,
-                retryAction = worldViewModel::getRandomSounds,
-                onPlayOrPause = appViewModel::play,
+                worldNetState = worldData.worldNetState,
+                retryAction = worldService::getRandomSounds,
+                onPlayOrPause = playSoundService::play,
             )
         )
 
@@ -117,7 +115,7 @@ fun ColorSoundApp() {
                 RouteContentHost(routeContentHostVM, modifier = Modifier.padding(paddingValues))
             }
 
-            if (appViewModel.isMaskContent) {
+            if (maskData.isMask) {
                 IconButton(
                     enabled = false, onClick = { /*TODO*/ }, modifier = Modifier.fillMaxSize()
                 ) {}

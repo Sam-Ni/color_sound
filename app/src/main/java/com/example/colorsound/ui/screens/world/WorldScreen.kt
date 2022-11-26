@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.colorsound.ui.components.SoundCardListVM
 import com.example.colorsound.ui.components.SoundList
+import com.example.colorsound.ui.vm.data.WorldNetState
 import com.example.colorsound.util.BASE_URL
 
 @Composable
@@ -19,10 +20,10 @@ fun WorldScreen(
     worldScreenVM: WorldScreenVM
 ) {
     worldScreenVM.apply {
-        when (worldUiState) {
-            is WorldUiState.Loading -> LoadingScreen()
-            is WorldUiState.Success -> {
-                val sounds = worldUiState.sounds.map { sound ->
+        when (worldNetState) {
+            is WorldNetState.Loading -> LoadingScreen()
+            is WorldNetState.Success -> {
+                val sounds = worldNetState.sounds.map { sound ->
                     sound.copy(url = BASE_URL + sound.url)
                 }
                 val soundCardListVM = SoundCardListVM(
@@ -34,14 +35,14 @@ fun WorldScreen(
                 )
                 SoundList(soundCardListVM)
             }
-            is WorldUiState.Error -> ErrorScreen(retryAction = retryAction)
+            is WorldNetState.Error -> ErrorScreen(retryAction = retryAction)
         }
     }
 }
 
 data class WorldScreenVM(
     val onPlayOrPause: (String, Int) -> Unit,
-    val worldUiState: WorldUiState,
+    val worldNetState: WorldNetState,
     val retryAction: () -> Unit,
 )
 

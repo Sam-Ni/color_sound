@@ -1,31 +1,12 @@
-package com.example.colorsound.ui.screens
+package com.example.colorsound.ui.vm.service
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.colorsound.model.Sound
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-//data class AppUiState(
-//    val highlightMode: Boolean = false,
-//    val highlightSound: Sound? = null,
-//)
-
-class AppViewModel : ViewModel() {
-
-    //    private val _uiState = MutableStateFlow(AppUiState())
-    //    val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
-    var isMaskContent = false
-
-    fun updateMask(isMask: Boolean) {
-        isMaskContent = isMask
-    }
-
+class PlaySoundService : ViewModel() {
     private val mediaPlayer by lazy {
         MediaPlayer().apply {
             setAudioAttributes(
@@ -35,8 +16,8 @@ class AppViewModel : ViewModel() {
         }
     }
 
-    var currentPlaying: Int = 0
-    var isPaused = false
+    private var currentPlaying: Int = 0
+    private var isPaused = false
 
     private fun _play(url: String) {
         viewModelScope.launch {
@@ -48,18 +29,6 @@ class AppViewModel : ViewModel() {
         }
     }
 
-    //    private fun updateHighlightMode(mode: Boolean, sound: Sound) {
-    //        _uiState.update { it.copy(highlightMode = mode, highlightSound = sound) }
-    //    }
-    //
-    //    fun onCardLongClick(sound: Sound) {
-    //        exitHighlight()
-    //        updateHighlightMode(true, sound)
-    //    }
-    //
-    //    fun exitHighlight() {
-    //        _uiState.update { it.copy(highlightMode = false, highlightSound = null) }
-    //    }
 
     fun play(url: String, soundId: Int) {
         if (mediaPlayer.isPlaying) {

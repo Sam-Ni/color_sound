@@ -18,7 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.example.colorsound.ui.screens.home.RecordState
+import com.example.colorsound.ui.vm.data.RecordState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
