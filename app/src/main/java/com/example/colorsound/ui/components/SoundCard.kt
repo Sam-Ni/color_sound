@@ -4,11 +4,14 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -19,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.example.colorsound.R
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
+import com.example.colorsound.util.CustomIndication
 import com.example.colorsound.util.IndexToColor
 import com.example.colorsound.util.SoundInfoFactory
 
@@ -39,7 +43,13 @@ fun SoundCard(
             .padding(15.dp, top = 10.dp, bottom = 8.dp, end = 15.dp)
             .combinedClickable(
                 onClick = { onPlayOrPause(soundInfo.url, soundInfo.id) },
-                onLongClick = { onLongClick(soundInfo) }
+                onLongClick = { onLongClick(soundInfo) },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = CustomIndication(
+                    pressColor = MaterialTheme.colorScheme.onSurface,
+                    cornerRadius = CornerRadius(50f, 50f),
+                    alpha = .3f
+                )
             ),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {

@@ -1,5 +1,7 @@
 package com.example.colorsound.ui.components
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,7 +43,7 @@ fun SoundList(
                 soundInfo = item,
                 onPlayOrPause = onPlayOrPause,
                 onLongClick = onLongClick,
-                modifier = Modifier.animateItemPlacement()
+                modifier = Modifier.animateItemPlacement(animationSpec = spring(stiffness = Spring.StiffnessLow))
             )
         }
     }
