@@ -3,10 +3,7 @@ package com.example.colorsound.ui.components
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +40,7 @@ fun SoundCard(
     modifier: Modifier = Modifier,
 ) {
     soundCardVM.apply {
+        val isSystemInDarkTheme = isSystemInDarkTheme()
         val transition = updateTransition(isHighlight, label = "")
         val elevation by transition.animateDp(label = "") {
             if (it) 20.dp
@@ -50,7 +48,7 @@ fun SoundCard(
         }
 
         val backColor by transition.animateColor(label = "") {
-            if (it) indexToBackColor(soundInfo.color)
+            if (it) indexToBackColor(soundInfo.color, isSystemInDarkTheme)
             else MaterialTheme.colorScheme.surface
         }
 
@@ -60,13 +58,9 @@ fun SoundCard(
         }
 
         Card(
-            modifier = modifier
-                .padding(
-                    start = 20.dp,
-                    top = 10.dp,
-                    bottom = 15.dp,
-                    end = 20.dp
-                ),
+            modifier = modifier.padding(
+                start = 20.dp, top = 10.dp, bottom = 15.dp, end = 20.dp
+            ),
             elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         ) {
             Row(
@@ -79,15 +73,15 @@ fun SoundCard(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(
                             radius = 300.dp,
-                            color = indexToBackColor(soundInfo.color),
+                            color = indexToBackColor(soundInfo.color, isSystemInDarkTheme),
                             bounded = true
                         )
                     ),
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(start = 12.dp, top = 20.dp, bottom = 20.dp, end = 12.dp)
+                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(
+                        start = 12.dp, top = 20.dp, bottom = 20.dp, end = 12.dp
+                    )
                 ) {
                     ColorCircle(soundInfo.color)
                     Spacer(modifier = Modifier.padding(horizontal = 6.dp))
@@ -111,7 +105,7 @@ fun SoundCard(
 }
 
 private fun Sound.getDate(): String {
-    return this.createTime.substring(0..9)
+    return this.createTime.substring(0 .. 9)
 }
 
 @Composable
@@ -142,7 +136,8 @@ private fun SoundName(name: String, color: Color) {
 @Composable
 private fun SoundCreateTime(createTime: String, color: Color) {
     Text(
-        text = createTime, style = MaterialTheme.typography.headlineMedium,
+        text = createTime,
+        style = MaterialTheme.typography.headlineMedium,
         color = color,
         modifier = Modifier.padding(end = 10.dp)
     )
@@ -163,8 +158,10 @@ private fun SoundDuration(duration: String, color: Color) {
 @Composable
 fun SoundCardPreview() {
     ColorSoundTheme {
-        SoundCard(SoundCardVM(
-            soundInfo = SoundInfoFactory(), onPlayOrPause = { _, _ -> }, onLongClick = {})
+        SoundCard(
+            SoundCardVM(soundInfo = SoundInfoFactory(),
+                onPlayOrPause = { _, _ -> },
+                onLongClick = {})
         )
     }
 }
