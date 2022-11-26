@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.SoundList
-import com.example.colorsound.ui.screens.AppUiState
+//import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.util.BASE_URL
 
 @Composable
@@ -21,7 +21,7 @@ fun WorldScreen(
     onPlayOrPause: (String, Int) -> Unit,
     worldUiState: WorldUiState,
     retryAction: () -> Unit,
-    appUiState: AppUiState
+//    appUiState: AppUiState
 ) {
     when (worldUiState) {
         is WorldUiState.Loading -> LoadingScreen()
@@ -34,7 +34,8 @@ fun WorldScreen(
                 soundList = sounds,
                 onPlayOrPause = onPlayOrPause,
                 onLongClick = {},
-                appUiState = appUiState
+                highlightSound = null,
+//                appUiState = appUiState
             )
         }
         is WorldUiState.Error -> ErrorScreen(retryAction = retryAction)

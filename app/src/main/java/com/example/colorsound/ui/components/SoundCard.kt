@@ -52,10 +52,6 @@ fun SoundCard(
         if (it) 20.dp
         else 6.dp
     }
-    val scale by transition.animateFloat(label = "") {
-        if (it) 1.05f
-        else 1f
-    }
 
     val backColor by transition.animateColor(label = "") {
         if (it) indexToBackColor(soundInfo.color)
@@ -71,7 +67,6 @@ fun SoundCard(
 
     Card(
         modifier = modifier
-            .scale(scale)
             .padding(
                 start = 20.dp,
                 top = 10.dp,

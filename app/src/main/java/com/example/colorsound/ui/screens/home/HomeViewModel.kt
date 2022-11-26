@@ -35,6 +35,8 @@ data class HomeUiState(
     val soundList: List<Sound> = mutableListOf(),
     val search: String = "",
     val listState: LazyListState = LazyListState(),
+    val highlightMode: Boolean = false,
+    val highlightSound: Sound? = null,
 )
 
 class HomeViewModel(
@@ -52,6 +54,23 @@ class HomeViewModel(
 
     init {
         getSounds()
+    }
+
+    fun refreshList() {
+        _uiState.update { it.copy(soundList = it.soundList.plus(emptyList())) }
+    }
+
+    private fun updateHighlightMode(mode: Boolean, sound: Sound) {
+        _uiState.update { it.copy(highlightMode = mode, highlightSound = sound) }
+    }
+
+    fun onCardLongClick(sound: Sound) {
+        exitHighlight()
+        updateHighlightMode(true, sound)
+    }
+
+    fun exitHighlight() {
+        _uiState.update { it.copy(highlightMode = false, highlightSound = null) }
     }
 
     private fun getSounds() {
@@ -113,13 +132,16 @@ class HomeViewModel(
     }
 
     /* TODO */
-    fun onDelete(sound: Sound) {
+    fun onDelete() {
         viewModelScope.launch {
-            repository.deleteSound(sound)
-            deleteAudio(sound.url)
-            val original = uiState.value.soundList.toMutableList()
-            original.remove(sound)
-            updateSoundList(original)
+            uiState.value.highlightSound?.let {
+                repository.deleteSound(it)
+                deleteAudio(it.url)
+                val original = uiState.value.soundList.toMutableList()
+                original.remove(it)
+                exitHighlight()
+                updateSoundList(original)
+            }
         }
     }
 

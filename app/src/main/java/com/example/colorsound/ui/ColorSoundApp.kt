@@ -32,7 +32,7 @@ fun ColorSoundApp() {
 
     val appViewModel: AppViewModel = viewModel()
 
-    val appUiState by appViewModel.uiState.collectAsState()
+//    val appUiState by appViewModel.uiState.collectAsState()
 
     val worldViewModel: WorldViewModel =
         viewModel(factory = WorldViewModel.Factory)
@@ -70,13 +70,8 @@ fun ColorSoundApp() {
                     recordState = homeUiState.recordState,
                     isGranted = isGranted,
                     askPermission = askPermission,
-                    isHighlightMode = appUiState.highlightMode,
-                    onDelete = {
-                        appUiState.highlightSound?.let {
-                            homeViewModel.onDelete(it)
-                            appViewModel.exitHighlight()
-                        }
-                    }
+                    isHighlightMode = homeUiState.highlightMode,
+                    onDelete = homeViewModel::onDelete
                 )
             },
         ) { paddingValues ->
@@ -87,7 +82,7 @@ fun ColorSoundApp() {
                     homeViewModel = homeViewModel,
                     worldViewModel = worldViewModel,
                     modifier = Modifier.padding(paddingValues),
-                    appUiState = appUiState
+//                    appUiState = appUiState
                 )
             }
         }

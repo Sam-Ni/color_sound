@@ -11,15 +11,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class AppUiState(
-    val highlightMode: Boolean = false,
-    val highlightSound: Sound? = null,
-)
+//data class AppUiState(
+//    val highlightMode: Boolean = false,
+//    val highlightSound: Sound? = null,
+//)
 
 class AppViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AppUiState())
-    val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
+//    private val _uiState = MutableStateFlow(AppUiState())
+//    val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
 
     private val mediaPlayer by lazy {
         MediaPlayer().apply {
@@ -45,18 +45,18 @@ class AppViewModel : ViewModel() {
         }
     }
 
-    private fun updateHighlightMode(mode: Boolean, sound: Sound) {
-        _uiState.update { it.copy(highlightMode = mode, highlightSound = sound) }
-    }
-
-    fun onCardLongClick(sound: Sound) {
-        exitHighlight()
-        updateHighlightMode(true, sound)
-    }
-
-    fun exitHighlight() {
-        _uiState.update { it.copy(highlightMode = false, highlightSound = null) }
-    }
+//    private fun updateHighlightMode(mode: Boolean, sound: Sound) {
+//        _uiState.update { it.copy(highlightMode = mode, highlightSound = sound) }
+//    }
+//
+//    fun onCardLongClick(sound: Sound) {
+//        exitHighlight()
+//        updateHighlightMode(true, sound)
+//    }
+//
+//    fun exitHighlight() {
+//        _uiState.update { it.copy(highlightMode = false, highlightSound = null) }
+//    }
 
     fun play(url: String, soundId: Int) {
         if (mediaPlayer.isPlaying) {

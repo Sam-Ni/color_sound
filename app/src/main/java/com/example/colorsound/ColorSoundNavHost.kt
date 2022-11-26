@@ -6,7 +6,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.colorsound.ui.screens.AppUiState
+//import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.ui.screens.AppViewModel
 import com.example.colorsound.ui.screens.home.HomeScreen
 import com.example.colorsound.ui.screens.home.HomeViewModel
@@ -21,7 +21,7 @@ fun ColorSoundHost(
     appViewModel: AppViewModel,
     homeViewModel: HomeViewModel,
     worldViewModel: WorldViewModel,
-    appUiState: AppUiState,
+//    appUiState: AppUiState,
     modifier: Modifier = Modifier,
 ) {
 
@@ -34,8 +34,10 @@ fun ColorSoundHost(
             HomeScreen(
                 onPlayOrPause = appViewModel::play,
                 homeViewModel = homeViewModel,
-                onCardLongClick = appViewModel::onCardLongClick,
-                appUiState = appUiState,
+                onCardLongClick = {
+                    homeViewModel.onCardLongClick(it)
+                                  },
+//                appUiState = appUiState,
             )
         }
         composable(route = World.route) {
@@ -43,7 +45,7 @@ fun ColorSoundHost(
                 worldUiState = worldViewModel.worldUiState,
                 retryAction = worldViewModel::getRandomSounds,
                 onPlayOrPause = appViewModel::play,
-                appUiState = appUiState,
+//                appUiState = appUiState,
             )
         }
         composable(route = Setting.route) {

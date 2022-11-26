@@ -15,7 +15,7 @@ import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.SaveDialog
 import com.example.colorsound.ui.components.SearchBar
 import com.example.colorsound.ui.components.SoundList
-import com.example.colorsound.ui.screens.AppUiState
+//import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.util.SoundInfoFactory
 
@@ -25,7 +25,7 @@ fun HomeScreen(
     onPlayOrPause: (String, Int) -> Unit,
     onCardLongClick: (Sound) -> Unit,
     homeViewModel: HomeViewModel,
-    appUiState: AppUiState
+//    appUiState: AppUiState
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
 
@@ -43,7 +43,7 @@ fun HomeScreen(
         onNameChanged = homeViewModel::updateSaveName,
         chooseColor = homeViewModel::updateChoice,
         onSearchValueChanged = homeViewModel::updateSearch,
-        appUiState = appUiState,
+//        appUiState = appUiState,
     )
 }
 
@@ -59,7 +59,7 @@ fun HomeScreen(
     chooseColor: (Int) -> Unit,
     onSearchValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
-    appUiState: AppUiState,
+//    appUiState: AppUiState,
 ) {
     if (uiState.showSaveDialog) {
         SaveDialog(
@@ -85,7 +85,8 @@ fun HomeScreen(
             soundList = uiState.soundList,
             onPlayOrPause = onPlayOrPause,
             onLongClick = onCardLongClick,
-            appUiState = appUiState,
+            highlightSound = uiState.highlightSound,
+//            appUiState = appUiState,
         )
         Spacer(modifier = Modifier.height(16.dp))
     }
@@ -105,7 +106,6 @@ fun HomeScreenPreview() {
             onNameChanged = {},
             chooseColor = {},
             onSearchValueChanged = {},
-            appUiState = AppUiState(),
         )
     }
 }

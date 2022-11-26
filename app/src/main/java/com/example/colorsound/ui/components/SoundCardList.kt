@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
-import com.example.colorsound.ui.screens.AppUiState
+//import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.util.SoundInfoFactory
 
@@ -25,11 +25,12 @@ fun SoundList(
     soundList: List<Sound> = DataSource.soundList,
     onPlayOrPause: (String, Int) -> Unit,
     onLongClick: (Sound) -> Unit,
-    appUiState: AppUiState
+    highlightSound: Sound?
+//    appUiState: AppUiState
 ) {
 
     LazyColumn(
-        state = listState,
+//        state = listState,
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
     ) {
         items(
@@ -41,7 +42,7 @@ fun SoundList(
                 onPlayOrPause = onPlayOrPause,
                 onLongClick = onLongClick,
                 modifier = Modifier.animateItemPlacement(animationSpec = spring(stiffness = Spring.StiffnessLow)),
-                isHighlight = if (appUiState.highlightSound != null) item.url == appUiState.highlightSound.url else false
+                isHighlight = if (highlightSound != null) item.url == highlightSound.url else false
             )
         }
     }
@@ -56,7 +57,8 @@ fun SoundListPreview() {
             LazyListState(),
             soundList = DataSource.soundList,
             onPlayOrPause = { _, _ -> },
-            onLongClick = {}, AppUiState()
+            onLongClick = {},
+            highlightSound = null
         )
     }
 }
@@ -69,7 +71,8 @@ fun DarkSoundListPreview() {
             LazyListState(),
             soundList = DataSource.soundList,
             onPlayOrPause = { _, _ -> },
-            onLongClick = {}, AppUiState()
+            onLongClick = {},
+            highlightSound = null
         )
     }
 }
