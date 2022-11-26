@@ -28,7 +28,7 @@ fun SoundList(
     listState: LazyListState,
     soundList: List<Sound> = DataSource.soundList,
     onPlayOrPause: (String, Int) -> Unit,
-    onLongClick: () -> Unit,
+    onLongClick: (Sound) -> Unit,
 ) {
 
     LazyColumn(

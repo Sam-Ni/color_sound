@@ -74,7 +74,11 @@ fun ColorSoundApp() {
                     recordState = homeUiState.recordState,
                     isGranted = isGranted,
                     askPermission = askPermission,
-                    isHighlightMode = appUiState.highLightMode
+                    isHighlightMode = appUiState.highlightMode,
+                    onDelete = { appUiState.highlightSound?.let {
+                        homeViewModel.onDelete(it)
+                        appViewModel.exitHighlight()
+                    } }
                 )
             },
         ) { paddingValues ->

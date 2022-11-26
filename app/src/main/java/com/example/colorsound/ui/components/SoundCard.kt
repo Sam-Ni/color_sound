@@ -34,7 +34,7 @@ import com.example.colorsound.util.SoundInfoFactory
 fun SoundCard(
     soundInfo: Sound,
     onPlayOrPause: (String, Int) -> Unit,
-    onLongClick: () -> Unit,
+    onLongClick: (Sound) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -43,7 +43,7 @@ fun SoundCard(
             .padding(15.dp, top = 10.dp, bottom = 8.dp, end = 15.dp)
             .combinedClickable(
                 onClick = { onPlayOrPause(soundInfo.url, soundInfo.id) },
-                onLongClick = onLongClick,
+                onLongClick = { onLongClick(soundInfo) },
                 interactionSource = remember { MutableInteractionSource() },
                 indication = CustomIndication(
                     pressColor = MaterialTheme.colorScheme.onSurface,

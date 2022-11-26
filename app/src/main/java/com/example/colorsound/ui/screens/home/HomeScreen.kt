@@ -21,7 +21,7 @@ import com.example.colorsound.ui.theme.ColorSoundTheme
 @Composable
 fun HomeScreen(
     onPlayOrPause: (String, Int) -> Unit,
-    onCardLongClick: () -> Unit,
+    onCardLongClick: (Sound) -> Unit,
     homeViewModel: HomeViewModel,
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
@@ -46,7 +46,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreen(
     onPlayOrPause: (String, Int) -> Unit,
-    onCardLongClick: () -> Unit,
+    onCardLongClick: (Sound) -> Unit,
     uiState: HomeUiState,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,

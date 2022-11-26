@@ -113,7 +113,7 @@ class HomeViewModel(
     }
 
     /* TODO */
-    fun onSoundLongClick(sound: Sound) {
+    fun onDelete(sound: Sound) {
         viewModelScope.launch {
             repository.deleteSound(sound)
             deleteAudio(sound.url)

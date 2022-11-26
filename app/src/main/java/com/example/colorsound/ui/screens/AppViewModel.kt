@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.colorsound.model.Sound
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class AppUiState(
-    val highLightMode: Boolean = false,
+    val highlightMode: Boolean = false,
+    val highlightSound: Sound? = null,
 )
 
 class AppViewModel : ViewModel() {
@@ -44,12 +46,16 @@ class AppViewModel : ViewModel() {
         }
     }
 
-    private fun updateHighLightMode(mode: Boolean) {
-        _uiState.update { it.copy(highLightMode = mode) }
+    private fun updateHighlightMode(mode: Boolean, sound: Sound) {
+        _uiState.update { it.copy(highlightMode = mode, highlightSound = sound) }
     }
 
-    fun onCardLongClick() {
-        updateHighLightMode(true)
+    fun onCardLongClick(sound: Sound) {
+        updateHighlightMode(true, sound)
+    }
+
+    fun exitHighlight() {
+        _uiState.update { it.copy(highlightMode = false, highlightSound = null) }
     }
 
     fun play(url: String, soundId: Int) {

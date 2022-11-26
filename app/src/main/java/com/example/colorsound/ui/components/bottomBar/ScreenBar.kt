@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.example.colorsound.ColorSoundDestination
 import com.example.colorsound.Home
 import com.example.colorsound.colorSoundTabRowScreens
+import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.bottomBar.DeleteButton
 import com.example.colorsound.ui.components.bottomBar.PushButton
 import com.example.colorsound.ui.components.bottomBar.UpdateButton
@@ -47,6 +48,7 @@ fun ColorSoundTapRow(
     isGranted: Boolean,
     askPermission: () -> Unit,
     isHighlightMode: Boolean = false,
+    onDelete: () -> Unit,
 ) {
     BottomAppBar(
         modifier = Modifier
@@ -88,7 +90,7 @@ fun ColorSoundTapRow(
                     Spacer(modifier = Modifier.width(15.dp))
 
                     PushButton(onPush = { /*TODO*/ })
-                    DeleteButton(onDelete = {})
+                    DeleteButton(onDelete = onDelete)
                     UpdateButton(onUpdate = { /*TODO*/ })
                 }
             }
@@ -151,6 +153,6 @@ private fun ColorSoundFAB(
 @Composable
 fun BottomNavigationPreview() {
     ColorSoundTheme {
-        ColorSoundTapRow(colorSoundTabRowScreens, {}, Home, {}, {}, RecordState.Normal, false, {})
+        ColorSoundTapRow(colorSoundTabRowScreens, {}, Home, {}, {}, RecordState.Normal, false, {}, onDelete = {})
     }
 }
