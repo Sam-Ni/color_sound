@@ -5,9 +5,20 @@ import android.media.MediaPlayer
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+data class AppUiState(
+    val highLightMode: Boolean = false,
+)
+
 class AppViewModel : ViewModel() {
+
+    private val _uiState = MutableStateFlow(AppUiState())
+    val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
 
     private val mediaPlayer by lazy {
         MediaPlayer().apply {
@@ -31,6 +42,14 @@ class AppViewModel : ViewModel() {
             mediaPlayer.start()
             currentPlaying = -1
         }
+    }
+
+    private fun updateHighLightMode(mode: Boolean) {
+        _uiState.update { it.copy(highLightMode = mode) }
+    }
+
+    fun onCardLongClick() {
+        updateHighLightMode(true)
     }
 
     fun play(url: String, soundId: Int) {

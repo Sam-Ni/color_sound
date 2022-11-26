@@ -20,9 +20,9 @@ import com.example.colorsound.Home
 import com.example.colorsound.colorSoundTabRowScreens
 import com.example.colorsound.navigateSingleTopTo
 import com.example.colorsound.ui.components.ColorSoundTapRow
+import com.example.colorsound.ui.components.bottomBar.HighLightBar
 import com.example.colorsound.ui.screens.AppViewModel
 import com.example.colorsound.ui.screens.home.HomeViewModel
-import com.example.colorsound.ui.screens.home.RecordState
 import com.example.colorsound.ui.screens.world.WorldViewModel
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -35,6 +35,8 @@ fun ColorSoundApp() {
 
     val appViewModel: AppViewModel = viewModel()
 
+    val appUiState by appViewModel.uiState.collectAsState()
+
     val worldViewModel: WorldViewModel =
         viewModel(factory = WorldViewModel.Factory)
     val homeViewModel: HomeViewModel =
@@ -43,9 +45,8 @@ fun ColorSoundApp() {
     val homeUiState by homeViewModel.uiState.collectAsState()
 
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
-    val askPermission by lazy {
-        {
-            audioPermissionState.launchPermissionRequest()
+    val askPermission by lazy { {
+        audioPermissionState.launchPermissionRequest()
         }
     }
     val isGranted = audioPermissionState.status.isGranted
@@ -56,10 +57,14 @@ fun ColorSoundApp() {
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
 
-        val currentScreen =
-            colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
+        val currentScreen = colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
         Scaffold(
-            bottomBar = {
+            bottomBar = if (appUiState.highLightMode) {
+                { HighLightBar(
+                    onPush = { /*TODO*/ },
+                    onDelete = { /*TODO*/ },
+                    onUpdate = { /*TODO*/ }) }
+            } else { {
                 ColorSoundTapRow(
                     allScreen = colorSoundTabRowScreens,
                     onTabSelected = { newScreen ->
@@ -70,10 +75,8 @@ fun ColorSoundApp() {
                     onLongClick = homeViewModel::onLongClick,
                     recordState = homeUiState.recordState,
                     isGranted = isGranted,
-                    askPermission = askPermission,
-                    isRecording = homeUiState.recordState != RecordState.Normal
-                )
-            },
+                    askPermission = askPermission
+                ) }},
         ) { paddingValues ->
             Column {
                 ColorSoundHost(
