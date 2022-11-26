@@ -10,39 +10,40 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.SoundCardListVM
 import com.example.colorsound.ui.components.SoundList
-//import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.util.BASE_URL
 
 @Composable
 fun WorldScreen(
-    onPlayOrPause: (String, Int) -> Unit,
-    worldUiState: WorldUiState,
-    retryAction: () -> Unit,
-//    appUiState: AppUiState
+    worldScreenVM: WorldScreenVM
 ) {
-    when (worldUiState) {
-        is WorldUiState.Loading -> LoadingScreen()
-        is WorldUiState.Success -> {
-            val sounds = worldUiState.sounds.map { sound ->
-                sound.copy(url = BASE_URL + sound.url)
-            }
-            SoundList(
-                SoundCardListVM(
+    worldScreenVM.apply {
+        when (worldUiState) {
+            is WorldUiState.Loading -> LoadingScreen()
+            is WorldUiState.Success -> {
+                val sounds = worldUiState.sounds.map { sound ->
+                    sound.copy(url = BASE_URL + sound.url)
+                }
+                val soundCardListVM = SoundCardListVM(
                     listState = LazyListState(),
                     soundList = sounds,
                     onPlayOrPause = onPlayOrPause,
                     onLongClick = {},
                     highlightSound = null,
                 )
-            )
+                SoundList(soundCardListVM)
+            }
+            is WorldUiState.Error -> ErrorScreen(retryAction = retryAction)
         }
-        is WorldUiState.Error -> ErrorScreen(retryAction = retryAction)
     }
 }
+
+data class WorldScreenVM(
+    val onPlayOrPause: (String, Int) -> Unit,
+    val worldUiState: WorldUiState,
+    val retryAction: () -> Unit,
+)
 
 @Composable
 fun LoadingScreen(
@@ -73,14 +74,4 @@ fun ErrorScreen(
             Text("Retry")
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun WorldScreenPreView() {
-//    WorldScreen(
-//        worldUiState = WorldUiState.Success(DataSource.soundList),
-//        retryAction = { /*TODO*/ },
-//        onClickStartPlay = {}
-//    )
 }

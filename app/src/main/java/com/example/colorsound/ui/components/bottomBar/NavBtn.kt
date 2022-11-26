@@ -8,7 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import com.example.colorsound.ColorSoundDestination
+import com.example.colorsound.ui.RouteDestination
 
 @Composable
 fun NavBtn(
@@ -37,6 +37,6 @@ fun NavBtn(
 
 data class NavBtnVM(
     val visible: Boolean,
-    val allScreen: List<ColorSoundDestination>,
-    val onTabSelected: (ColorSoundDestination) -> Unit
+    val allScreen: List<RouteDestination>,
+    val onTabSelected: (RouteDestination) -> Unit
 )

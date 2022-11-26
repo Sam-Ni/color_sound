@@ -14,9 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
-//import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.ui.theme.ColorSoundTheme
-import com.example.colorsound.util.SoundInfoFactory
 
 
 @OptIn(ExperimentalFoundationApi::class)

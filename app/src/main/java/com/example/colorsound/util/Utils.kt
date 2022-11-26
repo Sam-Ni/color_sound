@@ -16,7 +16,7 @@ import androidx.compose.ui.semantics.Role
 import com.example.colorsound.model.Sound
 
 fun SoundInfoFactory(): Sound {
-    return Sound(1, 1, "newAdd", "0", "123", "1:32")
+    return Sound(1, 1, "newAdd", "2022-11-26 17:03:52", "123", "1:32")
 }
 
 

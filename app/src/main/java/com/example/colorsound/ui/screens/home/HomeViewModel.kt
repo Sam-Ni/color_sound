@@ -40,8 +40,7 @@ data class HomeUiState(
 )
 
 class HomeViewModel(
-    private val filesDir: String,
-    private val repository: LocalRepository
+    private val filesDir: String, private val repository: LocalRepository
 ) : ViewModel() {
     private var recorder: MediaRecorder? = null
     private lateinit var filePath: String
@@ -195,19 +194,19 @@ class HomeViewModel(
         _uiState.update { it.copy(recordState = newState) }
     }
 
-    fun onLongClick() {
+    fun onLongClick(updateMask: (Boolean) -> Unit) {
         when (recordState) {
-            RecordState.Normal -> onClick()
+            RecordState.Normal -> onClick(updateMask)
             else -> {
                 pauseRecording()
                 _uiState.update { it.copy(showSaveDialog = true) }
                 updateRecordState(RecordState.Normal)
-//                stopRecording()
+                updateMask(false)
             }
         }
     }
 
-    fun onClick() {
+    fun onClick(updateMask: (Boolean) -> Unit) {
         when (recordState) {
             RecordState.Recording -> {
                 updateRecordState(RecordState.Pausing)
@@ -220,6 +219,7 @@ class HomeViewModel(
             RecordState.Normal -> {
                 updateRecordState(RecordState.Recording)
                 startRecording()
+                updateMask(true)
             }
         }
     }

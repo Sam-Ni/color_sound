@@ -2,7 +2,6 @@ package com.example.colorsound.ui.components
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -19,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -31,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.example.colorsound.R
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
-import com.example.colorsound.util.indexToColor
 import com.example.colorsound.util.SoundInfoFactory
 import com.example.colorsound.util.indexToBackColor
+import com.example.colorsound.util.indexToColor
 
 
 @OptIn(
@@ -94,13 +92,13 @@ fun SoundCard(
                     ColorCircle(soundInfo.color)
                     Spacer(modifier = Modifier.padding(horizontal = 6.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        Row() {
+                        Row {
                             SoundName(name = soundInfo.name, frontColor)
                         }
-                        Row() {
+                        Row {
                             Spacer(modifier = Modifier.height(16.dp))
                         }
-                        Row() {
+                        Row {
                             Spacer(modifier = Modifier.weight(1f))
                             SoundDuration(duration = soundInfo.duration, frontColor)
                             SoundCreateTime(createTime = soundInfo.getDate(), frontColor)
@@ -117,7 +115,7 @@ private fun Sound.getDate(): String {
 }
 
 @Composable
-fun ColorCircle(colorIndex: Int) {
+private fun ColorCircle(colorIndex: Int) {
     Image(
         painter = painterResource(R.drawable.circle),
         contentDescription = null,
@@ -129,9 +127,8 @@ fun ColorCircle(colorIndex: Int) {
     )
 }
 
-
 @Composable
-fun SoundName(name: String, color: Color) {
+private fun SoundName(name: String, color: Color) {
     Text(
         overflow = TextOverflow.Ellipsis,
         maxLines = 3,
@@ -143,7 +140,7 @@ fun SoundName(name: String, color: Color) {
 }
 
 @Composable
-fun SoundCreateTime(createTime: String, color: Color) {
+private fun SoundCreateTime(createTime: String, color: Color) {
     Text(
         text = createTime, style = MaterialTheme.typography.headlineMedium,
         color = color,
@@ -152,7 +149,7 @@ fun SoundCreateTime(createTime: String, color: Color) {
 }
 
 @Composable
-fun SoundDuration(duration: String, color: Color) {
+private fun SoundDuration(duration: String, color: Color) {
     Text(
         text = duration,
         style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
