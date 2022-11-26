@@ -81,7 +81,7 @@ fun HomeScreenPreview() {
         HomeScreen(
             onPlayOrPause = { _, _ -> },
             onCardLongClick = {},
-            uiState = HomeUiState(soundList = DataSource.soundList),
+            uiState = HomeUiState(soundList = DataSource.soundList.toMutableList()),
             onSaveClick = {},
             onCancelClick = { /*TODO*/ },
             onNameChanged = {},

@@ -22,8 +22,16 @@ fun SoundList(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
     ) {
 
-        items(soundList) { item ->
-            SoundCard(soundInfo = item, onPlayOrPause = onPlayOrPause, onLongClick = onLongClick)
+        items(
+            items = soundList,
+            key = { item -> item.url }
+        ) { item ->
+            SoundCard(
+                soundInfo = item,
+                onPlayOrPause = onPlayOrPause,
+                onLongClick = onLongClick,
+//                modifier = Modifier.animateItemPlacement()
+            )
         }
 
     }

@@ -30,7 +30,7 @@ data class HomeUiState(
     val showSaveDialog: Boolean = false,
     val saveName: String = "",
     val color: Int = 0,
-    val soundList: List<Sound> = emptyList(),
+    val soundList: List<Sound> = mutableListOf(),
     val search: String = "",
 )
 
@@ -53,7 +53,7 @@ class HomeViewModel(
 
     private fun getSounds() {
         viewModelScope.launch {
-            val sounds = repository.getAllSounds()
+            val sounds = repository.getAllSounds().toMutableList()
             _uiState.update { it.copy(soundList = sounds) }
         }
     }
@@ -103,10 +103,13 @@ class HomeViewModel(
         }
     }
 
+    /* TODO */
     fun onSoundLongClick(sound: Sound) {
         viewModelScope.launch {
             repository.deleteSound(sound)
             deleteAudio(sound.url)
+//            val original = uiState.value.soundList.toMutableList()
+//            original.removeAt()
             getSounds()
         }
     }
@@ -116,11 +119,12 @@ class HomeViewModel(
         stopRecording()
         getDuration()
         viewModelScope.launch {
-            val sound = uiState.value
-            repository.insertSound(
-                Sound(0, sound.color, sound.saveName, getCurrentDateTime(), filePath, getDuration())
-            )
-            getSounds()
+            val soundState = uiState.value
+            val sound = Sound(0, soundState.color, soundState.saveName, getCurrentDateTime(), filePath, getDuration())
+            repository.insertSound(sound)
+            val original = uiState.value.soundList.toMutableList()
+            original.add(0, sound)
+            _uiState.update { it.copy(soundList = original) }
         }
         reset()
     }

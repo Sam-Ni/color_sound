@@ -31,6 +31,7 @@ fun SoundCard(
     soundInfo: Sound,
     onPlayOrPause: (String, Int) -> Unit,
     onLongClick: (Sound) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     Card(
