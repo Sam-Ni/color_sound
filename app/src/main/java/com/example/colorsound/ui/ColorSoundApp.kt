@@ -38,6 +38,7 @@ fun ColorSoundApp() {
         viewModel(factory = LocalSoundListService.Factory)
     val playSoundService = PlaySoundService()
     val worldService: WorldService = viewModel(factory = WorldService.Factory)
+    val upLoadSoundService: UpLoadSoundService = viewModel(factory = UpLoadSoundService.Factory)
 
     val saveSoundDialogData by getDataService.saveSoundDialogData.collectAsState()
     val localSoundListData by getDataService.localSoundListData.collectAsState()
@@ -77,7 +78,9 @@ fun ColorSoundApp() {
             isGranted = isGranted,
             askPermission = askPermission,
             isHighlightMode = localSoundListData.highlightMode,
-            onDelete = localSoundListService::onDelete
+            onDelete = localSoundListService::onDelete,
+            onPush = upLoadSoundService::uploadSound,
+            onUpdate = {},
         )
         val coroutineScope = rememberCoroutineScope()
         val routeContentHostVM = RouteContentHostVM(

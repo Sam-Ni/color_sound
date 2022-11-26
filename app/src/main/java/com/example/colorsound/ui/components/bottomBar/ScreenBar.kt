@@ -33,8 +33,8 @@ fun ScreenBar(
         val highlightBtnVM = HighlightBtnVM(
             visible = isHighlightMode,
             onDelete = onDelete,
-            onPush = { /*TODO*/ },
-            onUpdate = {/*TODO*/ }
+            onPush = onPush,
+            onUpdate = onUpdate,
         )
 
         val navBtnVM = NavBtnVM(
@@ -74,5 +74,7 @@ data class ScreenBarVM(
     val askPermission: () -> Unit,
     val isHighlightMode: Boolean = false,
     val onDelete: () -> Unit,
+    val onPush: () -> Unit,
+    val onUpdate: () -> Unit,
 )
 
