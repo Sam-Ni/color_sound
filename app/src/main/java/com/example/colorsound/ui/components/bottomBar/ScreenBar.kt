@@ -28,6 +28,9 @@ import androidx.compose.ui.unit.dp
 import com.example.colorsound.ColorSoundDestination
 import com.example.colorsound.Home
 import com.example.colorsound.colorSoundTabRowScreens
+import com.example.colorsound.ui.components.bottomBar.DeleteButton
+import com.example.colorsound.ui.components.bottomBar.PushButton
+import com.example.colorsound.ui.components.bottomBar.UpdateButton
 import com.example.colorsound.ui.screens.home.RecordState
 import com.example.colorsound.ui.theme.ColorSoundTheme
 
@@ -43,7 +46,7 @@ fun ColorSoundTapRow(
     recordState: RecordState,
     isGranted: Boolean,
     askPermission: () -> Unit,
-    isRecording: Boolean = false,
+    isHighlightMode: Boolean = false,
 ) {
     BottomAppBar(
         modifier = Modifier
@@ -57,7 +60,7 @@ fun ColorSoundTapRow(
             Spacer(modifier = Modifier.width(15.dp))
 
             AnimatedVisibility(
-                !isRecording,
+                recordState == RecordState.Normal && !isHighlightMode,
                 enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(),
                 exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally()
             ) {
@@ -74,9 +77,30 @@ fun ColorSoundTapRow(
                 }
             }
 
+            AnimatedVisibility(
+                isHighlightMode,
+                enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(),
+                exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally()
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.width(15.dp))
+
+                    PushButton(onPush = { /*TODO*/ })
+                    DeleteButton(onDelete = {})
+                    UpdateButton(onUpdate = { /*TODO*/ })
+                }
+            }
+
+
             Spacer(modifier = Modifier.weight(1f))
 
-            if (currentScreen == Home) {
+            AnimatedVisibility(
+                currentScreen == Home && !isHighlightMode,
+                enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(),
+                exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally()
+            ) {
                 ColorSoundFAB(
                     onClick = onClick,
                     onLongClick = onLongClick,

@@ -23,6 +23,7 @@ import com.example.colorsound.ui.components.ColorSoundTapRow
 import com.example.colorsound.ui.components.bottomBar.HighLightBar
 import com.example.colorsound.ui.screens.AppViewModel
 import com.example.colorsound.ui.screens.home.HomeViewModel
+import com.example.colorsound.ui.screens.home.RecordState
 import com.example.colorsound.ui.screens.world.WorldViewModel
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -45,8 +46,9 @@ fun ColorSoundApp() {
     val homeUiState by homeViewModel.uiState.collectAsState()
 
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
-    val askPermission by lazy { {
-        audioPermissionState.launchPermissionRequest()
+    val askPermission by lazy {
+        {
+            audioPermissionState.launchPermissionRequest()
         }
     }
     val isGranted = audioPermissionState.status.isGranted
@@ -57,14 +59,10 @@ fun ColorSoundApp() {
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
 
-        val currentScreen = colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
+        val currentScreen =
+            colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
         Scaffold(
-            bottomBar = if (appUiState.highLightMode) {
-                { HighLightBar(
-                    onPush = { /*TODO*/ },
-                    onDelete = { /*TODO*/ },
-                    onUpdate = { /*TODO*/ }) }
-            } else { {
+            bottomBar = {
                 ColorSoundTapRow(
                     allScreen = colorSoundTabRowScreens,
                     onTabSelected = { newScreen ->
@@ -75,8 +73,10 @@ fun ColorSoundApp() {
                     onLongClick = homeViewModel::onLongClick,
                     recordState = homeUiState.recordState,
                     isGranted = isGranted,
-                    askPermission = askPermission
-                ) }},
+                    askPermission = askPermission,
+                    isHighlightMode = appUiState.highLightMode
+                )
+            },
         ) { paddingValues ->
             Column {
                 ColorSoundHost(
