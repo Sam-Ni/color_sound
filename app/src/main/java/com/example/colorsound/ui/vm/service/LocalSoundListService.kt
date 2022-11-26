@@ -23,6 +23,17 @@ class LocalSoundListService(
     private val localSoundListData: MutableStateFlow<LocalSoundListData>,
     private val searchBarData: MutableStateFlow<SearchBarData>
 ) : ViewModel() {
+
+    init {
+        freshLocalSoundsList()
+    }
+
+    private fun freshLocalSoundsList() {
+        viewModelScope.launch {
+            localSoundListData.update { it.copy(soundList = repository.getAllSounds()) }
+        }
+    }
+
     fun scrollToTop(coroutineScope: CoroutineScope) {
         coroutineScope.launch {
             localSoundListData.value.listState.animateScrollToItem(index = 0, scrollOffset = -1)

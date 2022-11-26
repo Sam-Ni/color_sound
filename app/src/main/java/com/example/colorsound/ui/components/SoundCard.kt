@@ -84,7 +84,7 @@ fun SoundCard(
                     )
                 ) {
                     ColorCircle(soundInfo.color)
-                    Spacer(modifier = Modifier.padding(horizontal = 6.dp))
+                    Spacer(modifier = Modifier.padding(horizontal = 8.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Row {
                             SoundName(name = soundInfo.name, frontColor)
@@ -129,7 +129,7 @@ private fun SoundName(name: String, color: Color) {
         text = name,
         style = MaterialTheme.typography.headlineLarge,
         color = color,
-        modifier = Modifier.width(220.dp)
+        modifier = Modifier.width(180.dp)
     )
 }
 
