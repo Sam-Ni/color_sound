@@ -83,8 +83,7 @@ fun SoundCard(
 }
 
 private fun Sound.getDate(): String {
-    val endIndex = this.createTime.indexOf(" ")
-    return this.createTime.substring(0 until endIndex)
+    return this.createTime.substring(0..9)
 }
 
 @Composable
