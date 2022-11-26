@@ -1,8 +1,6 @@
 package com.example.colorsound.ui
 
 import android.Manifest
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,11 +17,9 @@ import com.example.colorsound.ColorSoundHost
 import com.example.colorsound.Home
 import com.example.colorsound.colorSoundTabRowScreens
 import com.example.colorsound.navigateSingleTopTo
-import com.example.colorsound.ui.components.ColorSoundTapRow
-import com.example.colorsound.ui.components.bottomBar.HighLightBar
+import com.example.colorsound.ui.components.bottomBar.ColorSoundTapRow
 import com.example.colorsound.ui.screens.AppViewModel
 import com.example.colorsound.ui.screens.home.HomeViewModel
-import com.example.colorsound.ui.screens.home.RecordState
 import com.example.colorsound.ui.screens.world.WorldViewModel
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi

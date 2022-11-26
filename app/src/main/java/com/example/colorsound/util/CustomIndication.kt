@@ -35,7 +35,6 @@ class CustomIndication(
                             ), size = size
                         )
                     } else {
-
                         drawCircle(
                             radius = size.width,
                             color = pressColor.copy(

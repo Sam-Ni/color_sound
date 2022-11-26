@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package com.example.colorsound.ui.components
+package com.example.colorsound.ui.components.bottomBar
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.*
@@ -28,10 +28,6 @@ import androidx.compose.ui.unit.dp
 import com.example.colorsound.ColorSoundDestination
 import com.example.colorsound.Home
 import com.example.colorsound.colorSoundTabRowScreens
-import com.example.colorsound.model.Sound
-import com.example.colorsound.ui.components.bottomBar.DeleteButton
-import com.example.colorsound.ui.components.bottomBar.PushButton
-import com.example.colorsound.ui.components.bottomBar.UpdateButton
 import com.example.colorsound.ui.screens.home.RecordState
 import com.example.colorsound.ui.theme.ColorSoundTheme
 
@@ -61,98 +57,136 @@ fun ColorSoundTapRow(
         ) {
             Spacer(modifier = Modifier.width(15.dp))
 
-            AnimatedVisibility(
-                recordState == RecordState.Normal && !isHighlightMode,
-                enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(),
-                exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    allScreen.forEach { screen ->
-                        IconButton(
-                            onClick = { onTabSelected(screen) },
-                        ) {
-                            Icon(imageVector = screen.icon, contentDescription = null)
-                        }
-                    }
-                }
-            }
+            NavBtn(
+                visible = recordState == RecordState.Normal && !isHighlightMode,
+                allScreen = allScreen,
+                onTabSelected = onTabSelected
+            )
 
-            AnimatedVisibility(
-                isHighlightMode,
-                enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(),
-                exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(modifier = Modifier.width(15.dp))
-
-                    PushButton(onPush = { /*TODO*/ })
-                    DeleteButton(onDelete = onDelete)
-                    UpdateButton(onUpdate = { /*TODO*/ })
-                }
-            }
-
+            HighlightBtn(
+                visible = isHighlightMode,
+                onDelete = onDelete,
+                onPush = { /*TODO*/ },
+                onUpdate = {/*TODO*/ })
 
             Spacer(modifier = Modifier.weight(1f))
 
-            AnimatedVisibility(
-                currentScreen == Home && !isHighlightMode,
-                enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(),
-                exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally()
-            ) {
-                ColorSoundFAB(
-                    onClick = onClick,
-                    onLongClick = onLongClick,
-                    recordState = recordState,
-                    isGranted = isGranted,
-                    askPermission = askPermission,
-                )
-            }
+            RecordBtn(
+                onClick = onClick,
+                onLongClick = onLongClick,
+                recordState = recordState,
+                isGranted = isGranted,
+                askPermission = askPermission,
+                visible = currentScreen == Home && !isHighlightMode,
+            )
+
             Spacer(modifier = Modifier.width(20.dp))
         }
     }
 }
 
 @Composable
-private fun ColorSoundFAB(
+private fun RecordBtn(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     recordState: RecordState,
     isGranted: Boolean,
     askPermission: () -> Unit,
+    visible: Boolean
 ) {
-    val imageVector = when (recordState) {
-        RecordState.Normal -> Icons.Filled.Add
-        RecordState.Recording -> Icons.Filled.Star
-        RecordState.Pausing -> Icons.Filled.ArrowBack
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(),
+        exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally()
+    ) {
+        val imageVector = when (recordState) {
+            RecordState.Normal -> Icons.Filled.Add
+            RecordState.Recording -> Icons.Filled.Star
+            RecordState.Pausing -> Icons.Filled.ArrowBack
+        }
+        Icon(
+            imageVector = imageVector,
+            contentDescription = null,
+            modifier = Modifier
+                .combinedClickable(
+                    onClick = if (isGranted) onClick else askPermission,
+                    onLongClick = if (isGranted) onLongClick else askPermission,
+                    role = Role.Button,
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(
+                        bounded = false,
+                        radius = 20.dp
+                    )
+                )
+                .size(24.dp)
+        )
+    }
+}
+
+
+@Composable
+private fun HighlightBtn(
+    visible: Boolean,
+    onDelete: () -> Unit,
+    onPush: () -> Unit,
+    onUpdate: () -> Unit
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(),
+        exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.width(15.dp))
+
+            PushButton(onPush = { /*TODO*/ })
+            DeleteButton(onDelete = onDelete)
+            UpdateButton(onUpdate = { /*TODO*/ })
+        }
     }
 
-    Icon(
-        imageVector = imageVector,
-        contentDescription = null,
-        modifier = Modifier
-            .combinedClickable(
-                onClick = if (isGranted) onClick else askPermission,
-                onLongClick = if (isGranted) onLongClick else askPermission,
-                role = Role.Button,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(
-                    bounded = false,
-                    radius = 20.dp
-                )
-            )
-            .size(24.dp)
-
-    )
 }
+
+@Composable
+private fun NavBtn(
+    visible: Boolean,
+    allScreen: List<ColorSoundDestination>,
+    onTabSelected: (ColorSoundDestination) -> Unit
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(),
+        exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            allScreen.forEach { screen ->
+                IconButton(
+                    onClick = { onTabSelected(screen) },
+                ) {
+                    Icon(imageVector = screen.icon, contentDescription = null)
+                }
+            }
+        }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
 fun BottomNavigationPreview() {
     ColorSoundTheme {
-        ColorSoundTapRow(colorSoundTabRowScreens, {}, Home, {}, {}, RecordState.Normal, false, {}, onDelete = {})
+        ColorSoundTapRow(
+            colorSoundTabRowScreens,
+            {},
+            Home,
+            {},
+            {},
+            RecordState.Normal,
+            false,
+            {}, false, {})
     }
 }
