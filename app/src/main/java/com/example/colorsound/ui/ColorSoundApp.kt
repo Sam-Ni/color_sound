@@ -19,7 +19,7 @@ import com.example.colorsound.ColorSoundHost
 import com.example.colorsound.Home
 import com.example.colorsound.colorSoundTabRowScreens
 import com.example.colorsound.navigateSingleTopTo
-import com.example.colorsound.ui.components.bottomBar.ColorSoundTapRow
+import com.example.colorsound.ui.components.bottomBar.ScreenBar
 import com.example.colorsound.ui.screens.AppViewModel
 import com.example.colorsound.ui.screens.home.HomeViewModel
 import com.example.colorsound.ui.screens.world.WorldViewModel
@@ -68,7 +68,7 @@ fun ColorSoundApp() {
             colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
         Scaffold(
             bottomBar = {
-                ColorSoundTapRow(
+                ScreenBar(
                     allScreen = colorSoundTabRowScreens,
                     onTabSelected = { newScreen ->
                         navController.navigateSingleTopTo(newScreen.route)

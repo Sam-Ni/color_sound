@@ -6,7 +6,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-//import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.ui.screens.AppViewModel
 import com.example.colorsound.ui.screens.home.HomeScreen
 import com.example.colorsound.ui.screens.home.HomeViewModel
@@ -35,7 +34,7 @@ fun ColorSoundHost(
                 homeViewModel = homeViewModel,
                 onCardLongClick = {
                     homeViewModel.onCardLongClick(it)
-                                  },
+                },
             )
         }
         composable(route = World.route) {

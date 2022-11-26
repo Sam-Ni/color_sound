@@ -13,11 +13,10 @@ import androidx.compose.ui.unit.dp
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.SaveDialog
+import com.example.colorsound.ui.components.SaveDialogVM
 import com.example.colorsound.ui.components.SearchBar
 import com.example.colorsound.ui.components.SoundList
-//import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.ui.theme.ColorSoundTheme
-import com.example.colorsound.util.SoundInfoFactory
 
 
 @Composable
@@ -61,14 +60,17 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 //    appUiState: AppUiState,
 ) {
+    val saveDialogVM = SaveDialogVM(
+        onSaveClick,
+        onCancelClick,
+        onNameChanged,
+        uiState.saveName,
+        uiState.color,
+        chooseColor
+    )
+
     if (uiState.showSaveDialog) {
-        SaveDialog(
-            onSaveClick = onSaveClick,
-            onCancelClick = onCancelClick,
-            onNameChanged = onNameChanged,
-            uiState = uiState,
-            chooseColor = chooseColor,
-        )
+        SaveDialog(saveDialogVM)
     }
 
     Column(

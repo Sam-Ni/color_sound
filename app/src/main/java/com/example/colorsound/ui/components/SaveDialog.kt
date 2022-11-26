@@ -13,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.colorsound.R
-import com.example.colorsound.ui.screens.home.HomeUiState
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.util.COLOR_NUMBER
 import com.example.colorsound.util.indexToColor
@@ -21,67 +20,66 @@ import com.example.colorsound.util.indexToColor
 
 @Composable
 fun SaveDialog(
-    onSaveClick: () -> Unit,
-    onCancelClick: () -> Unit,
-    onNameChanged: (String) -> Unit,
-    uiState: HomeUiState,
-    chooseColor: (Int) -> Unit,
+    saveDialogVM: SaveDialogVM
 ) {
+    saveDialogVM.apply {
+        val inputBarVM =
+            InputBarVM("Sound Name", saveName, { onNameChanged(it) }, { onNameChanged("") })
+        val modifierButtonVM = ModifierButtonVM(text = "Save", onClick = onSaveClick)
+        val modifierOutlinedButtonVM = ModifierButtonVM(text = "Cancel", onClick = onCancelClick)
 
-    val inputBarVM =
-        InputBarVM("Sound Name", uiState.saveName, { onNameChanged(it) }, { onNameChanged("") })
-
-    Dialog(onDismissRequest = { /*TODO*/ }) {
-        Surface(
-            color = MaterialTheme.colorScheme.background,
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
+        Dialog(onDismissRequest = { /*TODO*/ }) {
+            Surface(
+                color = MaterialTheme.colorScheme.background,
+                shape = RoundedCornerShape(16.dp)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Box(
+                    contentAlignment = Alignment.Center,
                 ) {
-                    InputBar(inputBarVM)
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        for (i in 0 until COLOR_NUMBER) {
-                            IconButton(
-                                onClick = { chooseColor(i) },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                if (uiState.color == i) { // chosen state
-                                    Image(
-                                        painter = painterResource(id = R.drawable.circle),
-                                        contentDescription = null,
-                                        colorFilter = ColorFilter.tint(
-                                            indexToColor(i)
-                                        ),
-                                        modifier = Modifier.size(60.dp)
-                                    )
-                                } else { // not chosen state
-                                    Image(
-                                        painter = painterResource(id = R.drawable.circle),
-                                        contentDescription = null,
-                                        colorFilter = ColorFilter.tint(
-                                            indexToColor(i)
-                                        ),
-                                        modifier = Modifier.size(20.dp)
-                                    )
+                        InputBar(inputBarVM)
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            for (i in 0 until COLOR_NUMBER) {
+                                IconButton(
+                                    onClick = { chooseColor(i) },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    if (color == i) { // chosen state
+                                        Image(
+                                            painter = painterResource(id = R.drawable.circle),
+                                            contentDescription = null,
+                                            colorFilter = ColorFilter.tint(
+                                                indexToColor(i)
+                                            ),
+                                            modifier = Modifier.size(60.dp)
+                                        )
+                                    } else { // not chosen state
+                                        Image(
+                                            painter = painterResource(id = R.drawable.circle),
+                                            contentDescription = null,
+                                            colorFilter = ColorFilter.tint(
+                                                indexToColor(i)
+                                            ),
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        ModifierOutlinedButton(text = "Cancel", onClick = onCancelClick)
-                        ModifierButton(text = "Save", onClick = onSaveClick)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            ModifierOutlinedButton(modifierOutlinedButtonVM)
+                            ModifierButton(modifierButtonVM)
+                        }
                     }
                 }
             }
@@ -89,15 +87,28 @@ fun SaveDialog(
     }
 }
 
+data class SaveDialogVM(
+    val onSaveClick: () -> Unit,
+    val onCancelClick: () -> Unit,
+    val onNameChanged: (String) -> Unit,
+    val saveName: String,
+    val color: Int,
+    val chooseColor: (Int) -> Unit,
+)
+
 @Preview(showBackground = true)
 @Composable
 fun SaveDialogPreview() {
     ColorSoundTheme {
         SaveDialog(
-            onSaveClick = {},
-            onCancelClick = { /*TODO*/ },
-            onNameChanged = {},
-            uiState = HomeUiState(),
-            chooseColor = {})
+            SaveDialogVM(
+                onSaveClick = {},
+                onCancelClick = { /*TODO*/ },
+                onNameChanged = {},
+                saveName = "",
+                chooseColor = {},
+                color = 1
+            )
+        )
     }
 }
