@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -27,6 +28,7 @@ fun SoundList(
     onPlayOrPause: (String, Int) -> Unit,
     onLongClick: (Sound) -> Unit,
 ) {
+
     LazyColumn(
         state = listState,
         modifier = Modifier.background(MaterialTheme.colorScheme.background),

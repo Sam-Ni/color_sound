@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,11 +25,15 @@ fun HomeScreen(
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
 
+    val coroutineScope = rememberCoroutineScope()
+
     HomeScreen(
         onPlayOrPause = onPlayOrPause,
         onCardLongClick = homeViewModel::onSoundLongClick,
         uiState = uiState,
-        onSaveClick = homeViewModel::onSaveClick,
+        onSaveClick = {
+            homeViewModel.onSaveClick()
+            homeViewModel.scrollToTop(coroutineScope) },
         onCancelClick = homeViewModel::onCancelClick,
         onNameChanged = homeViewModel::updateSaveName,
         chooseColor = homeViewModel::updateChoice,

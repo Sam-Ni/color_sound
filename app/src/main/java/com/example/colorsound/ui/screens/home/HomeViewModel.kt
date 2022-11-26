@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.model.Sound
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -91,8 +92,8 @@ class HomeViewModel(
         reset()
     }
 
-    private fun scrollToTop() {
-        viewModelScope.launch {
+    fun scrollToTop(coroutineScope: CoroutineScope) {
+        coroutineScope.launch {
             uiState.value.listState.animateScrollToItem(0)
         }
     }
@@ -116,17 +117,20 @@ class HomeViewModel(
         viewModelScope.launch {
             repository.deleteSound(sound)
             deleteAudio(sound.url)
-//            val original = uiState.value.soundList.toMutableList()
-//            original.removeAt()
-            getSounds()
+            val original = uiState.value.soundList.toMutableList()
+            original.remove(sound)
+            updateSoundList(original)
         }
+    }
+
+    private fun updateSoundList(soundList: List<Sound>) {
+        _uiState.update { it.copy(soundList = soundList) }
     }
 
     fun onSaveClick() {
         _uiState.update { it.copy(showSaveDialog = false) }
         stopRecording()
         getDuration()
-        scrollToTop()
         viewModelScope.launch {
             val soundState = uiState.value
             val sound = Sound(
@@ -138,9 +142,10 @@ class HomeViewModel(
                 getDuration()
             )
             repository.insertSound(sound)
+
             val original = uiState.value.soundList.toMutableList()
             original.add(0, sound)
-            _uiState.update { it.copy(soundList = original) }
+            updateSoundList(original)
         }
         reset()
     }
