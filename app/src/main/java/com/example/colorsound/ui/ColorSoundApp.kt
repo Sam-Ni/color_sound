@@ -20,6 +20,7 @@ import com.example.colorsound.Home
 import com.example.colorsound.colorSoundTabRowScreens
 import com.example.colorsound.navigateSingleTopTo
 import com.example.colorsound.ui.components.ColorSoundTapRow
+import com.example.colorsound.ui.components.bottomBar.HighLightBar
 import com.example.colorsound.ui.screens.AppViewModel
 import com.example.colorsound.ui.screens.home.HomeViewModel
 import com.example.colorsound.ui.screens.world.WorldViewModel
@@ -33,6 +34,8 @@ import com.google.accompanist.permissions.rememberPermissionState
 fun ColorSoundApp() {
 
     val appViewModel: AppViewModel = viewModel()
+
+    val appUiState by appViewModel.uiState.collectAsState()
 
     val worldViewModel: WorldViewModel =
         viewModel(factory = WorldViewModel.Factory)
@@ -56,7 +59,12 @@ fun ColorSoundApp() {
 
         val currentScreen = colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
         Scaffold(
-            bottomBar = {
+            bottomBar = if (appUiState.highLightMode) {
+                { HighLightBar(
+                    onPush = { /*TODO*/ },
+                    onDelete = { /*TODO*/ },
+                    onUpdate = { /*TODO*/ }) }
+            } else { {
                 ColorSoundTapRow(
                     allScreen = colorSoundTabRowScreens,
                     onTabSelected = { newScreen ->
@@ -68,7 +76,7 @@ fun ColorSoundApp() {
                     recordState = homeUiState.recordState,
                     isGranted = isGranted,
                     askPermission = askPermission
-                ) },
+                ) }},
         ) { paddingValues ->
             Column {
                 ColorSoundHost(

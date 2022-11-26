@@ -42,6 +42,7 @@ fun ColorSoundHost(
             HomeScreen(
                 onPlayOrPause = appViewModel::play,
                 homeViewModel = homeViewModel,
+                onCardLongClick = appViewModel::onCardLongClick,
             )
         }
         composable(route = World.route) {
