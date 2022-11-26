@@ -35,7 +35,7 @@ fun SoundCard(
 ) {
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .padding(15.dp, top = 10.dp, bottom = 8.dp, end = 15.dp)
             .combinedClickable(
                 onClick = { onPlayOrPause(soundInfo.url, soundInfo.id) },

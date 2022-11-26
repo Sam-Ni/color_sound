@@ -68,7 +68,12 @@ fun HomeScreen(
             onValueChange = onSearchValueChanged,
             onDeleteBtnClick = { onSearchValueChanged("") },
         )
-        SoundList(soundList = uiState.soundList, onPlayOrPause = onPlayOrPause, onLongClick = onCardLongClick)
+        SoundList(
+            listState = uiState.listState,
+            soundList = uiState.soundList,
+            onPlayOrPause = onPlayOrPause,
+            onLongClick = onCardLongClick
+        )
         Spacer(modifier = Modifier.height(16.dp))
     }
 }

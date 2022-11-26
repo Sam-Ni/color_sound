@@ -2,6 +2,7 @@ package com.example.colorsound.ui.screens.home
 
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -32,6 +33,7 @@ data class HomeUiState(
     val color: Int = 0,
     val soundList: List<Sound> = mutableListOf(),
     val search: String = "",
+    val listState: LazyListState = LazyListState(),
 )
 
 class HomeViewModel(
@@ -89,6 +91,12 @@ class HomeViewModel(
         reset()
     }
 
+    private fun scrollToTop() {
+        viewModelScope.launch {
+            uiState.value.listState.animateScrollToItem(0)
+        }
+    }
+
     private fun getDuration(): String {
         val mmr = MediaMetadataRetriever().apply {
             setDataSource(filePath)
@@ -118,9 +126,17 @@ class HomeViewModel(
         _uiState.update { it.copy(showSaveDialog = false) }
         stopRecording()
         getDuration()
+        scrollToTop()
         viewModelScope.launch {
             val soundState = uiState.value
-            val sound = Sound(0, soundState.color, soundState.saveName, getCurrentDateTime(), filePath, getDuration())
+            val sound = Sound(
+                0,
+                soundState.color,
+                soundState.saveName,
+                getCurrentDateTime(),
+                filePath,
+                getDuration()
+            )
             repository.insertSound(sound)
             val original = uiState.value.soundList.toMutableList()
             original.add(0, sound)

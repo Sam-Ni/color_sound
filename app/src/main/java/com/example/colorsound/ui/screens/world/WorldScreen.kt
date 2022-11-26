@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ fun WorldScreen(
                 sound.copy(url = BASE_URL + sound.url)
             }
             SoundList(
+                listState = LazyListState(),
                 soundList = sounds,
                 onPlayOrPause = onPlayOrPause,
                 onLongClick = {},

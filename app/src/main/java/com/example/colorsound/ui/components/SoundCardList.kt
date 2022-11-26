@@ -1,39 +1,47 @@
 package com.example.colorsound.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
+import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SoundList(
+    listState: LazyListState,
     soundList: List<Sound> = DataSource.soundList,
     onPlayOrPause: (String, Int) -> Unit,
     onLongClick: (Sound) -> Unit,
 ) {
     LazyColumn(
+        state = listState,
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
     ) {
-
         items(
             items = soundList,
-            key = { item -> item.url }
+            key = { it.url }
         ) { item ->
             SoundCard(
                 soundInfo = item,
                 onPlayOrPause = onPlayOrPause,
                 onLongClick = onLongClick,
-//                modifier = Modifier.animateItemPlacement()
+                modifier = Modifier.animateItemPlacement()
             )
         }
-
     }
 }
 
@@ -42,7 +50,11 @@ fun SoundList(
 @Composable
 fun SoundListPreview() {
     ColorSoundTheme {
-        SoundList(soundList = DataSource.soundList, onPlayOrPause = { _, _ -> }, onLongClick = {})
+        SoundList(
+            LazyListState(),
+            soundList = DataSource.soundList,
+            onPlayOrPause = { _, _ -> },
+            onLongClick = {})
     }
 }
 
@@ -50,6 +62,10 @@ fun SoundListPreview() {
 @Composable
 fun DarkSoundListPreview() {
     ColorSoundTheme(darkTheme = true) {
-        SoundList(soundList = DataSource.soundList, onPlayOrPause = { _, _ -> }, onLongClick = {})
+        SoundList(
+            LazyListState(),
+            soundList = DataSource.soundList,
+            onPlayOrPause = { _, _ -> },
+            onLongClick = {})
     }
 }
