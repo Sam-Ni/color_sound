@@ -15,7 +15,9 @@ import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.SaveDialog
 import com.example.colorsound.ui.components.SearchBar
 import com.example.colorsound.ui.components.SoundList
+import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.ui.theme.ColorSoundTheme
+import com.example.colorsound.util.SoundInfoFactory
 
 
 @Composable
@@ -23,6 +25,7 @@ fun HomeScreen(
     onPlayOrPause: (String, Int) -> Unit,
     onCardLongClick: (Sound) -> Unit,
     homeViewModel: HomeViewModel,
+    appUiState: AppUiState
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
 
@@ -34,11 +37,13 @@ fun HomeScreen(
         uiState = uiState,
         onSaveClick = {
             homeViewModel.onSaveClick()
-            homeViewModel.scrollToTop(coroutineScope) },
+            homeViewModel.scrollToTop(coroutineScope)
+        },
         onCancelClick = homeViewModel::onCancelClick,
         onNameChanged = homeViewModel::updateSaveName,
         chooseColor = homeViewModel::updateChoice,
         onSearchValueChanged = homeViewModel::updateSearch,
+        appUiState = appUiState,
     )
 }
 
@@ -54,6 +59,7 @@ fun HomeScreen(
     chooseColor: (Int) -> Unit,
     onSearchValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
+    appUiState: AppUiState,
 ) {
     if (uiState.showSaveDialog) {
         SaveDialog(
@@ -78,7 +84,8 @@ fun HomeScreen(
             listState = uiState.listState,
             soundList = uiState.soundList,
             onPlayOrPause = onPlayOrPause,
-            onLongClick = onCardLongClick
+            onLongClick = onCardLongClick,
+            appUiState = appUiState,
         )
         Spacer(modifier = Modifier.height(16.dp))
     }
@@ -98,6 +105,7 @@ fun HomeScreenPreview() {
             onNameChanged = {},
             chooseColor = {},
             onSearchValueChanged = {},
+            appUiState = AppUiState(),
         )
     }
 }

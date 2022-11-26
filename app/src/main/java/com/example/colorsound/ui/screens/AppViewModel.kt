@@ -2,7 +2,6 @@ package com.example.colorsound.ui.screens
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.colorsound.model.Sound
@@ -51,6 +50,7 @@ class AppViewModel : ViewModel() {
     }
 
     fun onCardLongClick(sound: Sound) {
+        exitHighlight()
         updateHighlightMode(true, sound)
     }
 

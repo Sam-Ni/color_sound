@@ -16,7 +16,7 @@ import com.example.colorsound.R
 import com.example.colorsound.ui.screens.home.HomeUiState
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.util.COLOR_NUMBER
-import com.example.colorsound.util.IndexToColor
+import com.example.colorsound.util.indexToColor
 
 
 @Composable
@@ -60,7 +60,7 @@ fun SaveDialog(
                                         painter = painterResource(id = R.drawable.circle),
                                         contentDescription = null,
                                         colorFilter = ColorFilter.tint(
-                                            IndexToColor(i)
+                                            indexToColor(i)
                                         ),
                                         modifier = Modifier.size(60.dp)
                                     )
@@ -69,7 +69,7 @@ fun SaveDialog(
                                         painter = painterResource(id = R.drawable.circle),
                                         contentDescription = null,
                                         colorFilter = ColorFilter.tint(
-                                            IndexToColor(i)
+                                            indexToColor(i)
                                         ),
                                         modifier = Modifier.size(20.dp)
                                     )

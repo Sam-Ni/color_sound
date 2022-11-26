@@ -1,18 +1,26 @@
 package com.example.colorsound.ui.components
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -23,9 +31,9 @@ import androidx.compose.ui.unit.dp
 import com.example.colorsound.R
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
-import com.example.colorsound.util.CustomIndication
-import com.example.colorsound.util.IndexToColor
+import com.example.colorsound.util.indexToColor
 import com.example.colorsound.util.SoundInfoFactory
+import com.example.colorsound.util.indexToBackColor
 
 
 @OptIn(
@@ -36,26 +44,56 @@ fun SoundCard(
     soundInfo: Sound,
     onPlayOrPause: (String, Int) -> Unit,
     onLongClick: (Sound) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isHighlight: Boolean = true
 ) {
+    val transition = updateTransition(isHighlight, label = "")
+    val elevation by transition.animateDp(label = "") {
+        if (it) 20.dp
+        else 6.dp
+    }
+    val scale by transition.animateFloat(label = "") {
+        if (it) 1.05f
+        else 1f
+    }
+
+    val backColor by transition.animateColor(label = "") {
+        if (it) indexToBackColor(soundInfo.color)
+        else MaterialTheme.colorScheme.surface
+    }
+
+    val frontColor by transition.animateColor(label = "") {
+        if (it) indexToColor(soundInfo.color)
+        else MaterialTheme.colorScheme.onSurface
+    }
+
+
 
     Card(
         modifier = modifier
-            .padding(15.dp, top = 10.dp, bottom = 8.dp, end = 15.dp)
-            .combinedClickable(
-                onClick = { onPlayOrPause(soundInfo.url, soundInfo.id) },
-                onLongClick = { onLongClick(soundInfo) },
-                interactionSource = remember { MutableInteractionSource() },
-                indication = CustomIndication(
-                    pressColor = MaterialTheme.colorScheme.onSurface,
-                    cornerRadius = CornerRadius(50f, 50f),
-                    alpha = .3f
-                )
+            .scale(scale)
+            .padding(
+                start = 20.dp,
+                top = 10.dp,
+                bottom = 15.dp,
+                end = 20.dp
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation),
     ) {
         Row(
-            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+            modifier = Modifier
+                .background(backColor)
+                .clip(RoundedCornerShape(20.dp))
+                .combinedClickable(
+                    onClick = { onPlayOrPause(soundInfo.url, soundInfo.id) },
+                    onLongClick = { onLongClick(soundInfo) },
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(
+                        radius = 300.dp,
+                        color = indexToBackColor(soundInfo.color),
+                        bounded = true
+                    )
+                ),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -66,15 +104,15 @@ fun SoundCard(
                 Spacer(modifier = Modifier.padding(horizontal = 6.dp))
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Row() {
-                        SoundName(name = soundInfo.name)
+                        SoundName(name = soundInfo.name, frontColor)
                     }
                     Row() {
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                     Row() {
                         Spacer(modifier = Modifier.weight(1f))
-                        SoundDuration(duration = soundInfo.duration)
-                        SoundCreateTime(createTime = soundInfo.getDate())
+                        SoundDuration(duration = soundInfo.duration, frontColor)
+                        SoundCreateTime(createTime = soundInfo.getDate(), frontColor)
                     }
                 }
             }
@@ -94,39 +132,39 @@ fun ColorCircle(colorIndex: Int) {
         modifier = Modifier
             .padding(8.dp)
             .size(36.dp),
-        colorFilter = ColorFilter.tint(IndexToColor(colorIndex)),
+        colorFilter = ColorFilter.tint(indexToColor(colorIndex)),
         contentScale = ContentScale.Crop
     )
 }
 
 
 @Composable
-fun SoundName(name: String) {
+fun SoundName(name: String, color: Color) {
     Text(
         overflow = TextOverflow.Ellipsis,
         maxLines = 3,
         text = name,
         style = MaterialTheme.typography.headlineLarge,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
         modifier = Modifier.width(220.dp)
     )
 }
 
 @Composable
-fun SoundCreateTime(createTime: String) {
+fun SoundCreateTime(createTime: String, color: Color) {
     Text(
         text = createTime, style = MaterialTheme.typography.headlineMedium,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
         modifier = Modifier.padding(end = 10.dp)
     )
 }
 
 @Composable
-fun SoundDuration(duration: String) {
+fun SoundDuration(duration: String, color: Color) {
     Text(
         text = duration,
         style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
         modifier = Modifier.padding(end = 10.dp)
     )
 }
