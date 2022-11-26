@@ -21,7 +21,6 @@ fun ColorSoundHost(
     appViewModel: AppViewModel,
     homeViewModel: HomeViewModel,
     worldViewModel: WorldViewModel,
-//    appUiState: AppUiState,
     modifier: Modifier = Modifier,
 ) {
 
@@ -37,7 +36,6 @@ fun ColorSoundHost(
                 onCardLongClick = {
                     homeViewModel.onCardLongClick(it)
                                   },
-//                appUiState = appUiState,
             )
         }
         composable(route = World.route) {
@@ -45,7 +43,6 @@ fun ColorSoundHost(
                 worldUiState = worldViewModel.worldUiState,
                 retryAction = worldViewModel::getRandomSounds,
                 onPlayOrPause = appViewModel::play,
-//                appUiState = appUiState,
             )
         }
         composable(route = Setting.route) {

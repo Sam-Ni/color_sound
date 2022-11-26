@@ -1,9 +1,11 @@
 package com.example.colorsound.ui
 
 import android.Manifest
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,6 +27,7 @@ import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -50,6 +53,12 @@ fun ColorSoundApp() {
     val isGranted = audioPermissionState.status.isGranted
 
     ColorSoundTheme {
+        val systemUiController = rememberSystemUiController()
+        systemUiController.setStatusBarColor(
+            MaterialTheme.colorScheme.background,
+            darkIcons = !isSystemInDarkTheme()
+        )
+
         val navController = rememberNavController()
 
         val currentBackStack by navController.currentBackStackEntryAsState()
@@ -82,7 +91,6 @@ fun ColorSoundApp() {
                     homeViewModel = homeViewModel,
                     worldViewModel = worldViewModel,
                     modifier = Modifier.padding(paddingValues),
-//                    appUiState = appUiState
                 )
             }
         }

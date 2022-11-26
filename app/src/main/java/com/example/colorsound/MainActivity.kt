@@ -14,14 +14,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ColorSoundTheme {
-                val systemUiController = rememberSystemUiController()
-                systemUiController.setStatusBarColor(
-                    MaterialTheme.colorScheme.background,
-                    darkIcons = !isSystemInDarkTheme()
-                )
-                ColorSoundApp()
-            }
+            ColorSoundApp()
+
         }
     }
 }

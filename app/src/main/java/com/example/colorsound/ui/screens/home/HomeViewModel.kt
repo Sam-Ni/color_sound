@@ -113,7 +113,7 @@ class HomeViewModel(
 
     fun scrollToTop(coroutineScope: CoroutineScope) {
         coroutineScope.launch {
-            uiState.value.listState.animateScrollToItem(index = 0, scrollOffset = -1)
+            uiState.value.listState.animateScrollToItem(index = 0)
         }
     }
 

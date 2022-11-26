@@ -27,6 +27,10 @@ fun SaveDialog(
     uiState: HomeUiState,
     chooseColor: (Int) -> Unit,
 ) {
+
+    val inputBarVM =
+        InputBarVM("Sound Name", uiState.saveName, { onNameChanged(it) }, { onNameChanged("") })
+
     Dialog(onDismissRequest = { /*TODO*/ }) {
         Surface(
             color = MaterialTheme.colorScheme.background,
@@ -40,12 +44,7 @@ fun SaveDialog(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    InputBar(
-                        hint = "Sound Name",
-                        text = uiState.saveName,
-                        onValueChange = { onNameChanged(it) },
-                        onDeleteBtnClick = { onNameChanged("") }
-                    )
+                    InputBar(inputBarVM)
 
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)

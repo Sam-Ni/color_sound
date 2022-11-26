@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -30,8 +31,10 @@ fun SoundList(
 ) {
 
     LazyColumn(
-//        state = listState,
-        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+        state = listState,
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .fillMaxHeight(),
     ) {
         items(
             items = soundList,
