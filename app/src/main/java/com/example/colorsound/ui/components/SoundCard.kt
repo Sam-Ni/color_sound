@@ -41,73 +41,70 @@ import com.example.colorsound.util.indexToBackColor
 )
 @Composable
 fun SoundCard(
-    soundInfo: Sound,
-    onPlayOrPause: (String, Int) -> Unit,
-    onLongClick: (Sound) -> Unit,
+    soundCardVM: SoundCardVM,
     modifier: Modifier = Modifier,
-    isHighlight: Boolean = true
 ) {
-    val transition = updateTransition(isHighlight, label = "")
-    val elevation by transition.animateDp(label = "") {
-        if (it) 20.dp
-        else 6.dp
-    }
+    soundCardVM.apply {
+        val transition = updateTransition(isHighlight, label = "")
+        val elevation by transition.animateDp(label = "") {
+            if (it) 20.dp
+            else 6.dp
+        }
 
-    val backColor by transition.animateColor(label = "") {
-        if (it) indexToBackColor(soundInfo.color)
-        else MaterialTheme.colorScheme.surface
-    }
+        val backColor by transition.animateColor(label = "") {
+            if (it) indexToBackColor(soundInfo.color)
+            else MaterialTheme.colorScheme.surface
+        }
 
-    val frontColor by transition.animateColor(label = "") {
-        if (it) indexToColor(soundInfo.color)
-        else MaterialTheme.colorScheme.onSurface
-    }
+        val frontColor by transition.animateColor(label = "") {
+            if (it) indexToColor(soundInfo.color)
+            else MaterialTheme.colorScheme.onSurface
+        }
 
-
-
-    Card(
-        modifier = modifier
-            .padding(
-                start = 20.dp,
-                top = 10.dp,
-                bottom = 15.dp,
-                end = 20.dp
-            ),
-        elevation = CardDefaults.cardElevation(defaultElevation = elevation),
-    ) {
-        Row(
-            modifier = Modifier
-                .background(backColor)
-                .clip(RoundedCornerShape(20.dp))
-                .combinedClickable(
-                    onClick = { onPlayOrPause(soundInfo.url, soundInfo.id) },
-                    onLongClick = { onLongClick(soundInfo) },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(
-                        radius = 300.dp,
-                        color = indexToBackColor(soundInfo.color),
-                        bounded = true
-                    )
+        Card(
+            modifier = modifier
+                .padding(
+                    start = 20.dp,
+                    top = 10.dp,
+                    bottom = 15.dp,
+                    end = 20.dp
                 ),
+            elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .padding(start = 12.dp, top = 20.dp, bottom = 20.dp, end = 12.dp)
+                    .background(backColor)
+                    .clip(RoundedCornerShape(20.dp))
+                    .combinedClickable(
+                        onClick = { onPlayOrPause(soundInfo.url, soundInfo.id) },
+                        onLongClick = { onLongClick(soundInfo) },
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = rememberRipple(
+                            radius = 300.dp,
+                            color = indexToBackColor(soundInfo.color),
+                            bounded = true
+                        )
+                    ),
             ) {
-                ColorCircle(soundInfo.color)
-                Spacer(modifier = Modifier.padding(horizontal = 6.dp))
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Row() {
-                        SoundName(name = soundInfo.name, frontColor)
-                    }
-                    Row() {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                    Row() {
-                        Spacer(modifier = Modifier.weight(1f))
-                        SoundDuration(duration = soundInfo.duration, frontColor)
-                        SoundCreateTime(createTime = soundInfo.getDate(), frontColor)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(start = 12.dp, top = 20.dp, bottom = 20.dp, end = 12.dp)
+                ) {
+                    ColorCircle(soundInfo.color)
+                    Spacer(modifier = Modifier.padding(horizontal = 6.dp))
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row() {
+                            SoundName(name = soundInfo.name, frontColor)
+                        }
+                        Row() {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                        Row() {
+                            Spacer(modifier = Modifier.weight(1f))
+                            SoundDuration(duration = soundInfo.duration, frontColor)
+                            SoundCreateTime(createTime = soundInfo.getDate(), frontColor)
+                        }
                     }
                 }
             }
@@ -169,6 +166,15 @@ fun SoundDuration(duration: String, color: Color) {
 @Composable
 fun SoundCardPreview() {
     ColorSoundTheme {
-        SoundCard(soundInfo = SoundInfoFactory(), onPlayOrPause = { _, _ -> }, onLongClick = {})
+        SoundCard(SoundCardVM(
+            soundInfo = SoundInfoFactory(), onPlayOrPause = { _, _ -> }, onLongClick = {})
+        )
     }
 }
+
+data class SoundCardVM(
+    val soundInfo: Sound,
+    val onPlayOrPause: (String, Int) -> Unit,
+    val onLongClick: (Sound) -> Unit,
+    val isHighlight: Boolean = true
+)

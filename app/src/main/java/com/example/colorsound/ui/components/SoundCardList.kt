@@ -22,32 +22,32 @@ import com.example.colorsound.util.SoundInfoFactory
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SoundList(
-    listState: LazyListState,
-    soundList: List<Sound> = DataSource.soundList,
-    onPlayOrPause: (String, Int) -> Unit,
-    onLongClick: (Sound) -> Unit,
-    highlightSound: Sound?
-//    appUiState: AppUiState
+    soundCardListVM: SoundCardListVM,
 ) {
-
-    LazyColumn(
-        state = listState,
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .fillMaxHeight(),
-    ) {
-        items(
-            items = soundList,
-            key = { it.url }
-        ) { item ->
-            SoundCard(
-                soundInfo = item,
-                onPlayOrPause = onPlayOrPause,
-                onLongClick = onLongClick,
-                modifier = Modifier.animateItemPlacement(animationSpec = spring(stiffness = Spring.StiffnessLow)),
-                isHighlight = if (highlightSound != null) item.url == highlightSound.url else false
-            )
+    soundCardListVM.apply {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxHeight(),
+        ) {
+            items(
+                items = soundList,
+                key = { it.url }
+            ) { item ->
+                val soundCardVM = SoundCardVM(
+                    soundInfo = item,
+                    onPlayOrPause = onPlayOrPause,
+                    onLongClick = onLongClick,
+                    isHighlight = if (highlightSound != null) item.url == highlightSound.url else false
+                )
+                SoundCard(
+                    soundCardVM = soundCardVM,
+                    modifier = Modifier.animateItemPlacement(animationSpec = spring(stiffness = Spring.StiffnessLow)),
+                )
+            }
         }
+
     }
 }
 
@@ -57,11 +57,13 @@ fun SoundList(
 fun SoundListPreview() {
     ColorSoundTheme {
         SoundList(
-            LazyListState(),
-            soundList = DataSource.soundList,
-            onPlayOrPause = { _, _ -> },
-            onLongClick = {},
-            highlightSound = null
+            SoundCardListVM(
+                LazyListState(),
+                soundList = DataSource.soundList,
+                onPlayOrPause = { _, _ -> },
+                onLongClick = {},
+                highlightSound = null
+            )
         )
     }
 }
@@ -71,11 +73,21 @@ fun SoundListPreview() {
 fun DarkSoundListPreview() {
     ColorSoundTheme(darkTheme = true) {
         SoundList(
-            LazyListState(),
-            soundList = DataSource.soundList,
-            onPlayOrPause = { _, _ -> },
-            onLongClick = {},
-            highlightSound = null
+            SoundCardListVM(
+                LazyListState(),
+                soundList = DataSource.soundList,
+                onPlayOrPause = { _, _ -> },
+                onLongClick = {},
+                highlightSound = null
+            )
         )
     }
 }
+
+data class SoundCardListVM(
+    val listState: LazyListState,
+    val soundList: List<Sound> = DataSource.soundList,
+    val onPlayOrPause: (String, Int) -> Unit,
+    val onLongClick: (Sound) -> Unit,
+    val highlightSound: Sound?
+)

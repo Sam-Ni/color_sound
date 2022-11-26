@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.colorsound.model.Sound
+import com.example.colorsound.ui.components.SoundCardListVM
 import com.example.colorsound.ui.components.SoundList
 //import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.util.BASE_URL
@@ -30,12 +31,13 @@ fun WorldScreen(
                 sound.copy(url = BASE_URL + sound.url)
             }
             SoundList(
-                listState = LazyListState(),
-                soundList = sounds,
-                onPlayOrPause = onPlayOrPause,
-                onLongClick = {},
-                highlightSound = null,
-//                appUiState = appUiState
+                SoundCardListVM(
+                    listState = LazyListState(),
+                    soundList = sounds,
+                    onPlayOrPause = onPlayOrPause,
+                    onLongClick = {},
+                    highlightSound = null,
+                )
             )
         }
         is WorldUiState.Error -> ErrorScreen(retryAction = retryAction)

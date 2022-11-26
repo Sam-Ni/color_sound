@@ -3,6 +3,7 @@ package com.example.colorsound.ui.screens.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,102 +13,89 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
-import com.example.colorsound.ui.components.SaveDialog
-import com.example.colorsound.ui.components.SaveDialogVM
-import com.example.colorsound.ui.components.SearchBar
-import com.example.colorsound.ui.components.SoundList
+import com.example.colorsound.ui.components.*
+//import com.example.colorsound.ui.screens.AppUiState
 import com.example.colorsound.ui.theme.ColorSoundTheme
+import com.example.colorsound.util.SoundInfoFactory
+
+
 
 
 @Composable
 fun HomeScreen(
-    onPlayOrPause: (String, Int) -> Unit,
-    onCardLongClick: (Sound) -> Unit,
-    homeViewModel: HomeViewModel,
-//    appUiState: AppUiState
-) {
-    val uiState by homeViewModel.uiState.collectAsState()
-
-    val coroutineScope = rememberCoroutineScope()
-
-    HomeScreen(
-        onPlayOrPause = onPlayOrPause,
-        onCardLongClick = onCardLongClick,
-        uiState = uiState,
-        onSaveClick = {
-            homeViewModel.onSaveClick()
-            homeViewModel.scrollToTop(coroutineScope)
-        },
-        onCancelClick = homeViewModel::onCancelClick,
-        onNameChanged = homeViewModel::updateSaveName,
-        chooseColor = homeViewModel::updateChoice,
-        onSearchValueChanged = homeViewModel::updateSearch,
-//        appUiState = appUiState,
-    )
-}
-
-
-@Composable
-fun HomeScreen(
-    onPlayOrPause: (String, Int) -> Unit,
-    onCardLongClick: (Sound) -> Unit,
-    uiState: HomeUiState,
-    onSaveClick: () -> Unit,
-    onCancelClick: () -> Unit,
-    onNameChanged: (String) -> Unit,
-    chooseColor: (Int) -> Unit,
-    onSearchValueChanged: (String) -> Unit,
+    homeScreenVM: HomeScreenVM,
     modifier: Modifier = Modifier,
-//    appUiState: AppUiState,
 ) {
-    val saveDialogVM = SaveDialogVM(
-        onSaveClick,
-        onCancelClick,
-        onNameChanged,
-        uiState.saveName,
-        uiState.color,
-        chooseColor
-    )
-
-    if (uiState.showSaveDialog) {
-        SaveDialog(saveDialogVM)
-    }
-
-    Column(
-        modifier = modifier
-    ) {
-        SearchBar(
+    homeScreenVM.apply {
+        val searchBarVM = SearchBarVM(
             "Search...",
-            text = uiState.search,
+            text = search,
             onValueChange = onSearchValueChanged,
             onDeleteBtnClick = { onSearchValueChanged("") },
-        )
-        SoundList(
-            listState = uiState.listState,
-            soundList = uiState.soundList,
+            )
+        val soundCardListVM = SoundCardListVM(
+            listState = listState,
+            soundList = soundList,
             onPlayOrPause = onPlayOrPause,
             onLongClick = onCardLongClick,
-            highlightSound = uiState.highlightSound,
-//            appUiState = appUiState,
+            highlightSound = highlightSound,
+            )
+        val saveDialogVM = SaveDialogVM(
+            onSaveClick,
+            onCancelClick,
+            onNameChanged,
+            saveName,
+            color,
+            chooseColor
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        if (showSaveDialog) {
+            SaveDialog(saveDialogVM)
+        }
+
+        Column(
+            modifier = modifier
+        ) {
+            SearchBar(searchBarVM = searchBarVM)
+            SoundList(soundCardListVM = soundCardListVM)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
     }
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    ColorSoundTheme {
-        HomeScreen(
-            onPlayOrPause = { _, _ -> },
-            onCardLongClick = {},
-            uiState = HomeUiState(soundList = DataSource.soundList.toMutableList()),
-            onSaveClick = {},
-            onCancelClick = { /*TODO*/ },
-            onNameChanged = {},
-            chooseColor = {},
-            onSearchValueChanged = {},
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HomeScreenPreview() {
+//    ColorSoundTheme {
+//        HomeScreen(
+//            HomeScreenVM(
+//                onPlayOrPause = { _, _ -> },
+//                onCardLongClick = {},
+//                onSaveClick = {},
+//                onCancelClick = { /*TODO*/ },
+//                onNameChanged = {},
+//                chooseColor = {},
+//                onSearchValueChanged = {},
+//            )
+//        )
+//    }
+//}
+
+
+data class HomeScreenVM(
+    val onPlayOrPause: (String, Int) -> Unit,
+    val onCardLongClick: (Sound) -> Unit,
+    val onSaveClick: () -> Unit,
+    val onCancelClick: () -> Unit,
+    val onNameChanged: (String) -> Unit,
+    val chooseColor: (Int) -> Unit,
+    val onSearchValueChanged: (String) -> Unit,
+    val search: String,
+    val listState: LazyListState,
+    val soundList: List<Sound>,
+    val highlightSound: Sound?,
+    val showSaveDialog: Boolean,
+    val saveName: String,
+    val color: Int,
+)
