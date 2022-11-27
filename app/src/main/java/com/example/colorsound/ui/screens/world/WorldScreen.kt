@@ -26,7 +26,7 @@ fun WorldScreen(
     worldScreenVM.apply {
         val colorChooseRowVM = ColorChooseRowVM(currentColor, chooseColor, canCancelSelected = true)
         val loadContentVM =
-            LoadContentVM(onPlayOrPause, worldNetState, retryAction, playingSound, isPlayingPaused, listState, onCardLongClick)
+            LoadContentVM(onPlayOrPause, worldNetState, retryAction, playingSound, isPlayingPaused, listState, onCardLongClick, highlightSound)
 
         Column {
             ColorChooseRow(colorChooseRowVM, modifier = Modifier.padding(20.dp))
@@ -51,7 +51,7 @@ fun LoadContent(
                     soundList = sounds,
                     onPlayOrPause = onPlayOrPause,
                     onLongClick = onCardLongClick,
-                    highlightSound = null,
+                    highlightSound = highlightSound,
                     playingSound = playingSound,
                     isPlayingPaused = isPlayingPaused
                 )
@@ -75,6 +75,7 @@ data class LoadContentVM(
     val isPlayingPaused: Boolean,
     val listState: LazyListState,
     val onCardLongClick: (Sound) -> Unit,
+    val highlightSound: Sound?,
 )
 
 data class WorldScreenVM(
@@ -87,6 +88,7 @@ data class WorldScreenVM(
     val isPlayingPaused: Boolean,
     val listState: LazyListState,
     val onCardLongClick: (Sound) -> Unit,
+    val highlightSound: Sound?,
 )
 
 @Composable

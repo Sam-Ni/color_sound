@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.colorsound.R
+import com.example.colorsound.ui.Home
+import com.example.colorsound.ui.RouteDestination
 
 @Composable
 fun HighlightBtn(
@@ -33,17 +35,23 @@ fun HighlightBtn(
             ) {
                 Spacer(modifier = Modifier.width(15.dp))
 
-                IconButton(onClick = onPush) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.arrow_upward_30px),
-                        contentDescription = "",
-                    )
-                }
-                IconButton(onClick = onDelete) {
-                    Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
-                }
-                IconButton(onClick = onUpdate) {
-                    Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
+                when (currentScreen) {
+                    is Home -> {
+                        IconButton(onClick = onPush) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.arrow_upward_30px),
+                                contentDescription = "",
+                            )
+                        }
+                        IconButton(onClick = onDelete) {
+                            Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+                        }
+                        IconButton(onClick = onUpdate) {
+                            Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
+                        }
+
+                    }
+                    else -> {}
                 }
                 IconButton(onClick = onLoop) {
                     Icon(painter = painterResource(id = R.drawable.cached_30px), contentDescription = null)
@@ -60,5 +68,5 @@ data class HighlightBtnVM(
     val onUpdate: () -> Unit,
 //    val exitHighlight: () -> Unit,
     val onLoop: () -> Unit,
-    val atHome: Boolean = true,
+    val currentScreen: RouteDestination,
 )

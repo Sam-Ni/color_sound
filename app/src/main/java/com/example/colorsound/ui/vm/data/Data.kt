@@ -43,8 +43,6 @@ data class WorldData(
     val worldNetState: WorldNetState = WorldNetState.Loading,
     val soundsBuffer: List<Sound> = emptyList(),
     val listState: LazyListState = LazyListState(),
-    val highlightMode: Boolean = false,
-    val highlightSound: Sound? = null,
 )
 
 data class MaskData(

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.model.Sound
+import com.example.colorsound.ui.vm.data.HighlightData
 import com.example.colorsound.ui.vm.data.LocalSoundListData
 import com.example.colorsound.ui.vm.data.MaskData
 import com.example.colorsound.ui.vm.data.SearchBarData
@@ -21,7 +22,8 @@ class LocalSoundListService(
     private val repository: LocalRepository,
     private val maskData: MutableStateFlow<MaskData>,
     private val localSoundListData: MutableStateFlow<LocalSoundListData>,
-    private val searchBarData: MutableStateFlow<SearchBarData>
+    private val searchBarData: MutableStateFlow<SearchBarData>,
+    private val highlightData: MutableStateFlow<HighlightData>,
 ) : ViewModel() {
 
     init {
@@ -44,8 +46,8 @@ class LocalSoundListService(
         searchBarData.update { it.copy(search = search) }
     }
 
-    private fun updateHighlightMode(mode: Boolean, sound: Sound) {
-        localSoundListData.update { it.copy(highlightMode = mode, highlightSound = sound) }
+    private fun updateHighlightMode(mode: Boolean, sound: Sound?) {
+        highlightData.update { it.copy(highlightMode = mode, highlightSound = sound) }
     }
 
     fun onCardLongClick(sound: Sound) {
@@ -55,7 +57,7 @@ class LocalSoundListService(
 
     fun onDelete() {
         viewModelScope.launch {
-            localSoundListData.value.highlightSound?.let {
+            highlightData.value.highlightSound?.let {
                 repository.deleteSound(it)
                 deleteAudio(it.url)
                 val original = localSoundListData.value.soundList.toMutableList()
@@ -72,7 +74,7 @@ class LocalSoundListService(
     }
 
     fun exitHighlight() {
-        localSoundListData.update { it.copy(highlightMode = false, highlightSound = null) }
+        updateHighlightMode(false, null)
         maskData.update { it.copy(isMask = false) }
     }
 
@@ -86,14 +88,12 @@ class LocalSoundListService(
             initializer {
                 val application =
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as ColorSoundApplication)
-                val saveSoundDialogData = application.container.saveSoundDialogData
                 val localSoundListData = application.container.localSoundListData
-                val recordData = application.container.recordData
                 val maskData = application.container.maskData
                 val searchBarData = application.container.searchBarData
-                val worldData = application.container.worldData
                 val repository = application.container.databaseRepository
-                LocalSoundListService(repository, maskData, localSoundListData, searchBarData)
+                val highlightData = application.container.highlightData
+                LocalSoundListService(repository, maskData, localSoundListData, searchBarData, highlightData)
             }
         }
     }

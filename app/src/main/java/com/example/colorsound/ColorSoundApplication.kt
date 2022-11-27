@@ -31,8 +31,8 @@ class ColorSoundApplication : Application() {
             MutableStateFlow(MaskData()),
             MutableStateFlow(PlaySoundData()),
             MutableStateFlow(WorldColorData()),
-            MutableStateFlow(WorldColorData()),
-            getSharedPreferences("data", Context.MODE_PRIVATE)
+            getSharedPreferences("data", Context.MODE_PRIVATE),
+            MutableStateFlow(HighlightData())
         )
     }
 }

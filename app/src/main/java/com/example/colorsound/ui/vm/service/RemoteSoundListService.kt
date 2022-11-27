@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.model.Sound
+import com.example.colorsound.ui.vm.data.HighlightData
 import com.example.colorsound.ui.vm.data.MaskData
 import com.example.colorsound.ui.vm.data.SearchBarData
 import com.example.colorsound.ui.vm.data.WorldData
@@ -14,11 +15,11 @@ import kotlinx.coroutines.flow.update
 
 class RemoteSoundListService(
     private val maskData: MutableStateFlow<MaskData>,
-    private val worldData: MutableStateFlow<WorldData>,
+    private val highlightData: MutableStateFlow<HighlightData>,
 ) : ViewModel(){
 
     private fun updateHighlightMode(mode: Boolean, sound: Sound) {
-        worldData.update { it.copy(highlightMode = mode, highlightSound = sound) }
+        highlightData.update { it.copy(highlightMode = mode, highlightSound = sound) }
     }
 
     fun onCardLongClick(sound: Sound) {
@@ -38,7 +39,8 @@ class RemoteSoundListService(
                 val searchBarData = application.container.searchBarData
                 val worldData = application.container.worldData
                 val repository = application.container.databaseRepository
-                RemoteSoundListService(maskData, worldData)
+                val highlightData = application.container.highlightData
+                RemoteSoundListService(maskData, highlightData)
             }
         }
     }

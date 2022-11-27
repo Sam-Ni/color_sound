@@ -36,7 +36,7 @@ fun ScreenBar(
             onPush = onPush,
             onUpdate = onUpdate,
             onLoop = onLoop,
-            atHome = currentScreen == Home,
+            currentScreen = currentScreen,
 //            exitHighlight = exitHighlight,
         )
 

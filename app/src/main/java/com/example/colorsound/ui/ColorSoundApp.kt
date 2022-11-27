@@ -54,6 +54,7 @@ fun ColorSoundApp() {
     val playSoundData by getDataService.playSoundData.collectAsState()
     val worldColorData by getDataService.worldColorData.collectAsState()
     val configData by getDataService.config.collectAsState()
+    val highlightData by getDataService.highlightData.collectAsState()
 
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
     val askPermission by lazy {
@@ -89,7 +90,7 @@ fun ColorSoundApp() {
             recordState = recordData.recordState,
             isGranted = isGranted,
             askPermission = askPermission,
-            isHighlightMode = localSoundListData.highlightMode,
+            isHighlightMode = highlightData.highlightMode,
             onDelete = {
                 playSoundData.currentPlayingSound?.let { playSoundService.stopPlayIfSoundIs(it) }
                 localSoundListService.onDelete()
@@ -99,13 +100,9 @@ fun ColorSoundApp() {
             onUpdate = {},
             exitHighlight = exitHighlight,
             isPlaying = playSoundData.currentPlayingSound != null,
-            onLoop = { localSoundListData.highlightSound?.let { playSoundService.loopPlay(it) } }
+            onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } }
         )
         val coroutineScope = rememberCoroutineScope()
-        val onCardLongClick = { sound: Sound ->
-            playSoundService.stopPlayIfSoundIs(sound)
-            localSoundListService.onCardLongClick(sound)
-        }
         val routeContentHostVM = RouteContentHostVM(
             navController = navController, homeScreenVM = HomeScreenVM(
                 onPlayOrPause = { playSoundService.playOrPause(it) },
@@ -124,7 +121,7 @@ fun ColorSoundApp() {
                 searchBarText = searchBarData.search,
                 soundListState = localSoundListData.listState,
                 soundList = localSoundListData.soundList,
-                highlightSound = localSoundListData.highlightSound,
+                highlightSound = highlightData.highlightSound,
                 isShowSaveDialog = saveSoundDialogData.showSaveDialog,
                 saveDialogSoundNameText = saveSoundDialogData.saveName,
                 saveDialogChosenColor = saveSoundDialogData.color,
@@ -143,6 +140,7 @@ fun ColorSoundApp() {
                     playSoundService.stopPlayIfSoundIs(it)
                     remoteSoundListService.onCardLongClick(it)
                 },
+                highlightSound = highlightData.highlightSound,
             ), settingsScreenVM = SettingsScreenVM(
                 configData.isRepeatPlay, settingService::onIsRepeatPlayChanged
             )

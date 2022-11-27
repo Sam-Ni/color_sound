@@ -31,6 +31,7 @@ interface IDataContainer {
     val playSoundData: MutableStateFlow<PlaySoundData>
     val worldColorData: MutableStateFlow<WorldColorData>
     val configData: MutableStateFlow<ConfigData>
+    val highlightData: MutableStateFlow<HighlightData>
 }
 
 class DefaultAppContainer(
@@ -44,6 +45,7 @@ class DefaultAppContainer(
     override val playSoundData: MutableStateFlow<PlaySoundData>,
     override val worldColorData: MutableStateFlow<WorldColorData>,
     override val sharedPreferences: SharedPreferences,
+    override val highlightData: MutableStateFlow<HighlightData>,
 
     ) : AppContainer, IDataContainer {
     override val configData: MutableStateFlow<ConfigData> by lazy {

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.remote.RemoteRepository
 import com.example.colorsound.model.Sound
+import com.example.colorsound.ui.vm.data.HighlightData
 import com.example.colorsound.ui.vm.data.LocalSoundListData
 import com.example.colorsound.ui.vm.data.MaskData
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,13 +17,13 @@ import kotlinx.coroutines.launch
 
 class UpLoadSoundService(
     private val networkRepository: RemoteRepository,
-    private val localSoundListData: MutableStateFlow<LocalSoundListData>,
     private val maskData : MutableStateFlow<MaskData>,
+    private val highlightData: MutableStateFlow<HighlightData>,
 ) : ViewModel(){
     fun uploadSound() {
         viewModelScope.launch {
-            localSoundListData.value.highlightSound?.let { networkRepository.uploadSound(it) }
-            localSoundListData.update { it.copy(highlightSound = null, highlightMode = false) }
+            highlightData.value.highlightSound?.let { networkRepository.uploadSound(it) }
+            highlightData.update { it.copy(highlightSound = null, highlightMode = false) }
             maskData.update { it.copy(isMask = false) }
         }
     }
@@ -34,8 +35,9 @@ class UpLoadSoundService(
                 val networkRepository: RemoteRepository = application.container.networkRepository
                 val localSoundListData = application.container.localSoundListData
                 val maskData = application.container.maskData
+                val highlightData = application.container.highlightData
                 UpLoadSoundService(
-                    networkRepository, localSoundListData, maskData
+                    networkRepository, maskData, highlightData
                 )
             }
         }
