@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.ColorChooseRow
 import com.example.colorsound.ui.components.ColorChooseRowVM
@@ -28,7 +29,7 @@ fun WorldScreen(
             LoadContentVM(onPlayOrPause, worldNetState, retryAction, playingSound, isPlayingPaused)
 
         Column {
-            ColorChooseRow(colorChooseRowVM)
+            ColorChooseRow(colorChooseRowVM, modifier = Modifier.padding(20.dp))
             LoadContent(loadContentVM = loadContentVM)
         }
     }

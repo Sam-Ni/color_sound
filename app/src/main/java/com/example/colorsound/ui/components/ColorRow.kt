@@ -9,8 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.colorsound.R
+import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.util.COLOR_NUMBER
 import com.example.colorsound.util.indexToColor
 
@@ -22,35 +24,29 @@ fun ColorChooseRow(
 ) {
     colorChooseRowVM.apply {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             for (i in 0 until COLOR_NUMBER) {
                 IconButton(
-                    onClick = { chooseColor(i) },
-                    modifier = Modifier.weight(1f)
+                    onClick = { chooseColor(i) }, modifier = Modifier.weight(1f)
                 ) {
-                    if (currentColor == i) { // chosen state
-                        Image(
-                            painter = painterResource(id = R.drawable.circle),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(
-                                indexToColor(i)
-                            ),
-                            modifier = Modifier.size(60.dp)
-                        )
-                    } else { // not chosen state
-                        Image(
-                            painter = painterResource(id = R.drawable.circle),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(
-                                indexToColor(i)
-                            ),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.circle),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(indexToColor(i)),
+                        modifier = Modifier.size(if (currentColor == i) 60.dp else 20.dp)
+                    )
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun ColorRowPreview() {
+    ColorSoundTheme {
+        ColorChooseRow(ColorChooseRowVM(currentColor = 0, chooseColor = {}))
     }
 }
 
