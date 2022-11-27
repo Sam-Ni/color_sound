@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.example.colorsound.ui.screens.home.HomeScreen
 import com.example.colorsound.ui.screens.home.HomeScreenVM
 import com.example.colorsound.ui.screens.settings.SettingsScreen
+import com.example.colorsound.ui.screens.settings.SettingsScreenVM
 import com.example.colorsound.ui.screens.world.WorldScreen
 import com.example.colorsound.ui.screens.world.WorldScreenVM
 
@@ -31,7 +32,7 @@ fun RouteContentHost(
                 WorldScreen(worldScreenVM)
             }
             composable(route = Setting.route) {
-                SettingsScreen()
+                SettingsScreen(settingsScreenVM)
             }
         }
     }
@@ -41,6 +42,7 @@ data class RouteContentHostVM(
     val navController: NavHostController,
     val homeScreenVM: HomeScreenVM,
     val worldScreenVM: WorldScreenVM,
+    val settingsScreenVM: SettingsScreenVM,
 )
 
 fun NavHostController.navigateSingleTopTo(route: String) {

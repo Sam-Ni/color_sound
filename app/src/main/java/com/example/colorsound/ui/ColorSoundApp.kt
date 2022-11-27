@@ -22,6 +22,7 @@ import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.bottomBar.ScreenBar
 import com.example.colorsound.ui.components.bottomBar.ScreenBarVM
 import com.example.colorsound.ui.screens.home.HomeScreenVM
+import com.example.colorsound.ui.screens.settings.SettingsScreenVM
 import com.example.colorsound.ui.screens.world.WorldScreenVM
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.ui.vm.service.*
@@ -40,6 +41,7 @@ fun ColorSoundApp() {
     val playSoundService: PlaySoundService = viewModel(factory = PlaySoundService.Factory)
     val worldService: WorldService = viewModel(factory = WorldService.Factory)
     val upLoadSoundService: UpLoadSoundService = viewModel(factory = UpLoadSoundService.Factory)
+    val settingService: SettingService = viewModel(factory = SettingService.Factory)
     val remoteSoundListService: RemoteSoundListService =
         viewModel(factory = RemoteSoundListService.Factory)
 
@@ -51,6 +53,7 @@ fun ColorSoundApp() {
     val maskData by getDataService.maskData.collectAsState()
     val playSoundData by getDataService.playSoundData.collectAsState()
     val worldColorData by getDataService.worldColorData.collectAsState()
+    val configData by getDataService.config.collectAsState()
 
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
     val askPermission by lazy {
@@ -140,6 +143,8 @@ fun ColorSoundApp() {
                     playSoundService.stopPlayIfSoundIs(it)
                     remoteSoundListService.onCardLongClick(it)
                 },
+            ), settingsScreenVM = SettingsScreenVM(
+                configData.isRepeatPlay, settingService::onIsRepeatPlayChanged
             )
         )
 

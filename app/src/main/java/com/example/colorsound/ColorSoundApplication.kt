@@ -1,7 +1,7 @@
 package com.example.colorsound
 
 import android.app.Application
-import com.example.colorsound.data.AppContainer
+import android.content.Context
 import com.example.colorsound.data.DefaultAppContainer
 import com.example.colorsound.data.local.impl.DatabaseRepository
 import com.example.colorsound.database.ColorSoundDatabase
@@ -31,6 +31,8 @@ class ColorSoundApplication : Application() {
             MutableStateFlow(MaskData()),
             MutableStateFlow(PlaySoundData()),
             MutableStateFlow(WorldColorData()),
+            MutableStateFlow(WorldColorData()),
+            getSharedPreferences("data", Context.MODE_PRIVATE)
         )
     }
 }
