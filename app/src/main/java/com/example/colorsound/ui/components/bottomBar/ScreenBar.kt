@@ -26,7 +26,7 @@ fun ScreenBar(
             recordState = recordState,
             isGranted = isGranted,
             askPermission = askPermission,
-            visible = currentScreen == Home && !isHighlightMode
+            visible = currentScreen == Home && !isHighlightMode && !isPlaying
         )
 
 
@@ -78,5 +78,6 @@ data class ScreenBarVM(
     val onPush: () -> Unit,
     val onUpdate: () -> Unit,
     val exitHighlight: () -> Unit,
+    val isPlaying: Boolean = false
 )
 

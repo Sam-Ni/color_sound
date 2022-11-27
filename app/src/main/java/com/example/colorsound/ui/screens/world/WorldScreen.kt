@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.ColorChooseRow
 import com.example.colorsound.ui.components.ColorChooseRowVM
 import com.example.colorsound.ui.components.SoundCardListVM
@@ -23,7 +24,7 @@ fun WorldScreen(
 ) {
     worldScreenVM.apply {
         val colorChooseRowVM = ColorChooseRowVM(currentColor, chooseColor)
-        val loadContentVM = LoadContentVM(onPlayOrPause, worldNetState, retryAction)
+        val loadContentVM = LoadContentVM(onPlayOrPause, worldNetState, retryAction, playingSound)
 
         Column {
             ColorChooseRow(colorChooseRowVM)
@@ -49,6 +50,7 @@ fun LoadContent(
                     onPlayOrPause = onPlayOrPause,
                     onLongClick = {},
                     highlightSound = null,
+                    playingSound = playingSound,
                 )
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(worldNetState == WorldNetState.Loading),
@@ -63,17 +65,19 @@ fun LoadContent(
 }
 
 data class LoadContentVM(
-    val onPlayOrPause: (String, Int) -> Unit,
+    val onPlayOrPause: (Sound) -> Unit,
     val worldNetState: WorldNetState,
     val retryAction: () -> Unit,
+    val playingSound: Sound?,
 )
 
 data class WorldScreenVM(
-    val onPlayOrPause: (String, Int) -> Unit,
+    val onPlayOrPause: (Sound) -> Unit,
     val worldNetState: WorldNetState,
     val retryAction: () -> Unit,
     val currentColor: Int,
     val chooseColor: (Int) -> Unit,
+    val playingSound: Sound?,
 )
 
 @Composable
@@ -83,8 +87,7 @@ private fun LoadingScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
-        ,
+            .wrapContentSize(Alignment.Center),
     ) {
         CircularProgressIndicator()
     }
@@ -94,8 +97,7 @@ private fun LoadingScreen(
 /* TODO change to pull down to refresh */
 @Composable
 fun ErrorScreen(
-    retryAction: () -> Unit,
-    modifier: Modifier = Modifier
+    retryAction: () -> Unit, modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxSize(),

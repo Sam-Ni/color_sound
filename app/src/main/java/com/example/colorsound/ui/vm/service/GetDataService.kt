@@ -17,6 +17,7 @@ class GetDataService(
     private val _recordData: MutableStateFlow<RecordData>,
     private val _searchBarData: MutableStateFlow<SearchBarData>,
     private val _maskData: MutableStateFlow<MaskData>,
+    private val _playSoundData: MutableStateFlow<PlaySoundData>,
     private val _worldColorData: MutableStateFlow<WorldColorData>,
 ) : ViewModel() {
 
@@ -26,6 +27,7 @@ class GetDataService(
     val recordData = _recordData.asStateFlow()
     val searchBarData = _searchBarData.asStateFlow()
     val maskData = _maskData.asStateFlow()
+    val playSoundData = _playSoundData.asStateFlow()
     val worldColorData = _worldColorData.asStateFlow()
 
 
@@ -39,6 +41,7 @@ class GetDataService(
                 val maskData = application.container.maskData
                 val searchBarData = application.container.searchBarData
                 val worldData = application.container.worldData
+                val playSoundData = application.container.playSoundData
                 val worldColorData = application.container.worldColorData
                 GetDataService(
                     saveSoundDialogData,
@@ -47,6 +50,7 @@ class GetDataService(
                     recordData,
                     searchBarData,
                     maskData,
+                    playSoundData,
                     worldColorData,
                 )
             }

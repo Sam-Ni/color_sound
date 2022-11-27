@@ -29,19 +29,17 @@ fun SoundList(
                 .background(MaterialTheme.colorScheme.background)
                 .fillMaxHeight(),
         ) {
-            items(
-                items = soundList,
-                key = { it.url }
-            ) { item ->
+            items(items = soundList, key = { it.url }) { item ->
                 val soundCardVM = SoundCardVM(
                     soundInfo = item,
                     onPlayOrPause = onPlayOrPause,
                     onLongClick = onLongClick,
-                    isHighlight = if (highlightSound != null) item.url == highlightSound.url else false
+                    isHighlight = if (highlightSound != null) item.url == highlightSound.url else false,
+                    isPlaying = if (playingSound != null) item.url == playingSound.url else false
                 )
                 SoundCard(
                     soundCardVM = soundCardVM,
-                    modifier = Modifier.animateItemPlacement(animationSpec = spring(stiffness = Spring.StiffnessLow)),
+                    modifier = Modifier.animateItemPlacement(animationSpec = spring(stiffness = Spring.StiffnessMedium)),
                 )
             }
         }
@@ -55,12 +53,12 @@ fun SoundList(
 fun SoundListPreview() {
     ColorSoundTheme {
         SoundList(
-            SoundCardListVM(
-                LazyListState(),
+            SoundCardListVM(LazyListState(),
                 soundList = DataSource.soundList,
-                onPlayOrPause = { _, _ -> },
+                onPlayOrPause = { _-> },
                 onLongClick = {},
-                highlightSound = null
+                highlightSound = null,
+                playingSound = null
             )
         )
     }
@@ -71,12 +69,12 @@ fun SoundListPreview() {
 fun DarkSoundListPreview() {
     ColorSoundTheme(darkTheme = true) {
         SoundList(
-            SoundCardListVM(
-                LazyListState(),
+            SoundCardListVM(LazyListState(),
                 soundList = DataSource.soundList,
-                onPlayOrPause = { _, _ -> },
+                onPlayOrPause = { _ -> },
                 onLongClick = {},
-                highlightSound = null
+                highlightSound = null,
+                playingSound = null
             )
         )
     }
@@ -85,7 +83,8 @@ fun DarkSoundListPreview() {
 data class SoundCardListVM(
     val listState: LazyListState,
     val soundList: List<Sound> = DataSource.soundList,
-    val onPlayOrPause: (String, Int) -> Unit,
+    val onPlayOrPause: (Sound) -> Unit,
     val onLongClick: (Sound) -> Unit,
-    val highlightSound: Sound?
+    val highlightSound: Sound?,
+    val playingSound: Sound?
 )

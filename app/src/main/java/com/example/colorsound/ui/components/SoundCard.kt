@@ -1,8 +1,7 @@
 package com.example.colorsound.ui.components
 
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -22,7 +21,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.colorsound.R
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
@@ -41,20 +43,39 @@ fun SoundCard(
 ) {
     soundCardVM.apply {
         val isSystemInDarkTheme = isSystemInDarkTheme()
-        val transition = updateTransition(isHighlight, label = "")
-        val elevation by transition.animateDp(label = "") {
+
+        val transition = updateTransition(isHighlight, label = "2")
+        val elevation by transition.animateDp(label = "2") {
             if (it) 20.dp
             else 6.dp
         }
-
-        val backColor by transition.animateColor(label = "") {
+        val backColor by transition.animateColor(label = "2") {
             if (it) indexToBackColor(soundInfo.color, isSystemInDarkTheme)
             else MaterialTheme.colorScheme.surface
         }
-
-        val frontColor by transition.animateColor(label = "") {
+        val frontColor by transition.animateColor(label = "2") {
             if (it) indexToColor(soundInfo.color)
             else MaterialTheme.colorScheme.onSurface
+        }
+
+        val transition2 = updateTransition(isPlaying, label = "1")
+        val fontSize by transition2.animateFloat(
+            label = "1",
+            transitionSpec = {
+                spring(Spring.DampingRatioNoBouncy, Spring.StiffnessMedium)
+            },
+        ) {
+            if (it) 32f
+            else 24f
+        }
+        val nameWidth by transition2.animateDp(
+            label = "1",
+            transitionSpec = {
+                spring(Spring.DampingRatioNoBouncy, Spring.StiffnessMedium)
+            },
+        ) {
+            if (it) 240.dp
+            else 180.dp
         }
 
         Card(
@@ -68,7 +89,7 @@ fun SoundCard(
                     .background(backColor)
                     .clip(RoundedCornerShape(20.dp))
                     .combinedClickable(
-                        onClick = { onPlayOrPause(soundInfo.url, soundInfo.id) },
+                        onClick = { onPlayOrPause(soundInfo) },
                         onLongClick = { onLongClick(soundInfo) },
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(
@@ -84,13 +105,34 @@ fun SoundCard(
                     )
                 ) {
                     ColorCircle(soundInfo.color)
-                    Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Row {
-                            SoundName(name = soundInfo.name, frontColor)
+                            SoundName(
+                                name = soundInfo.name,
+                                frontColor,
+                                fontSize = fontSize.sp,
+                                width = nameWidth
+                            )
                         }
                         Row {
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        Row(
+                            modifier = Modifier.animateContentSize(
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessMedium
+                                )
+                            )
+                        ) {
+                            if (isPlaying) {
+                                Text(text = "你好。。。")
+                                Spacer(modifier = Modifier.height(48.dp))
+                            }
+                        }
+                        Row {
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
                         Row {
                             Spacer(modifier = Modifier.weight(1f))
@@ -122,14 +164,14 @@ private fun ColorCircle(colorIndex: Int) {
 }
 
 @Composable
-private fun SoundName(name: String, color: Color) {
+private fun SoundName(name: String, color: Color, fontSize: TextUnit = 24.sp, width: Dp = 180.dp) {
     Text(
         overflow = TextOverflow.Ellipsis,
         maxLines = 3,
         text = name,
-        style = MaterialTheme.typography.headlineLarge,
+        style = MaterialTheme.typography.headlineLarge.copy(fontSize = fontSize),
         color = color,
-        modifier = Modifier.width(180.dp)
+        modifier = Modifier.width(width)
     )
 }
 
@@ -159,16 +201,21 @@ private fun SoundDuration(duration: String, color: Color) {
 fun SoundCardPreview() {
     ColorSoundTheme {
         SoundCard(
-            SoundCardVM(soundInfo = SoundInfoFactory(),
-                onPlayOrPause = { _, _ -> },
-                onLongClick = {})
-        )
+            SoundCardVM(
+                soundInfo = SoundInfoFactory(),
+                onPlayOrPause = { },
+                onLongClick = {},
+                isPlaying = true
+            ),
+
+            )
     }
 }
 
 data class SoundCardVM(
     val soundInfo: Sound,
-    val onPlayOrPause: (String, Int) -> Unit,
+    val onPlayOrPause: (Sound) -> Unit,
     val onLongClick: (Sound) -> Unit,
-    val isHighlight: Boolean = true
+    val isHighlight: Boolean = false,
+    val isPlaying: Boolean = false
 )

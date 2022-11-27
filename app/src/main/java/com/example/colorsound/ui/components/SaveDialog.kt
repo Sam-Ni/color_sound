@@ -1,21 +1,16 @@
 package com.example.colorsound.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.colorsound.R
 import com.example.colorsound.ui.theme.ColorSoundTheme
-import com.example.colorsound.util.COLOR_NUMBER
-import com.example.colorsound.util.indexToColor
 
 
 @Composable
@@ -30,8 +25,7 @@ fun SaveDialog(
 
         Dialog(onDismissRequest = { /*TODO*/ }) {
             Surface(
-                color = MaterialTheme.colorScheme.background,
-                shape = RoundedCornerShape(16.dp)
+                color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(16.dp)
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
@@ -43,7 +37,12 @@ fun SaveDialog(
                     ) {
                         InputBar(inputBarVM)
 
-                        ColorChooseRow(currentColor = color, chooseColor = chooseColor)
+                        ColorChooseRow(
+                            ColorChooseRowVM(
+                                currentColor = color,
+                                chooseColor = chooseColor
+                            )
+                        )
 
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -72,8 +71,7 @@ data class SaveDialogVM(
 fun SaveDialogPreview() {
     ColorSoundTheme {
         SaveDialog(
-            SaveDialogVM(
-                onSaveClick = {},
+            SaveDialogVM(onSaveClick = {},
                 onCancelClick = { /*TODO*/ },
                 onNameChanged = {},
                 saveName = "",

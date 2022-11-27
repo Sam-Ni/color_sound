@@ -45,6 +45,11 @@ data class MaskData(
     val isMask: Boolean = false
 )
 
+data class PlaySoundData(
+    val currentPlayingSound: Sound? = null,
+    val isPaused: Boolean = false
+)
+
 data class WorldColorData(
     val currentColor: Int = 0,
 )

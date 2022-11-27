@@ -36,7 +36,7 @@ fun ColorSoundApp() {
     val recordService: RecordService = viewModel(factory = RecordService.Factory)
     val localSoundListService: LocalSoundListService =
         viewModel(factory = LocalSoundListService.Factory)
-    val playSoundService = PlaySoundService()
+    val playSoundService: PlaySoundService = viewModel(factory = PlaySoundService.Factory)
     val worldService: WorldService = viewModel(factory = WorldService.Factory)
     val upLoadSoundService: UpLoadSoundService = viewModel(factory = UpLoadSoundService.Factory)
 
@@ -46,6 +46,7 @@ fun ColorSoundApp() {
     val recordData by getDataService.recordData.collectAsState()
     val searchBarData by getDataService.searchBarData.collectAsState()
     val maskData by getDataService.maskData.collectAsState()
+    val playSoundData by getDataService.playSoundData.collectAsState()
     val worldColorData by getDataService.worldColorData.collectAsState()
 
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
@@ -82,12 +83,13 @@ fun ColorSoundApp() {
             onDelete = localSoundListService::onDelete,
             onPush = upLoadSoundService::uploadSound,
             onUpdate = {},
-            exitHighlight = localSoundListService::exitHighlight
+            exitHighlight = localSoundListService::exitHighlight,
+            isPlaying = playSoundData.currentPlayingSound != null
         )
         val coroutineScope = rememberCoroutineScope()
         val routeContentHostVM = RouteContentHostVM(
             navController = navController, homeScreenVM = HomeScreenVM(
-                onPlayOrPause = playSoundService::play,
+                onPlayOrPause = { playSoundService.playOrPause(it) },
                 onCardLongClick = { localSoundListService.onCardLongClick(it) },
                 onSaveDialogSaveBtnClick = {
                     recordService.onSaveClick()
@@ -104,10 +106,12 @@ fun ColorSoundApp() {
                 isShowSaveDialog = saveSoundDialogData.showSaveDialog,
                 saveDialogSoundNameText = saveSoundDialogData.saveName,
                 saveDialogChosenColor = saveSoundDialogData.color,
+                playingSound = playSoundData.currentPlayingSound
             ), worldScreenVM = WorldScreenVM(
                 worldNetState = worldData.worldNetState,
                 retryAction = worldService::getRandomSounds,
-                onPlayOrPause = playSoundService::play,
+                onPlayOrPause = playSoundService::playOrPause,
+                playingSound = playSoundData.currentPlayingSound,
                 currentColor = worldColorData.currentColor,
                 chooseColor = { worldService.updateChoice(it) }
             )

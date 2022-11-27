@@ -24,6 +24,7 @@ interface IDataContainer {
     val recordData: MutableStateFlow<RecordData>
     val worldData: MutableStateFlow<WorldData>
     val maskData: MutableStateFlow<MaskData>
+    val playSoundData: MutableStateFlow<PlaySoundData>
     val worldColorData: MutableStateFlow<WorldColorData>
 }
 
@@ -35,6 +36,7 @@ class DefaultAppContainer(
     override val recordData: MutableStateFlow<RecordData>,
     override val worldData: MutableStateFlow<WorldData>,
     override val maskData: MutableStateFlow<MaskData>,
+    override val playSoundData: MutableStateFlow<PlaySoundData>,
     override val worldColorData: MutableStateFlow<WorldColorData>,
 ) : AppContainer, IDataContainer {
 
