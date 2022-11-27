@@ -91,7 +91,7 @@ fun ColorSoundApp() {
             navController = navController, homeScreenVM = HomeScreenVM(
                 onPlayOrPause = { playSoundService.playOrPause(it) },
                 onCardLongClick = {
-                    playSoundService.stopCurrentSound()
+                    playSoundService.stopPlayIfSoundIs(it)
                     localSoundListService.onCardLongClick(it)
                 },
                 onSaveDialogSaveBtnClick = {

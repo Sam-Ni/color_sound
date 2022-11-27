@@ -44,7 +44,7 @@ class PlaySoundService(private val playSoundData: MutableStateFlow<PlaySoundData
         }
     }
 
-    fun stopCurrentSound() {
+    private fun stopCurrentSound() {
         if (playSoundData.value.currentPlayingSound != null) {
             mediaPlayer.stop()
             mediaPlayer.reset()
@@ -71,6 +71,14 @@ class PlaySoundService(private val playSoundData: MutableStateFlow<PlaySoundData
 
     private fun isPlaying(sound: Sound): Boolean {
         return playSoundData.value.currentPlayingSound == sound
+    }
+
+    fun stopPlayIfSoundIs(sound: Sound) {
+        if (playSoundData.value.currentPlayingSound == sound) {
+            mediaPlayer.stop()
+            mediaPlayer.reset()
+            playSoundData.update { it.copy(currentPlayingSound = null, isPaused = false) }
+        }
     }
 
     fun playOrPause(sound: Sound) {
