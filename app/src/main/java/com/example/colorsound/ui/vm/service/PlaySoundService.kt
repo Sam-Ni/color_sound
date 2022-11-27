@@ -44,7 +44,7 @@ class PlaySoundService(private val playSoundData: MutableStateFlow<PlaySoundData
         }
     }
 
-    private fun stopCurrentSound() {
+    fun stopCurrentSound() {
         if (playSoundData.value.currentPlayingSound != null) {
             mediaPlayer.stop()
             mediaPlayer.reset()

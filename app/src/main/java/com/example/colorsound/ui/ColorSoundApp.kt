@@ -90,7 +90,10 @@ fun ColorSoundApp() {
         val routeContentHostVM = RouteContentHostVM(
             navController = navController, homeScreenVM = HomeScreenVM(
                 onPlayOrPause = { playSoundService.playOrPause(it) },
-                onCardLongClick = { localSoundListService.onCardLongClick(it) },
+                onCardLongClick = {
+                    playSoundService.stopCurrentSound()
+                    localSoundListService.onCardLongClick(it)
+                },
                 onSaveDialogSaveBtnClick = {
                     recordService.onSaveClick()
                     localSoundListService.scrollToTop(coroutineScope)
