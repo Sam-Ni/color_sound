@@ -27,9 +27,13 @@ class WorldService(
     }
 
 
+    /**
+     * Refresh Sounds and update UI
+     */
     fun getRandomSounds() {
+        worldData.update { it.copy(worldNetState = WorldNetState.Loading) }
+
         viewModelScope.launch {
-            worldData.update { it.copy(worldNetState = WorldNetState.Loading) }
             worldData.update {
                 it.copy(
                     worldNetState = try {
