@@ -101,6 +101,25 @@ class PlaySoundService(private val playSoundData: MutableStateFlow<PlaySoundData
         }
     }
 
+    fun restorePlayerConfig() {
+        mediaPlayer.isLooping = playSoundData.value.previousLoopState
+    }
+
+    fun loopPlay(sound: Sound) {
+        playSoundData.update {
+            it.copy(previousLoopState = mediaPlayer.isLooping, currentPlayingSound = sound)
+        }
+        viewModelScope.launch {
+            mediaPlayer.apply {
+                reset()
+                isLooping = true
+                setDataSource(sound.url)
+                prepare()
+                start()
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

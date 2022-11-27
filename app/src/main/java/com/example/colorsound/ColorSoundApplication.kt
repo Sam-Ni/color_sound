@@ -6,6 +6,7 @@ import com.example.colorsound.data.DefaultAppContainer
 import com.example.colorsound.data.local.impl.DatabaseRepository
 import com.example.colorsound.database.ColorSoundDatabase
 import com.example.colorsound.ui.vm.data.*
+import com.example.colorsound.ui.vm.service.RemoteSoundListService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +30,7 @@ class ColorSoundApplication : Application() {
             MutableStateFlow(WorldData()),
             MutableStateFlow(MaskData()),
             MutableStateFlow(PlaySoundData()),
-            MutableStateFlow(WorldColorData())
+            MutableStateFlow(WorldColorData()),
         )
     }
 }

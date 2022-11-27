@@ -35,13 +35,19 @@ fun ScreenBar(
             onDelete = onDelete,
             onPush = onPush,
             onUpdate = onUpdate,
-            exitHighlight = exitHighlight,
+            onLoop = onLoop,
+            atHome = currentScreen == Home,
+//            exitHighlight = exitHighlight,
         )
 
         val navBtnVM = NavBtnVM(
             visible = recordState == RecordState.Normal && !isHighlightMode,
             allScreen = allScreen,
             onTabSelected = onTabSelected
+        )
+
+        val backBtnVM = BackBtnVM(
+            exitHighlight = exitHighlight,
         )
 
 
@@ -57,7 +63,7 @@ fun ScreenBar(
                 NavBtn(navBtnVM)
                 HighlightBtn(highlightBtnVM)
                 Spacer(modifier = Modifier.weight(1f))
-                RecordBtn(recordBtnVM)
+                if (isHighlightMode) BackBtn(backBtnVM) else RecordBtn(recordBtnVM)
                 Spacer(modifier = Modifier.width(20.dp))
             }
         }
@@ -78,6 +84,7 @@ data class ScreenBarVM(
     val onPush: () -> Unit,
     val onUpdate: () -> Unit,
     val exitHighlight: () -> Unit,
-    val isPlaying: Boolean = false
+    val isPlaying: Boolean = false,
+    val onLoop: () -> Unit,
 )
 

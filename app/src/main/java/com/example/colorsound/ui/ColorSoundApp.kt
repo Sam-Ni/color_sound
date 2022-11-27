@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.bottomBar.ScreenBar
 import com.example.colorsound.ui.components.bottomBar.ScreenBarVM
 import com.example.colorsound.ui.screens.home.HomeScreenVM
@@ -39,6 +40,8 @@ fun ColorSoundApp() {
     val playSoundService: PlaySoundService = viewModel(factory = PlaySoundService.Factory)
     val worldService: WorldService = viewModel(factory = WorldService.Factory)
     val upLoadSoundService: UpLoadSoundService = viewModel(factory = UpLoadSoundService.Factory)
+    val remoteSoundListService: RemoteSoundListService =
+        viewModel(factory = RemoteSoundListService.Factory)
 
     val saveSoundDialogData by getDataService.saveSoundDialogData.collectAsState()
     val localSoundListData by getDataService.localSoundListData.collectAsState()
@@ -68,6 +71,10 @@ fun ColorSoundApp() {
         val currentScreen =
             colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
 
+        val exitHighlight = {
+            localSoundListService.exitHighlight()
+            playSoundService.restorePlayerConfig()
+        }
         val screenBarVM = ScreenBarVM(
             allScreen = colorSoundTabRowScreens,
             onTabSelected = { newScreen ->
@@ -80,19 +87,28 @@ fun ColorSoundApp() {
             isGranted = isGranted,
             askPermission = askPermission,
             isHighlightMode = localSoundListData.highlightMode,
-            onDelete = localSoundListService::onDelete,
+            onDelete = {
+                playSoundData.currentPlayingSound?.let { playSoundService.stopPlayIfSoundIs(it) }
+                localSoundListService.onDelete()
+                exitHighlight()
+            },
             onPush = upLoadSoundService::uploadSound,
             onUpdate = {},
-            exitHighlight = localSoundListService::exitHighlight,
-            isPlaying = playSoundData.currentPlayingSound != null
+            exitHighlight = exitHighlight,
+            isPlaying = playSoundData.currentPlayingSound != null,
+            onLoop = { localSoundListData.highlightSound?.let { playSoundService.loopPlay(it) } }
         )
         val coroutineScope = rememberCoroutineScope()
+        val onCardLongClick = { sound: Sound ->
+            playSoundService.stopPlayIfSoundIs(sound)
+            localSoundListService.onCardLongClick(sound)
+        }
         val routeContentHostVM = RouteContentHostVM(
             navController = navController, homeScreenVM = HomeScreenVM(
                 onPlayOrPause = { playSoundService.playOrPause(it) },
-                onCardLongClick = {
-                    playSoundService.stopPlayIfSoundIs(it)
-                    localSoundListService.onCardLongClick(it)
+                onCardLongClick = { sound: Sound ->
+                    playSoundService.stopPlayIfSoundIs(sound)
+                    localSoundListService.onCardLongClick(sound)
                 },
                 onSaveDialogSaveBtnClick = {
                     recordService.onSaveClick()
@@ -120,6 +136,10 @@ fun ColorSoundApp() {
                 chooseColor = { worldService.updateChoice(it) },
                 listState = worldData.listState,
                 isPlayingPaused = playSoundData.isPaused,
+                onCardLongClick = {
+                    playSoundService.stopPlayIfSoundIs(it)
+                    remoteSoundListService.onCardLongClick(it)
+                },
             )
         )
 

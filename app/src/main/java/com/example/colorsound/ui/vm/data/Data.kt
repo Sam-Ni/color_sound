@@ -23,6 +23,9 @@ data class SaveSoundDialogData(
 data class LocalSoundListData(
     val soundList: List<Sound> = mutableListOf(),
     val listState: LazyListState = LazyListState(),
+)
+
+data class HighlightData(
     val highlightMode: Boolean = false,
     val highlightSound: Sound? = null,
 )
@@ -40,6 +43,8 @@ data class WorldData(
     val worldNetState: WorldNetState = WorldNetState.Loading,
     val soundsBuffer: List<Sound> = emptyList(),
     val listState: LazyListState = LazyListState(),
+    val highlightMode: Boolean = false,
+    val highlightSound: Sound? = null,
 )
 
 data class MaskData(
@@ -48,7 +53,8 @@ data class MaskData(
 
 data class PlaySoundData(
     val currentPlayingSound: Sound? = null,
-    val isPaused: Boolean = false
+    val isPaused: Boolean = false,
+    val previousLoopState: Boolean = false,
 )
 
 data class WorldColorData(
