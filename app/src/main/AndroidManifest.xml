@@ -15,7 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_color_sound_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ColorSound"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        tools:remove="android:appComponentFactory"
+        >
         <activity
             android:name=".MainActivity"
             android:exported="true"

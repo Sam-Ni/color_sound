@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.remote.RemoteRepository
+import com.example.colorsound.ui.vm.data.WorldColorData
 import com.example.colorsound.ui.vm.data.WorldData
 import com.example.colorsound.ui.vm.data.WorldNetState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ import java.io.IOException
 
 class WorldService(
     private val worldData: MutableStateFlow<WorldData>,
-    private val networkRepository: RemoteRepository
+    private val networkRepository: RemoteRepository,
+    private val worldColorData: MutableStateFlow<WorldColorData>,
 ) : ViewModel() {
 
 
@@ -26,22 +28,36 @@ class WorldService(
         getRandomSounds()
     }
 
+    fun updateChoice(color: Int) {
+        worldColorData.update { it.copy(currentColor = color) }
+    }
 
+    /**
+     * Refresh Sounds and update UI
+     */
     fun getRandomSounds() {
+        worldData.update { it.copy(worldNetState = WorldNetState.Loading) }
+
         viewModelScope.launch {
-            worldData.update { it.copy(worldNetState = WorldNetState.Loading) }
             worldData.update {
-                it.copy(
-                    worldNetState = try {
-                        WorldNetState.Success(networkRepository.getRandomSounds())
-                    } catch (e: IOException) {
-                        Log.e("ColorSound", e.toString())
-                        WorldNetState.Error
-                    } catch (e: HttpException) {
-                        Log.e("ColorSound", e.toString())
-                        WorldNetState.Error
+                try {
+                    val result = networkRepository.getRandomSounds()
+                    val sounds = if (it.soundsBuffer.size < 20) {
+                        result.plus(it.soundsBuffer).distinctBy { sound ->  sound.url }
+                    } else {
+                        result.plus(it.soundsBuffer.subList(0, 10)).distinctBy { sound -> sound.url }
                     }
-                )
+                    it.copy(
+                        worldNetState = WorldNetState.Success(sounds),
+                        soundsBuffer = sounds
+                    )
+                } catch (e: IOException) {
+                    Log.e("ColorSound", e.toString())
+                    it.copy(worldNetState = WorldNetState.Error)
+                } catch (e: HttpException) {
+                    Log.e("ColorSound", e.toString())
+                    it.copy(worldNetState = WorldNetState.Error)
+                }
             }
         }
     }
@@ -58,7 +74,8 @@ class WorldService(
                 val maskData = application.container.maskData
                 val searchBarData = application.container.searchBarData
                 val worldData = application.container.worldData
-                WorldService(worldData, networkRepository)
+                val worldColorData = application.container.worldColorData
+                WorldService(worldData, networkRepository, worldColorData)
             }
         }
     }

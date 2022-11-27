@@ -43,36 +43,7 @@ fun SaveDialog(
                     ) {
                         InputBar(inputBarVM)
 
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            for (i in 0 until COLOR_NUMBER) {
-                                IconButton(
-                                    onClick = { chooseColor(i) },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    if (color == i) { // chosen state
-                                        Image(
-                                            painter = painterResource(id = R.drawable.circle),
-                                            contentDescription = null,
-                                            colorFilter = ColorFilter.tint(
-                                                indexToColor(i)
-                                            ),
-                                            modifier = Modifier.size(60.dp)
-                                        )
-                                    } else { // not chosen state
-                                        Image(
-                                            painter = painterResource(id = R.drawable.circle),
-                                            contentDescription = null,
-                                            colorFilter = ColorFilter.tint(
-                                                indexToColor(i)
-                                            ),
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                        ColorChooseRow(currentColor = color, chooseColor = chooseColor)
 
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)

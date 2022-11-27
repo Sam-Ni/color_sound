@@ -37,10 +37,15 @@ data class RecordData(
 
 
 data class WorldData(
-    val worldNetState: WorldNetState = WorldNetState.Loading
+    val worldNetState: WorldNetState = WorldNetState.Loading,
+    val soundsBuffer: List<Sound> = emptyList()
 )
 
 data class MaskData(
     val isMask: Boolean = false
+)
+
+data class WorldColorData(
+    val currentColor: Int = 0,
 )
 
