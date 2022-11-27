@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.colorsound.ui.components.ColorChooseRow
+import com.example.colorsound.ui.components.ColorChooseRowVM
 import com.example.colorsound.ui.components.SoundCardListVM
 import com.example.colorsound.ui.components.SoundList
 import com.example.colorsound.ui.vm.data.WorldNetState
@@ -20,6 +22,21 @@ fun WorldScreen(
     worldScreenVM: WorldScreenVM
 ) {
     worldScreenVM.apply {
+        val colorChooseRowVM = ColorChooseRowVM(currentColor, chooseColor)
+        val loadContentVM = LoadContentVM(onPlayOrPause, worldNetState, retryAction)
+
+        Column {
+            ColorChooseRow(colorChooseRowVM)
+            LoadContent(loadContentVM = loadContentVM)
+        }
+    }
+}
+
+@Composable
+fun LoadContent(
+    loadContentVM: LoadContentVM
+) {
+    loadContentVM.apply {
         when (worldNetState) {
             is WorldNetState.Loading -> LoadingScreen()
             is WorldNetState.Success -> {
@@ -45,10 +62,18 @@ fun WorldScreen(
     }
 }
 
+data class LoadContentVM(
+    val onPlayOrPause: (String, Int) -> Unit,
+    val worldNetState: WorldNetState,
+    val retryAction: () -> Unit,
+)
+
 data class WorldScreenVM(
     val onPlayOrPause: (String, Int) -> Unit,
     val worldNetState: WorldNetState,
     val retryAction: () -> Unit,
+    val currentColor: Int,
+    val chooseColor: (Int) -> Unit,
 )
 
 @Composable

@@ -27,7 +27,8 @@ class ColorSoundApplication : Application() {
             MutableStateFlow(SearchBarData()),
             MutableStateFlow(RecordData()),
             MutableStateFlow(WorldData()),
-            MutableStateFlow(MaskData())
+            MutableStateFlow(MaskData()),
+            MutableStateFlow(WorldColorData())
         )
     }
 }

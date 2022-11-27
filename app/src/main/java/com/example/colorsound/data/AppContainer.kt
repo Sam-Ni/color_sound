@@ -24,6 +24,7 @@ interface IDataContainer {
     val recordData: MutableStateFlow<RecordData>
     val worldData: MutableStateFlow<WorldData>
     val maskData: MutableStateFlow<MaskData>
+    val worldColorData: MutableStateFlow<WorldColorData>
 }
 
 class DefaultAppContainer(
@@ -34,6 +35,7 @@ class DefaultAppContainer(
     override val recordData: MutableStateFlow<RecordData>,
     override val worldData: MutableStateFlow<WorldData>,
     override val maskData: MutableStateFlow<MaskData>,
+    override val worldColorData: MutableStateFlow<WorldColorData>,
 ) : AppContainer, IDataContainer {
 
     @kotlinx.serialization.ExperimentalSerializationApi

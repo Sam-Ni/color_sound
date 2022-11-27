@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.remote.RemoteRepository
+import com.example.colorsound.ui.vm.data.WorldColorData
 import com.example.colorsound.ui.vm.data.WorldData
 import com.example.colorsound.ui.vm.data.WorldNetState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ import java.io.IOException
 
 class WorldService(
     private val worldData: MutableStateFlow<WorldData>,
-    private val networkRepository: RemoteRepository
+    private val networkRepository: RemoteRepository,
+    private val worldColorData: MutableStateFlow<WorldColorData>,
 ) : ViewModel() {
 
 
@@ -26,6 +28,9 @@ class WorldService(
         getRandomSounds()
     }
 
+    fun updateChoice(color: Int) {
+        worldColorData.update { it.copy(currentColor = color) }
+    }
 
     /**
      * Refresh Sounds and update UI
@@ -69,7 +74,8 @@ class WorldService(
                 val maskData = application.container.maskData
                 val searchBarData = application.container.searchBarData
                 val worldData = application.container.worldData
-                WorldService(worldData, networkRepository)
+                val worldColorData = application.container.worldColorData
+                WorldService(worldData, networkRepository, worldColorData)
             }
         }
     }

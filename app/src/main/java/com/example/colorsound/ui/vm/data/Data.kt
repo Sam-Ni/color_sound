@@ -45,3 +45,7 @@ data class MaskData(
     val isMask: Boolean = false
 )
 
+data class WorldColorData(
+    val currentColor: Int = 0,
+)
+

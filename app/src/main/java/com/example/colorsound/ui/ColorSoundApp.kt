@@ -46,6 +46,7 @@ fun ColorSoundApp() {
     val recordData by getDataService.recordData.collectAsState()
     val searchBarData by getDataService.searchBarData.collectAsState()
     val maskData by getDataService.maskData.collectAsState()
+    val worldColorData by getDataService.worldColorData.collectAsState()
 
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
     val askPermission by lazy {
@@ -106,6 +107,8 @@ fun ColorSoundApp() {
                 worldNetState = worldData.worldNetState,
                 retryAction = worldService::getRandomSounds,
                 onPlayOrPause = playSoundService::play,
+                currentColor = worldColorData.currentColor,
+                chooseColor = { worldService.updateChoice(it) }
             )
         )
 
