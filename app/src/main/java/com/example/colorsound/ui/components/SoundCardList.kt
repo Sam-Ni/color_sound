@@ -35,7 +35,8 @@ fun SoundList(
                     onPlayOrPause = onPlayOrPause,
                     onLongClick = onLongClick,
                     isHighlight = if (highlightSound != null) item.url == highlightSound.url else false,
-                    isPlaying = if (playingSound != null) item.url == playingSound.url else false
+                    isPlaying = if (playingSound != null) item.url == playingSound.url else false,
+                    isPlayingPaused = isPlayingPaused
                 )
                 SoundCard(
                     soundCardVM = soundCardVM,
@@ -55,10 +56,11 @@ fun SoundListPreview() {
         SoundList(
             SoundCardListVM(LazyListState(),
                 soundList = DataSource.soundList,
-                onPlayOrPause = { _-> },
+                onPlayOrPause = { _ -> },
                 onLongClick = {},
                 highlightSound = null,
-                playingSound = null
+                playingSound = null,
+                isPlayingPaused = false
             )
         )
     }
@@ -74,7 +76,8 @@ fun DarkSoundListPreview() {
                 onPlayOrPause = { _ -> },
                 onLongClick = {},
                 highlightSound = null,
-                playingSound = null
+                playingSound = null,
+                isPlayingPaused = false
             )
         )
     }
@@ -86,5 +89,6 @@ data class SoundCardListVM(
     val onPlayOrPause: (Sound) -> Unit,
     val onLongClick: (Sound) -> Unit,
     val highlightSound: Sound?,
-    val playingSound: Sound?
+    val playingSound: Sound?,
+    val isPlayingPaused: Boolean,
 )

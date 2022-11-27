@@ -24,7 +24,8 @@ fun WorldScreen(
 ) {
     worldScreenVM.apply {
         val colorChooseRowVM = ColorChooseRowVM(currentColor, chooseColor)
-        val loadContentVM = LoadContentVM(onPlayOrPause, worldNetState, retryAction, playingSound)
+        val loadContentVM =
+            LoadContentVM(onPlayOrPause, worldNetState, retryAction, playingSound, isPlayingPaused)
 
         Column {
             ColorChooseRow(colorChooseRowVM)
@@ -51,6 +52,7 @@ fun LoadContent(
                     onLongClick = {},
                     highlightSound = null,
                     playingSound = playingSound,
+                    isPlayingPaused = isPlayingPaused
                 )
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(worldNetState == WorldNetState.Loading),
@@ -69,6 +71,7 @@ data class LoadContentVM(
     val worldNetState: WorldNetState,
     val retryAction: () -> Unit,
     val playingSound: Sound?,
+    val isPlayingPaused: Boolean,
 )
 
 data class WorldScreenVM(
@@ -78,6 +81,7 @@ data class WorldScreenVM(
     val currentColor: Int,
     val chooseColor: (Int) -> Unit,
     val playingSound: Sound?,
+    val isPlayingPaused: Boolean,
 )
 
 @Composable

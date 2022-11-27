@@ -25,6 +25,13 @@ class PlaySoundService(private val playSoundData: MutableStateFlow<PlaySoundData
         }
     }
 
+    init {
+        mediaPlayer.setOnCompletionListener { onCompletion() }
+    }
+
+    private fun onCompletion() {
+        playSoundData.update { it.copy(currentPlayingSound = null) }
+    }
 
     private fun playSound(sound: Sound) {
         playSoundData.update { it.copy(currentPlayingSound = sound) }
@@ -65,7 +72,6 @@ class PlaySoundService(private val playSoundData: MutableStateFlow<PlaySoundData
     private fun isPlaying(sound: Sound): Boolean {
         return playSoundData.value.currentPlayingSound == sound
     }
-
 
     fun playOrPause(sound: Sound) {
         if (mediaPlayer.isPlaying) { //正在播放

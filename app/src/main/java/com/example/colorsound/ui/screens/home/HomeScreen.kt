@@ -30,7 +30,8 @@ fun HomeScreen(
             onPlayOrPause = onPlayOrPause,
             onLongClick = onCardLongClick,
             highlightSound = highlightSound,
-            playingSound = playingSound
+            playingSound = playingSound,
+            isPlayingPaused = isPlayingPaused
         )
         val saveDialogVM = SaveDialogVM(
             onSaveClick = onSaveDialogSaveBtnClick,
@@ -74,5 +75,6 @@ data class HomeScreenVM(
     val soundListState: LazyListState,
     val soundList: List<Sound>,
     val highlightSound: Sound?,
-    val playingSound: Sound?
+    val playingSound: Sound?,
+    val isPlayingPaused: Boolean,
 )

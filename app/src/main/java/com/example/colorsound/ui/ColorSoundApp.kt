@@ -106,14 +106,16 @@ fun ColorSoundApp() {
                 isShowSaveDialog = saveSoundDialogData.showSaveDialog,
                 saveDialogSoundNameText = saveSoundDialogData.saveName,
                 saveDialogChosenColor = saveSoundDialogData.color,
-                playingSound = playSoundData.currentPlayingSound
+                playingSound = playSoundData.currentPlayingSound,
+                isPlayingPaused = playSoundData.isPaused,
             ), worldScreenVM = WorldScreenVM(
                 worldNetState = worldData.worldNetState,
                 retryAction = worldService::getRandomSounds,
                 onPlayOrPause = playSoundService::playOrPause,
                 playingSound = playSoundData.currentPlayingSound,
                 currentColor = worldColorData.currentColor,
-                chooseColor = { worldService.updateChoice(it) }
+                chooseColor = { worldService.updateChoice(it) },
+                isPlayingPaused = playSoundData.isPaused,
             )
         )
 

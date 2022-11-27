@@ -127,7 +127,7 @@ fun SoundCard(
                             )
                         ) {
                             if (isPlaying) {
-                                Text(text = "你好。。。")
+                                Text(text = if (!isPlayingPaused) "正在播放..." else "正在暂停")
                                 Spacer(modifier = Modifier.height(48.dp))
                             }
                         }
@@ -217,5 +217,6 @@ data class SoundCardVM(
     val onPlayOrPause: (Sound) -> Unit,
     val onLongClick: (Sound) -> Unit,
     val isHighlight: Boolean = false,
-    val isPlaying: Boolean = false
+    val isPlaying: Boolean = false,
+    val isPlayingPaused: Boolean = false,
 )
