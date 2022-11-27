@@ -21,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.colorsound.ui.components.bottomBar.ScreenBar
 import com.example.colorsound.ui.components.bottomBar.ScreenBarVM
 import com.example.colorsound.ui.screens.home.HomeScreenVM
+import com.example.colorsound.ui.screens.settings.SettingsScreenVM
 import com.example.colorsound.ui.screens.world.WorldScreenVM
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.ui.vm.service.*
@@ -39,6 +40,7 @@ fun ColorSoundApp() {
     val playSoundService: PlaySoundService = viewModel(factory = PlaySoundService.Factory)
     val worldService: WorldService = viewModel(factory = WorldService.Factory)
     val upLoadSoundService: UpLoadSoundService = viewModel(factory = UpLoadSoundService.Factory)
+    val settingService: SettingService = viewModel(factory = SettingService.Factory)
 
     val saveSoundDialogData by getDataService.saveSoundDialogData.collectAsState()
     val localSoundListData by getDataService.localSoundListData.collectAsState()
@@ -48,6 +50,7 @@ fun ColorSoundApp() {
     val maskData by getDataService.maskData.collectAsState()
     val playSoundData by getDataService.playSoundData.collectAsState()
     val worldColorData by getDataService.worldColorData.collectAsState()
+    val configData by getDataService.config.collectAsState()
 
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
     val askPermission by lazy {
@@ -120,6 +123,8 @@ fun ColorSoundApp() {
                 chooseColor = { worldService.updateChoice(it) },
                 listState = worldData.listState,
                 isPlayingPaused = playSoundData.isPaused,
+            ), settingsScreenVM = SettingsScreenVM(
+                configData.isRepeatPlay, settingService::onIsRepeatPlayChanged
             )
         )
 

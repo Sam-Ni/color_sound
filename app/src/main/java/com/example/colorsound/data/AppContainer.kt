@@ -1,11 +1,13 @@
 package com.example.colorsound.data
 
+import android.content.SharedPreferences
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.data.remote.RemoteRepository
 import com.example.colorsound.data.remote.impl.NetworkRepository
 import com.example.colorsound.network.ColorApiService
 import com.example.colorsound.ui.vm.data.*
 import com.example.colorsound.util.BASE_URL
+import com.example.colorsound.util.ConfigName
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
@@ -15,6 +17,7 @@ import retrofit2.Retrofit
 interface AppContainer {
     val networkRepository: RemoteRepository
     val databaseRepository: LocalRepository
+    val sharedPreferences: SharedPreferences
 }
 
 interface IDataContainer {
@@ -26,6 +29,7 @@ interface IDataContainer {
     val maskData: MutableStateFlow<MaskData>
     val playSoundData: MutableStateFlow<PlaySoundData>
     val worldColorData: MutableStateFlow<WorldColorData>
+    val configData: MutableStateFlow<ConfigData>
 }
 
 class DefaultAppContainer(
@@ -38,7 +42,23 @@ class DefaultAppContainer(
     override val maskData: MutableStateFlow<MaskData>,
     override val playSoundData: MutableStateFlow<PlaySoundData>,
     override val worldColorData: MutableStateFlow<WorldColorData>,
-) : AppContainer, IDataContainer {
+    override val sharedPreferences: SharedPreferences,
+
+    ) : AppContainer, IDataContainer {
+    override val configData: MutableStateFlow<ConfigData> by lazy {
+        if (!sharedPreferences.contains(ConfigName.isRepeatPlay)) {
+            sharedPreferences.edit().apply {
+                putBoolean(ConfigName.isRepeatPlay, false)
+                commit()
+            }
+        }
+
+        MutableStateFlow(
+            ConfigData(
+                isRepeatPlay = sharedPreferences.getBoolean(ConfigName.isRepeatPlay, false)
+            )
+        )
+    }
 
     @kotlinx.serialization.ExperimentalSerializationApi
     private val retrofit: Retrofit = Retrofit.Builder()

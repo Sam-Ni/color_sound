@@ -24,7 +24,7 @@ fun WorldScreen(
     worldScreenVM: WorldScreenVM
 ) {
     worldScreenVM.apply {
-        val colorChooseRowVM = ColorChooseRowVM(currentColor, chooseColor)
+        val colorChooseRowVM = ColorChooseRowVM(currentColor, chooseColor, canCancelSelected = true)
         val loadContentVM =
             LoadContentVM(onPlayOrPause, worldNetState, retryAction, playingSound, isPlayingPaused, listState)
 

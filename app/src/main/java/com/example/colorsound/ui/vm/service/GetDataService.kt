@@ -19,6 +19,7 @@ class GetDataService(
     private val _maskData: MutableStateFlow<MaskData>,
     private val _playSoundData: MutableStateFlow<PlaySoundData>,
     private val _worldColorData: MutableStateFlow<WorldColorData>,
+    private val _config: MutableStateFlow<ConfigData>,
 ) : ViewModel() {
 
     val saveSoundDialogData = _saveSoundDialogData.asStateFlow()
@@ -29,7 +30,7 @@ class GetDataService(
     val maskData = _maskData.asStateFlow()
     val playSoundData = _playSoundData.asStateFlow()
     val worldColorData = _worldColorData.asStateFlow()
-
+    val config = _config.asStateFlow()
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -43,6 +44,7 @@ class GetDataService(
                 val worldData = application.container.worldData
                 val playSoundData = application.container.playSoundData
                 val worldColorData = application.container.worldColorData
+                val configData = application.container.configData
                 GetDataService(
                     saveSoundDialogData,
                     localSoundListData,
@@ -52,6 +54,7 @@ class GetDataService(
                     maskData,
                     playSoundData,
                     worldColorData,
+                    configData,
                 )
             }
         }

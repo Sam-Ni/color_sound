@@ -28,13 +28,16 @@ fun ColorChooseRow(
         ) {
             for (i in 0 until COLOR_NUMBER) {
                 IconButton(
-                    onClick = { chooseColor(i) }, modifier = Modifier.weight(1f)
+                    onClick = {
+                        if (currentColor == i && canCancelSelected) chooseColor(-1)
+                        else chooseColor(i)
+                    }, modifier = Modifier.weight(1f)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.circle),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(indexToColor(i)),
-                        modifier = Modifier.size(if (currentColor == i) 60.dp else 20.dp)
+                        modifier = Modifier.size(if (currentColor == i) 60.dp else 20.dp),
                     )
                 }
             }
@@ -51,6 +54,5 @@ fun ColorRowPreview() {
 }
 
 data class ColorChooseRowVM(
-    val currentColor: Int,
-    val chooseColor: (Int) -> Unit,
+    val currentColor: Int, val chooseColor: (Int) -> Unit, val canCancelSelected: Boolean = false
 )
