@@ -41,7 +41,7 @@ class WorldService(
         viewModelScope.launch {
             worldData.update {
                 try {
-                    val result = networkRepository.getRandomSounds()
+                    val result = networkRepository.getRandomSounds(worldColorData.value.currentColor)
                     val sounds = if (it.soundsBuffer.size < 20) {
                         result.plus(it.soundsBuffer).distinctBy { sound ->  sound.url }
                     } else {

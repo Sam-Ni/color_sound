@@ -38,7 +38,8 @@ data class RecordData(
 
 data class WorldData(
     val worldNetState: WorldNetState = WorldNetState.Loading,
-    val soundsBuffer: List<Sound> = emptyList()
+    val soundsBuffer: List<Sound> = emptyList(),
+    val listState: LazyListState = LazyListState(),
 )
 
 data class MaskData(
@@ -51,6 +52,6 @@ data class PlaySoundData(
 )
 
 data class WorldColorData(
-    val currentColor: Int = 0,
+    val currentColor: Int = -1,
 )
 

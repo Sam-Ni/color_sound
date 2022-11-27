@@ -118,6 +118,7 @@ fun ColorSoundApp() {
                 playingSound = playSoundData.currentPlayingSound,
                 currentColor = worldColorData.currentColor,
                 chooseColor = { worldService.updateChoice(it) },
+                listState = worldData.listState,
                 isPlayingPaused = playSoundData.isPaused,
             )
         )

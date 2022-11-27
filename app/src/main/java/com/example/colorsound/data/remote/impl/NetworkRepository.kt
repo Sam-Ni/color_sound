@@ -14,8 +14,8 @@ import java.io.File
 class NetworkRepository(
     private val colorApiService: ColorApiService
 ) : RemoteRepository{
-    override suspend fun getRandomSounds(): List<Sound> {
-        val responseSounds =  colorApiService.getSounds()
+    override suspend fun getRandomSounds(color: Int): List<Sound> {
+        val responseSounds = if (color == -1) colorApiService.getSounds() else colorApiService.getColorSound(color)
         return if (responseSounds.status == "SUCCESS") {
             responseSounds.data
         } else { /* TODO handle failure */

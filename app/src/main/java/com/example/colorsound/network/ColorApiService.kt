@@ -22,4 +22,8 @@ interface ColorApiService {
         @Part("duration") duration: RequestBody,
         @Part("name") name: RequestBody,
     ): ResponseBody
+
+    @Multipart
+    @POST("sound/getRandomByColor")
+    suspend fun getColorSound(@Part ("color") color: Int): ResponseSounds
 }
