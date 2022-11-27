@@ -35,17 +35,24 @@ class WorldService(
 
         viewModelScope.launch {
             worldData.update {
-                it.copy(
-                    worldNetState = try {
-                        WorldNetState.Success(networkRepository.getRandomSounds())
-                    } catch (e: IOException) {
-                        Log.e("ColorSound", e.toString())
-                        WorldNetState.Error
-                    } catch (e: HttpException) {
-                        Log.e("ColorSound", e.toString())
-                        WorldNetState.Error
+                try {
+                    val result = networkRepository.getRandomSounds()
+                    val sounds = if (it.soundsBuffer.size < 20) {
+                        result.plus(it.soundsBuffer).distinctBy { sound ->  sound.url }
+                    } else {
+                        result.plus(it.soundsBuffer.subList(0, 10)).distinctBy { sound -> sound.url }
                     }
-                )
+                    it.copy(
+                        worldNetState = WorldNetState.Success(sounds),
+                        soundsBuffer = sounds
+                    )
+                } catch (e: IOException) {
+                    Log.e("ColorSound", e.toString())
+                    it.copy(worldNetState = WorldNetState.Error)
+                } catch (e: HttpException) {
+                    Log.e("ColorSound", e.toString())
+                    it.copy(worldNetState = WorldNetState.Error)
+                }
             }
         }
     }
