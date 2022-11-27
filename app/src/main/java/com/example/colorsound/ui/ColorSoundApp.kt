@@ -81,6 +81,7 @@ fun ColorSoundApp() {
             onDelete = localSoundListService::onDelete,
             onPush = upLoadSoundService::uploadSound,
             onUpdate = {},
+            exitHighlight = localSoundListService::exitHighlight
         )
         val coroutineScope = rememberCoroutineScope()
         val routeContentHostVM = RouteContentHostVM(

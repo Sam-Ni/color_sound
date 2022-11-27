@@ -71,8 +71,9 @@ class LocalSoundListService(
         localSoundListData.update { it.copy(soundList = soundList) }
     }
 
-    private fun exitHighlight() {
+    fun exitHighlight() {
         localSoundListData.update { it.copy(highlightMode = false, highlightSound = null) }
+        maskData.update { it.copy(isMask = false) }
     }
 
     private fun deleteAudio(fileUrl: String) {

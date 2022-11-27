@@ -35,6 +35,7 @@ fun ScreenBar(
             onDelete = onDelete,
             onPush = onPush,
             onUpdate = onUpdate,
+            exitHighlight = exitHighlight,
         )
 
         val navBtnVM = NavBtnVM(
@@ -76,5 +77,6 @@ data class ScreenBarVM(
     val onDelete: () -> Unit,
     val onPush: () -> Unit,
     val onUpdate: () -> Unit,
+    val exitHighlight: () -> Unit,
 )
 
