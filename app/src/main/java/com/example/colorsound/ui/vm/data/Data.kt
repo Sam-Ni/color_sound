@@ -59,3 +59,10 @@ data class WorldColorData(
     val currentColor: Int = -1,
 )
 
+enum class PushState {
+    Idle, Success, Failure, Uploading
+}
+
+data class OnPushResultData(
+    val result: PushState = PushState.Idle,
+)

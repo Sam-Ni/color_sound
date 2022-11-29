@@ -55,6 +55,7 @@ fun ColorSoundAppEntry() {
     val worldColorData by Injecter.getMutable<WorldColorData>().collectAsState()
     val configData by Injecter.getMutable<ConfigData>().collectAsState()
     val highlightData by Injecter.getMutable<HighlightData>().collectAsState()
+    val onPushResultData by Injecter.getMutable<OnPushResultData>().collectAsState()
 
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
     val askPermission by lazy {
@@ -98,10 +99,13 @@ fun ColorSoundAppEntry() {
                 exitHighlight()
             },
             onPush = upLoadSoundService::uploadSound,
+            onPushResult = onPushResultData.result,
             onUpdate = {},
             exitHighlight = exitHighlight,
             isPlaying = playSoundData.currentPlayingSound != null,
-            onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } })
+            onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } },
+            setUploadIdle = upLoadSoundService::setUploadIdle
+        )
         val coroutineScope = rememberCoroutineScope()
         val homeScreenVM = HomeScreenVM(
             onCardClick = { playSoundService.playOrPause(it) },

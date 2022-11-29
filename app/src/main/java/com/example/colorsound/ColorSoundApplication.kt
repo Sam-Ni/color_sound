@@ -21,7 +21,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalSerializationApi::class)
 class ColorSoundApplication : Application() {
@@ -32,7 +34,12 @@ class ColorSoundApplication : Application() {
     @ExperimentalSerializationApi
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
-        .baseUrl(BASE_URL).build()
+        .baseUrl(BASE_URL)
+        .client(OkHttpClient.Builder()
+            .readTimeout(5, TimeUnit.SECONDS)
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .build())
+        .build()
 
     @ExperimentalSerializationApi
     private val retrofitService: ColorApiService by lazy {
@@ -63,6 +70,7 @@ class ColorSoundApplication : Application() {
                 )
             )
         }
+        val onPushResultData = MutableStateFlow(OnPushResultData())
 
         Injecter.add<LocalRepository>(databaseRepository)
         Injecter.add(networkRepository)
@@ -77,6 +85,7 @@ class ColorSoundApplication : Application() {
         Injecter.add<SharedPreferences>(getSharedPreferences("data", Context.MODE_PRIVATE))
         Injecter.add(highlightData)
         Injecter.add(configData)
+        Injecter.add(onPushResultData)
 
 
         val recordService = RecordService()

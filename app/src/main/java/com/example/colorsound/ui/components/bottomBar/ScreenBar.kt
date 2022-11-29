@@ -1,6 +1,7 @@
 package com.example.colorsound.ui.components.bottomBar
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.BottomAppBar
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.colorsound.ui.RouteDestination
 import com.example.colorsound.ui.Home
+import com.example.colorsound.ui.vm.data.PushState
 import com.example.colorsound.ui.vm.data.RecordState
 
 
@@ -37,6 +39,8 @@ fun ScreenBar(
             onUpdate = onUpdate,
             onLoop = onLoop,
             currentScreen = currentScreen,
+            onPushResult = onPushResult,
+            setUploadIdle = setUploadIdle
 //            exitHighlight = exitHighlight,
         )
 
@@ -86,5 +90,7 @@ data class ScreenBarVM(
     val exitHighlight: () -> Unit,
     val isPlaying: Boolean = false,
     val onLoop: () -> Unit,
+    val onPushResult: PushState,
+    val setUploadIdle: () -> Unit,
 )
 
