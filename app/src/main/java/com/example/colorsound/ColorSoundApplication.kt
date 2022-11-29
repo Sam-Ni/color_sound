@@ -2,12 +2,15 @@ package com.example.colorsound
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
+import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.data.local.impl.DatabaseRepository
 import com.example.colorsound.data.remote.RemoteRepository
 import com.example.colorsound.data.remote.impl.NetworkRepository
 import com.example.colorsound.database.ColorSoundDatabase
 import com.example.colorsound.network.ColorApiService
 import com.example.colorsound.ui.vm.data.*
+import com.example.colorsound.ui.vm.service.*
 import com.example.colorsound.util.BASE_URL
 import com.example.colorsound.util.ConfigName
 import com.example.colorsound.util.Injecter
@@ -55,24 +58,42 @@ class ColorSoundApplication : Application() {
         val configData: MutableStateFlow<ConfigData> by lazy {
             MutableStateFlow(
                 ConfigData(
-                    isRepeatPlay = sharedPreferences.getBoolean(ConfigName.isRepeatPlay, false)
+                    isRepeatPlay = sharedPreferences.getBoolean(ConfigName.isRepeatPlay, false),
+                    fileDir = applicationContext.filesDir.path
                 )
             )
         }
 
-        Injecter.add("FilesDir", applicationContext.filesDir.path)
-        Injecter.add("DatabaseRepository", databaseRepository)
-        Injecter.add("NetworkRepository", networkRepository)
-        Injecter.add("LocalSoundListData", localSoundListData)
-        Injecter.add("SaveSoundDialogData", saveSoundDialogData)
-        Injecter.add("SearchBarData", searchBarData)
-        Injecter.add("RecordData", recordData)
-        Injecter.add("WorldData", worldData)
-        Injecter.add("MaskData", maskData)
-        Injecter.add("PlaySoundData", playSoundData)
-        Injecter.add("WorldColorData", worldColorData)
-        Injecter.add("SharedPreferences",  getSharedPreferences("data", Context.MODE_PRIVATE))
-        Injecter.add("HighlightData", highlightData)
-        Injecter.add("ConfigData", configData)
+        Injecter.add<LocalRepository>(databaseRepository)
+        Injecter.add(networkRepository)
+        Injecter.add(localSoundListData)
+        Injecter.add(saveSoundDialogData)
+        Injecter.add(searchBarData)
+        Injecter.add(recordData)
+        Injecter.add(worldData)
+        Injecter.add(maskData)
+        Injecter.add(playSoundData)
+        Injecter.add(worldColorData)
+        Injecter.add<SharedPreferences>(getSharedPreferences("data", Context.MODE_PRIVATE))
+        Injecter.add(highlightData)
+        Injecter.add(configData)
+
+
+        val recordService = RecordService()
+        val localSoundListService = LocalSoundListService()
+        val playSoundService = PlaySoundService()
+        val worldService = WorldService()
+        val upLoadSoundService = UpLoadSoundService()
+        val settingService = SettingService()
+        val remoteSoundListService = RemoteSoundListService()
+
+
+        Injecter.addService(recordService)
+        Injecter.addService(localSoundListService)
+        Injecter.addService(playSoundService)
+        Injecter.addService(worldService)
+        Injecter.addService(upLoadSoundService)
+        Injecter.addService(settingService)
+        Injecter.addService(remoteSoundListService)
     }
 }

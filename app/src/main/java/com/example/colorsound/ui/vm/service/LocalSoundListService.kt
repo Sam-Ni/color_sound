@@ -1,11 +1,7 @@
 package com.example.colorsound.ui.vm.service
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.vm.data.HighlightData
@@ -14,20 +10,16 @@ import com.example.colorsound.ui.vm.data.MaskData
 import com.example.colorsound.ui.vm.data.SearchBarData
 import com.example.colorsound.util.Injecter
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 
 class LocalSoundListService : ViewModel() {
-    private val repository: LocalRepository = Injecter.get("DatabaseRepository")
-    private val maskData: MutableStateFlow<MaskData> = Injecter.get("MaskData")
-    private val localSoundListData: MutableStateFlow<LocalSoundListData> =
-        Injecter.get("LocalSoundListData")
-    private val searchBarData: MutableStateFlow<SearchBarData> =
-        Injecter.get("SearchBarData")
-    private val highlightData: MutableStateFlow<HighlightData> =
-        Injecter.get("HighlightData")
+    private val repository = Injecter.get<LocalRepository>()
+    private val maskData = Injecter.getMutable<MaskData>()
+    private val localSoundListData = Injecter.getMutable<LocalSoundListData>()
+    private val searchBarData = Injecter.getMutable<SearchBarData>()
+    private val highlightData = Injecter.getMutable<HighlightData>()
 
     init {
         freshLocalSoundsList()

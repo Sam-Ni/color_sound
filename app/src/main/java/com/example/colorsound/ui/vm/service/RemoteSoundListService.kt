@@ -8,10 +8,9 @@ import com.example.colorsound.util.Injecter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-class RemoteSoundListService: ViewModel() {
-    private val maskData: MutableStateFlow<MaskData> = Injecter.get("MaskData")
-    private val highlightData: MutableStateFlow<HighlightData> =
-        Injecter.get("HighlightData")
+class RemoteSoundListService : ViewModel() {
+    private val maskData = Injecter.getMutable<MaskData>()
+    private val highlightData = Injecter.getMutable<HighlightData>()
 
     private fun updateHighlightMode(mode: Boolean, sound: Sound) {
         highlightData.update { it.copy(highlightMode = mode, highlightSound = sound) }

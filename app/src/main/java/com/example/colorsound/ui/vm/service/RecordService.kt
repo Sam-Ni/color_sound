@@ -3,17 +3,11 @@ package com.example.colorsound.ui.vm.service
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.vm.data.*
 import com.example.colorsound.util.Injecter
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -24,14 +18,12 @@ import java.util.*
 class RecordService : ViewModel() {
     private var recorder: MediaRecorder? = null
     private lateinit var filePath: String
-    private val filesDir: String = Injecter.get("FilesDir")
-    private val repository: LocalRepository = Injecter.get("DatabaseRepository")
-    private val recordData: MutableStateFlow<RecordData> = Injecter.get("RecordData")
-    private val dialogData: MutableStateFlow<SaveSoundDialogData> =
-        Injecter.get("SaveSoundDialogData")
-    private val maskData: MutableStateFlow<MaskData> = Injecter.get("MaskData")
-    private val listData: MutableStateFlow<LocalSoundListData> =
-        Injecter.get("LocalSoundListData")
+    private val configData = Injecter.getMutable<ConfigData>()
+    private val repository = Injecter.get<LocalRepository>()
+    private val recordData = Injecter.getMutable<RecordData>()
+    private val dialogData = Injecter.getMutable<SaveSoundDialogData>()
+    private val maskData = Injecter.getMutable<MaskData>()
+    private val listData = Injecter.getMutable<LocalSoundListData>()
 
     fun onSaveClick() {
         dialogData.update { it.copy(showSaveDialog = false) }
@@ -136,7 +128,7 @@ class RecordService : ViewModel() {
     }
 
     private fun generateFilePath(): String {
-        filePath = filesDir + File.separator + UUID.randomUUID() + ".mp3"
+        filePath = configData.value.fileDir + File.separator + UUID.randomUUID() + ".mp3"
         return filePath
     }
 

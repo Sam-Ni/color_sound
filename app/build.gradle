@@ -93,4 +93,7 @@ dependencies {
     // room
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    //reflection
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.21")
 }

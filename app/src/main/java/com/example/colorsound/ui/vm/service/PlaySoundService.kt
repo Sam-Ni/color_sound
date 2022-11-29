@@ -7,13 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.vm.data.PlaySoundData
 import com.example.colorsound.util.Injecter
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PlaySoundService : ViewModel() {
-    private val playSoundData: MutableStateFlow<PlaySoundData> =
-        Injecter.get("PlaySoundData")
+    private val playSoundData = Injecter.getMutable<PlaySoundData>()
 
     private val mediaPlayer by lazy {
         MediaPlayer().apply {

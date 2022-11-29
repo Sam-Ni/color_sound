@@ -8,18 +8,15 @@ import com.example.colorsound.ui.vm.data.WorldColorData
 import com.example.colorsound.ui.vm.data.WorldData
 import com.example.colorsound.ui.vm.data.WorldNetState
 import com.example.colorsound.util.Injecter
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class WorldService(
-
-) : ViewModel() {
-    private val worldData: MutableStateFlow<WorldData> = Injecter.get("WorldData")
-    private val networkRepository: RemoteRepository = Injecter.get("NetworkRepository")
-    private val worldColorData: MutableStateFlow<WorldColorData> = Injecter.get("WorldColorData")
+class WorldService : ViewModel() {
+    private val worldData = Injecter.getMutable<WorldData>()
+    private val networkRepository = Injecter.get<RemoteRepository>()
+    private val worldColorData = Injecter.getMutable<WorldColorData>()
 
     init {
         getRandomSounds()
