@@ -65,8 +65,10 @@ fun ColorSoundApp() {
     ColorSoundTheme {
         val systemUiController = rememberSystemUiController()
         systemUiController.setStatusBarColor(
-            MaterialTheme.colorScheme.background, darkIcons = !isSystemInDarkTheme()
+            MaterialTheme.colorScheme.background,
+            darkIcons = !isSystemInDarkTheme()
         )
+
         val navController = rememberNavController()
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination

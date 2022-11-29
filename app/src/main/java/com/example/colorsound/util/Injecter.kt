@@ -6,7 +6,6 @@ import kotlin.reflect.typeOf
 
 object Injecter {
     val container: MutableMap<KType, Any> = HashMap()
-    val serviceContainer: MutableMap<KType, Any> = HashMap()
 
     inline fun <reified T : Any> add(obj: T) {
         container[typeOf<T>()] = obj
@@ -20,6 +19,9 @@ object Injecter {
         return container[typeOf<MutableStateFlow<T>>()] as MutableStateFlow<T>
     }
 
+    //service
+
+    val serviceContainer: MutableMap<KType, Any> = HashMap()
 
     inline fun <reified T : Any> addService(obj: T) {
         serviceContainer[typeOf<T>()] = obj

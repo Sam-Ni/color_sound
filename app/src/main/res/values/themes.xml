@@ -2,6 +2,6 @@
 <resources>
 
     <style name="Theme.ColorSound" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/purple_700</item>
+        <item name="android:previewImage">@drawable/front_app_icon</item>
     </style>
 </resources>
