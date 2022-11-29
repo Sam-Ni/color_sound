@@ -1,6 +1,9 @@
 package com.example.colorsound.ui
 
 import android.Manifest
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,10 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -22,6 +22,7 @@ import com.example.colorsound.ui.components.bottomBar.ScreenBar
 import com.example.colorsound.ui.components.bottomBar.ScreenBarVM
 import com.example.colorsound.ui.screens.home.HomeScreenVM
 import com.example.colorsound.ui.screens.settings.SettingsScreenVM
+import com.example.colorsound.ui.screens.splash.SplashScreen
 import com.example.colorsound.ui.screens.world.WorldScreenVM
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.ui.vm.data.*
@@ -31,10 +32,11 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
-fun ColorSoundApp() {
+fun ColorSoundAppEntry() {
     val recordService = Injecter.getService<RecordService>()
     val localSoundListService = Injecter.getService<LocalSoundListService>()
     val playSoundService = Injecter.getService<PlaySoundService>()
@@ -166,6 +168,25 @@ fun ColorSoundApp() {
                 ) {}
             }
         }
+    }
+}
+
+@Composable
+fun ColorSoundApp() {
+    var launching by remember {
+        mutableStateOf(true)
+    }
+    LaunchedEffect(key1 = Unit) {
+        delay(1000)
+        launching = false
+    }
+    ColorSoundAppEntry()
+    AnimatedVisibility(
+        visible = launching,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        SplashScreen()
     }
 }
 

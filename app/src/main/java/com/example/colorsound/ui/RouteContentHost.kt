@@ -10,6 +10,7 @@ import com.example.colorsound.ui.screens.home.HomeScreen
 import com.example.colorsound.ui.screens.home.HomeScreenVM
 import com.example.colorsound.ui.screens.settings.SettingsScreen
 import com.example.colorsound.ui.screens.settings.SettingsScreenVM
+import com.example.colorsound.ui.screens.splash.SplashScreen
 import com.example.colorsound.ui.screens.world.WorldScreen
 import com.example.colorsound.ui.screens.world.WorldScreenVM
 
