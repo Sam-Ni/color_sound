@@ -22,8 +22,6 @@ import retrofit2.Retrofit
 
 @OptIn(ExperimentalSerializationApi::class)
 class ColorSoundApplication : Application() {
-    private var injecter: Injecter = Injecter.instance()
-
     private val applicationScope = CoroutineScope(SupervisorJob())
     private val database by lazy { ColorSoundDatabase.getDatabase(this, applicationScope) }
     private val databaseRepository by lazy { DatabaseRepository(database.soundDao()) }
@@ -62,19 +60,19 @@ class ColorSoundApplication : Application() {
             )
         }
 
-        injecter.add("FilesDir", applicationContext.filesDir.path)
-        injecter.add("DatabaseRepository", databaseRepository)
-        injecter.add("NetworkRepository", networkRepository)
-        injecter.add("LocalSoundListData", localSoundListData)
-        injecter.add("SaveSoundDialogData", saveSoundDialogData)
-        injecter.add("SearchBarData", searchBarData)
-        injecter.add("RecordData", recordData)
-        injecter.add("WorldData", worldData)
-        injecter.add("MaskData", maskData)
-        injecter.add("PlaySoundData", playSoundData)
-        injecter.add("WorldColorData", worldColorData)
-        injecter.add("SharedPreferences",  getSharedPreferences("data", Context.MODE_PRIVATE))
-        injecter.add("HighlightData", highlightData)
-        injecter.add("ConfigData", configData)
+        Injecter.add("FilesDir", applicationContext.filesDir.path)
+        Injecter.add("DatabaseRepository", databaseRepository)
+        Injecter.add("NetworkRepository", networkRepository)
+        Injecter.add("LocalSoundListData", localSoundListData)
+        Injecter.add("SaveSoundDialogData", saveSoundDialogData)
+        Injecter.add("SearchBarData", searchBarData)
+        Injecter.add("RecordData", recordData)
+        Injecter.add("WorldData", worldData)
+        Injecter.add("MaskData", maskData)
+        Injecter.add("PlaySoundData", playSoundData)
+        Injecter.add("WorldColorData", worldColorData)
+        Injecter.add("SharedPreferences",  getSharedPreferences("data", Context.MODE_PRIVATE))
+        Injecter.add("HighlightData", highlightData)
+        Injecter.add("ConfigData", configData)
     }
 }

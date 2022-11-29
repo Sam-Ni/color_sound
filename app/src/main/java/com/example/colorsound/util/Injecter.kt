@@ -1,6 +1,8 @@
 package com.example.colorsound.util
 
-class Injecter private constructor(private val container: MutableMap<String, Any>) {
+object Injecter {
+    private val container: MutableMap<String, Any> = HashMap()
+
     fun add(label: String, obj: Any) {
         container[label] = obj
     }
@@ -9,13 +11,4 @@ class Injecter private constructor(private val container: MutableMap<String, Any
         val obj = container[label]
         return obj as T
     }
-
-    companion object {
-        fun instance() = Helper.instance
-    }
-
-    private object Helper {
-        val instance = Injecter(HashMap())
-    }
-
 }

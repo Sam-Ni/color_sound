@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 class SettingService: ViewModel() {
-    private val sharedPreferences: SharedPreferences = Injecter.instance().get("SharedPreferences")
-    private val config: MutableStateFlow<ConfigData> = Injecter.instance().get("ConfigData")
+    private val sharedPreferences: SharedPreferences = Injecter.get("SharedPreferences")
+    private val config: MutableStateFlow<ConfigData> = Injecter.get("ConfigData")
 
     fun onIsRepeatPlayChanged(value: Boolean) {
         config.update { it.copy(isRepeatPlay = value) } //先更新config，驱动UI更新

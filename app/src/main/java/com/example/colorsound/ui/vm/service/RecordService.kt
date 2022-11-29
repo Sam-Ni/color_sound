@@ -24,14 +24,14 @@ import java.util.*
 class RecordService : ViewModel() {
     private var recorder: MediaRecorder? = null
     private lateinit var filePath: String
-    private val filesDir: String = Injecter.instance().get("FilesDir")
-    private val repository: LocalRepository = Injecter.instance().get("DatabaseRepository")
-    private val recordData: MutableStateFlow<RecordData> = Injecter.instance().get("RecordData")
+    private val filesDir: String = Injecter.get("FilesDir")
+    private val repository: LocalRepository = Injecter.get("DatabaseRepository")
+    private val recordData: MutableStateFlow<RecordData> = Injecter.get("RecordData")
     private val dialogData: MutableStateFlow<SaveSoundDialogData> =
-        Injecter.instance().get("SaveSoundDialogData")
-    private val maskData: MutableStateFlow<MaskData> = Injecter.instance().get("MaskData")
+        Injecter.get("SaveSoundDialogData")
+    private val maskData: MutableStateFlow<MaskData> = Injecter.get("MaskData")
     private val listData: MutableStateFlow<LocalSoundListData> =
-        Injecter.instance().get("LocalSoundListData")
+        Injecter.get("LocalSoundListData")
 
     fun onSaveClick() {
         dialogData.update { it.copy(showSaveDialog = false) }

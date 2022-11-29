@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class PlaySoundService : ViewModel() {
     private val playSoundData: MutableStateFlow<PlaySoundData> =
-        Injecter.instance().get("PlaySoundData")
+        Injecter.get("PlaySoundData")
 
     private val mediaPlayer by lazy {
         MediaPlayer().apply {

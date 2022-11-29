@@ -11,10 +11,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UpLoadSoundService : ViewModel() {
-    private val networkRepository: RemoteRepository = Injecter.instance().get("NetworkRepository")
-    private val maskData: MutableStateFlow<MaskData> = Injecter.instance().get("MaskData")
-    private val highlightData: MutableStateFlow<HighlightData> =
-        Injecter.instance().get("HighlightData")
+    private val networkRepository: RemoteRepository = Injecter.get("NetworkRepository")
+    private val maskData: MutableStateFlow<MaskData> = Injecter.get("MaskData")
+    private val highlightData: MutableStateFlow<HighlightData> = Injecter.get("HighlightData")
 
     fun uploadSound() {
         viewModelScope.launch {

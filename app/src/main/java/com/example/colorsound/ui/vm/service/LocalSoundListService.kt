@@ -20,14 +20,14 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class LocalSoundListService : ViewModel() {
-    private val repository: LocalRepository = Injecter.instance().get("DatabaseRepository")
-    private val maskData: MutableStateFlow<MaskData> = Injecter.instance().get("MaskData")
+    private val repository: LocalRepository = Injecter.get("DatabaseRepository")
+    private val maskData: MutableStateFlow<MaskData> = Injecter.get("MaskData")
     private val localSoundListData: MutableStateFlow<LocalSoundListData> =
-        Injecter.instance().get("LocalSoundListData")
+        Injecter.get("LocalSoundListData")
     private val searchBarData: MutableStateFlow<SearchBarData> =
-        Injecter.instance().get("SearchBarData")
+        Injecter.get("SearchBarData")
     private val highlightData: MutableStateFlow<HighlightData> =
-        Injecter.instance().get("HighlightData")
+        Injecter.get("HighlightData")
 
     init {
         freshLocalSoundsList()

@@ -17,10 +17,9 @@ import java.io.IOException
 class WorldService(
 
 ) : ViewModel() {
-    private val worldData: MutableStateFlow<WorldData> = Injecter.instance().get("WorldData")
-    private val networkRepository: RemoteRepository = Injecter.instance().get("NetworkRepository")
-    private val worldColorData: MutableStateFlow<WorldColorData> =
-        Injecter.instance().get("WorldColorData")
+    private val worldData: MutableStateFlow<WorldData> = Injecter.get("WorldData")
+    private val networkRepository: RemoteRepository = Injecter.get("NetworkRepository")
+    private val worldColorData: MutableStateFlow<WorldColorData> = Injecter.get("WorldColorData")
 
     init {
         getRandomSounds()
