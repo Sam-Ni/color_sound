@@ -8,12 +8,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -32,6 +31,14 @@ import com.example.colorsound.util.SoundInfoFactory
 import com.example.colorsound.util.indexToBackColor
 import com.example.colorsound.util.indexToColor
 
+data class SoundCardVM(
+    val soundInfo: Sound,
+    val onClick: (Sound) -> Unit,
+    val onLongClick: (Sound) -> Unit,
+    val isHighlight: Boolean = false,
+    val isPlaying: Boolean = false,
+    val isPlayingPaused: Boolean = false,
+)
 
 @OptIn(
     ExperimentalFoundationApi::class
@@ -44,6 +51,7 @@ fun SoundCard(
     soundCardVM.apply {
         val isSystemInDarkTheme = isSystemInDarkTheme()
 
+        //高亮动画
         val transition = updateTransition(isHighlight, label = "2")
         val elevation by transition.animateDp(label = "2") {
             if (it) 20.dp
@@ -58,6 +66,7 @@ fun SoundCard(
             else MaterialTheme.colorScheme.onSurface
         }
 
+        //播放动画
         val transition2 = updateTransition(isPlaying, label = "1")
         val fontSize by transition2.animateFloat(
             label = "1",
@@ -78,66 +87,76 @@ fun SoundCard(
             else 180.dp
         }
 
-        Card(
-            modifier = modifier.padding(
-                start = 20.dp, top = 10.dp, bottom = 15.dp, end = 20.dp
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = elevation),
-        ) {
-            Row(
-                modifier = Modifier
-                    .background(backColor)
-                    .clip(RoundedCornerShape(20.dp))
-                    .combinedClickable(
-                        onClick = { onPlayOrPause(soundInfo) },
-                        onLongClick = { onLongClick(soundInfo) },
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(
-                            radius = 300.dp,
-                            color = indexToBackColor(soundInfo.color, isSystemInDarkTheme),
-                            bounded = true
-                        )
-                    ),
+        //触摸动画 TODO
+        var isTouched by remember { mutableStateOf(false) }
+        val transition3 = updateTransition(isTouched, label = "2")
+        val contentSize by transition3.animateFloat(label = "2", transitionSpec = { spring(Spring.DampingRatioNoBouncy, Spring.StiffnessMedium) }) {
+            if (it) 0.9f
+            else 1f
+        }
+
+        Row(modifier = modifier.padding(
+            start = 20.dp, top = 10.dp, bottom = 15.dp, end = 20.dp
+        )) {
+            Card(
+                modifier = modifier.scale(contentSize),
+                elevation = CardDefaults.cardElevation(defaultElevation = elevation),
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(
+                    modifier = Modifier
+                        .background(backColor)
+                        .clip(RoundedCornerShape(20.dp))
+                        .combinedClickable(
+                            onClick = { onClick(soundInfo) },
+                            onLongClick = { onLongClick(soundInfo) },
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = rememberRipple(
+                                radius = 300.dp,
+                                color = indexToBackColor(soundInfo.color, isSystemInDarkTheme),
+                                bounded = true
+                            )
+                        ),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(
                         start = 12.dp, top = 20.dp, bottom = 20.dp, end = 12.dp
                     )
-                ) {
-                    ColorCircle(soundInfo.color)
-                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Row {
-                            SoundName(
-                                name = soundInfo.name,
-                                frontColor,
-                                fontSize = fontSize.sp,
-                                width = nameWidth
-                            )
-                        }
-                        Row {
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                        Row(
-                            modifier = Modifier.animateContentSize(
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessMedium
+                    ) {
+                        ColorCircle(soundInfo.color)
+                        Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row {
+                                SoundName(
+                                    name = soundInfo.name,
+                                    frontColor,
+                                    fontSize = fontSize.sp,
+                                    width = nameWidth
                                 )
-                            )
-                        ) {
-                            if (isPlaying) {
-                                Text(text = if (!isPlayingPaused) "正在播放..." else "暂停", color = frontColor)
-                                Spacer(modifier = Modifier.height(48.dp))
                             }
-                        }
-                        Row {
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                        Row {
-                            Spacer(modifier = Modifier.weight(1f))
-                            SoundDuration(duration = soundInfo.duration, frontColor)
-                            SoundCreateTime(createTime = soundInfo.getDate(), frontColor)
+                            Row {
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                            Row(
+                                modifier = Modifier.animateContentSize(
+                                    animationSpec = spring(
+                                        dampingRatio = Spring.DampingRatioNoBouncy,
+                                        stiffness = Spring.StiffnessMedium
+                                    )
+                                )
+                            ) {
+                                if (isPlaying) {
+                                    Text(text = if (!isPlayingPaused) "正在播放..." else "暂停", color = frontColor)
+                                    Spacer(modifier = Modifier.height(48.dp))
+                                }
+                            }
+                            Row {
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                            Row {
+                                Spacer(modifier = Modifier.weight(1f))
+                                SoundDuration(duration = soundInfo.duration, frontColor)
+                                SoundCreateTime(createTime = soundInfo.getDate(), frontColor)
+                            }
                         }
                     }
                 }
@@ -147,7 +166,7 @@ fun SoundCard(
 }
 
 private fun Sound.getDate(): String {
-    return this.createTime.substring(0 .. 9)
+    return this.createTime.substring(0..9)
 }
 
 @Composable
@@ -203,7 +222,7 @@ fun SoundCardPreview() {
         SoundCard(
             SoundCardVM(
                 soundInfo = SoundInfoFactory(),
-                onPlayOrPause = { },
+                onClick = { },
                 onLongClick = {},
                 isPlaying = true
             ),
@@ -212,11 +231,3 @@ fun SoundCardPreview() {
     }
 }
 
-data class SoundCardVM(
-    val soundInfo: Sound,
-    val onPlayOrPause: (Sound) -> Unit,
-    val onLongClick: (Sound) -> Unit,
-    val isHighlight: Boolean = false,
-    val isPlaying: Boolean = false,
-    val isPlayingPaused: Boolean = false,
-)

@@ -32,10 +32,10 @@ fun SoundList(
             items(items = soundList, key = { it.url }) { item ->
                 val soundCardVM = SoundCardVM(
                     soundInfo = item,
-                    onPlayOrPause = onPlayOrPause,
-                    onLongClick = onLongClick,
-                    isHighlight = if (highlightSound != null) item.url == highlightSound.url else false,
-                    isPlaying = if (playingSound != null) item.url == playingSound.url else false,
+                    onClick = onCardClick,
+                    onLongClick = onCardLongClick,
+                    isHighlight = if (currentHighlightSound != null) item.url == currentHighlightSound.url else false,
+                    isPlaying = if (currentPlayingSound != null) item.url == currentPlayingSound.url else false,
                     isPlayingPaused = isPlayingPaused
                 )
                 SoundCard(
@@ -56,10 +56,10 @@ fun SoundListPreview() {
         SoundList(
             SoundCardListVM(LazyListState(),
                 soundList = DataSource.soundList,
-                onPlayOrPause = { _ -> },
-                onLongClick = {},
-                highlightSound = null,
-                playingSound = null,
+                onCardClick = { _ -> },
+                onCardLongClick = {},
+                currentHighlightSound = null,
+                currentPlayingSound = null,
                 isPlayingPaused = false
             )
         )
@@ -73,10 +73,10 @@ fun DarkSoundListPreview() {
         SoundList(
             SoundCardListVM(LazyListState(),
                 soundList = DataSource.soundList,
-                onPlayOrPause = { _ -> },
-                onLongClick = {},
-                highlightSound = null,
-                playingSound = null,
+                onCardClick = { _ -> },
+                onCardLongClick = {},
+                currentHighlightSound = null,
+                currentPlayingSound = null,
                 isPlayingPaused = false
             )
         )
@@ -86,9 +86,9 @@ fun DarkSoundListPreview() {
 data class SoundCardListVM(
     val listState: LazyListState,
     val soundList: List<Sound> = DataSource.soundList,
-    val onPlayOrPause: (Sound) -> Unit,
-    val onLongClick: (Sound) -> Unit,
-    val highlightSound: Sound?,
-    val playingSound: Sound?,
+    val onCardClick: (Sound) -> Unit,
+    val onCardLongClick: (Sound) -> Unit,
+    val currentHighlightSound: Sound?,
+    val currentPlayingSound: Sound?,
     val isPlayingPaused: Boolean,
 )

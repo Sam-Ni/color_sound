@@ -49,10 +49,10 @@ fun LoadContent(
                 val soundCardListVM = SoundCardListVM(
                     listState = listState,
                     soundList = sounds,
-                    onPlayOrPause = onPlayOrPause,
-                    onLongClick = onCardLongClick,
-                    highlightSound = highlightSound,
-                    playingSound = playingSound,
+                    onCardClick = onPlayOrPause,
+                    onCardLongClick = onCardLongClick,
+                    currentHighlightSound = highlightSound,
+                    currentPlayingSound = playingSound,
                     isPlayingPaused = isPlayingPaused
                 )
                 SwipeRefresh(

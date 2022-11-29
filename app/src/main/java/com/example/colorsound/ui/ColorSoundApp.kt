@@ -45,21 +45,21 @@ fun ColorSoundApp() {
     val remoteSoundListService = RemoteSoundListService()
 
     val saveSoundDialogData by Injecter.get<MutableStateFlow<SaveSoundDialogData>>("SaveSoundDialogData")
-        .collectAsState()
+            .collectAsState()
     val localSoundListData by Injecter.get<MutableStateFlow<LocalSoundListData>>("LocalSoundListData")
-        .collectAsState()
+            .collectAsState()
     val worldData by Injecter.get<MutableStateFlow<WorldData>>("WorldData").collectAsState()
     val recordData by Injecter.get<MutableStateFlow<RecordData>>("RecordData").collectAsState()
     val searchBarData by Injecter.get<MutableStateFlow<SearchBarData>>("SearchBarData")
-        .collectAsState()
+            .collectAsState()
     val maskData by Injecter.get<MutableStateFlow<MaskData>>("MaskData").collectAsState()
     val playSoundData by Injecter.get<MutableStateFlow<PlaySoundData>>("PlaySoundData")
-        .collectAsState()
+            .collectAsState()
     val worldColorData by Injecter.get<MutableStateFlow<WorldColorData>>("WorldColorData")
-        .collectAsState()
+            .collectAsState()
     val configData by Injecter.get<MutableStateFlow<ConfigData>>("ConfigData").collectAsState()
     val highlightData by Injecter.get<MutableStateFlow<HighlightData>>("HighlightData")
-        .collectAsState()
+            .collectAsState()
 
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
     val askPermission by lazy {
@@ -72,43 +72,42 @@ fun ColorSoundApp() {
     ColorSoundTheme {
         val systemUiController = rememberSystemUiController()
         systemUiController.setStatusBarColor(
-            MaterialTheme.colorScheme.background, darkIcons = !isSystemInDarkTheme()
+                MaterialTheme.colorScheme.background, darkIcons = !isSystemInDarkTheme()
         )
         val navController = rememberNavController()
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
         val currentScreen =
-            colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
+                colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
 
         val exitHighlight = {
             localSoundListService.exitHighlight()
             playSoundService.restorePlayerConfig()
         }
         val screenBarVM = ScreenBarVM(allScreen = colorSoundTabRowScreens,
-            onTabSelected = { newScreen ->
-                navController.navigateSingleTopTo(newScreen.route)
-            },
-            currentScreen = currentScreen,
-            onClick = recordService::onRecordBtnClick,
-            onLongClick = recordService::onRecordBtnLongClick,
-            recordState = recordData.recordState,
-            isGranted = isGranted,
-            askPermission = askPermission,
-            isHighlightMode = highlightData.highlightMode,
-            onDelete = {
-                playSoundData.currentPlayingSound?.let { playSoundService.stopPlayIfSoundIs(it) }
-                localSoundListService.onDelete()
-                exitHighlight()
-            },
-            onPush = upLoadSoundService::uploadSound,
-            onUpdate = {},
-            exitHighlight = exitHighlight,
-            isPlaying = playSoundData.currentPlayingSound != null,
-            onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } })
+                onTabSelected = { newScreen ->
+                    navController.navigateSingleTopTo(newScreen.route)
+                },
+                currentScreen = currentScreen,
+                onClick = recordService::onRecordBtnClick,
+                onLongClick = recordService::onRecordBtnLongClick,
+                recordState = recordData.recordState,
+                isGranted = isGranted,
+                askPermission = askPermission,
+                isHighlightMode = highlightData.highlightMode,
+                onDelete = {
+                    playSoundData.currentPlayingSound?.let { playSoundService.stopPlayIfSoundIs(it) }
+                    localSoundListService.onDelete()
+                    exitHighlight()
+                },
+                onPush = upLoadSoundService::uploadSound,
+                onUpdate = {},
+                exitHighlight = exitHighlight,
+                isPlaying = playSoundData.currentPlayingSound != null,
+                onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } })
         val coroutineScope = rememberCoroutineScope()
-        val routeContentHostVM = RouteContentHostVM(
-            navController = navController, homeScreenVM = HomeScreenVM(
-                onPlayOrPause = { playSoundService.playOrPause(it) },
+        val homeScreenVM = HomeScreenVM(
+                onCardClick = { playSoundService.playOrPause(it) },
                 onCardLongClick = { sound: Sound ->
                     playSoundService.stopPlayIfSoundIs(sound)
                     localSoundListService.onCardLongClick(sound)
@@ -124,13 +123,15 @@ fun ColorSoundApp() {
                 searchBarText = searchBarData.search,
                 soundListState = localSoundListData.listState,
                 soundList = localSoundListData.soundList,
-                highlightSound = highlightData.highlightSound,
+                currentHighlightSound = highlightData.highlightSound,
                 isShowSaveDialog = saveSoundDialogData.showSaveDialog,
                 saveDialogSoundNameText = saveSoundDialogData.saveName,
                 saveDialogChosenColor = saveSoundDialogData.color,
-                playingSound = playSoundData.currentPlayingSound,
+                currentPlayingSound = playSoundData.currentPlayingSound,
                 isPlayingPaused = playSoundData.isPaused,
-            ), worldScreenVM = WorldScreenVM(
+        )
+
+        val worldScreenVM = WorldScreenVM(
                 worldNetState = worldData.worldNetState,
                 retryAction = worldService::getRandomSounds,
                 onPlayOrPause = playSoundService::playOrPause,
@@ -144,23 +145,29 @@ fun ColorSoundApp() {
                     remoteSoundListService.onCardLongClick(it)
                 },
                 highlightSound = highlightData.highlightSound,
-            ), settingsScreenVM = SettingsScreenVM(
+        )
+        val settingScreenVM = SettingsScreenVM(
                 configData.isRepeatPlay, settingService::onIsRepeatPlayChanged
-            )
+        )
+        val routeContentHostVM = RouteContentHostVM(
+                navController = navController,
+                homeScreenVM = homeScreenVM,
+                worldScreenVM = worldScreenVM,
+                settingsScreenVM = settingScreenVM
         )
 
         Scaffold(
-            bottomBar = {
-                ScreenBar(screenBarVM)
-            },
+                bottomBar = {
+                    ScreenBar(screenBarVM)
+                },
         ) { paddingValues ->
             Column {
                 RouteContentHost(routeContentHostVM, modifier = Modifier.padding(paddingValues))
             }
 
-            if (maskData.isMask) {
+            if (maskData.isMask) { //Mask
                 IconButton(
-                    enabled = false, onClick = { /*TODO*/ }, modifier = Modifier.fillMaxSize()
+                        enabled = false, onClick = { /*TODO*/ }, modifier = Modifier.fillMaxSize()
                 ) {}
             }
         }
