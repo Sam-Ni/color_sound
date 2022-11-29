@@ -12,6 +12,7 @@ import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.vm.data.*
+import com.example.colorsound.util.Injecter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,16 +21,17 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class RecordService(
-    private val filesDir: String,
-    private val repository: LocalRepository,
-    private val recordData: MutableStateFlow<RecordData>,
-    private val dialogData: MutableStateFlow<SaveSoundDialogData>,
-    private val maskData: MutableStateFlow<MaskData>,
-    private val listData: MutableStateFlow<LocalSoundListData>
-) : ViewModel() {
+class RecordService : ViewModel() {
     private var recorder: MediaRecorder? = null
     private lateinit var filePath: String
+    private val filesDir: String = Injecter.instance().get("FilesDir")
+    private val repository: LocalRepository = Injecter.instance().get("DatabaseRepository")
+    private val recordData: MutableStateFlow<RecordData> = Injecter.instance().get("RecordData")
+    private val dialogData: MutableStateFlow<SaveSoundDialogData> =
+        Injecter.instance().get("SaveSoundDialogData")
+    private val maskData: MutableStateFlow<MaskData> = Injecter.instance().get("MaskData")
+    private val listData: MutableStateFlow<LocalSoundListData> =
+        Injecter.instance().get("LocalSoundListData")
 
     fun onSaveClick() {
         dialogData.update { it.copy(showSaveDialog = false) }
@@ -166,22 +168,5 @@ class RecordService(
             release()
         }
         recorder = null
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as ColorSoundApplication)
-                val fileDir = application.filesDir
-                val repository = application.container.databaseRepository
-                val recordData = application.container.recordData
-                val maskData = application.container.maskData
-                val dialogData = application.container.saveSoundDialogData
-                val listData = application.container.localSoundListData
-                RecordService(
-                    filesDir = fileDir, repository, recordData, dialogData, maskData, listData
-                )
-            }
-        }
     }
 }

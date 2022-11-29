@@ -12,19 +12,22 @@ import com.example.colorsound.ui.vm.data.HighlightData
 import com.example.colorsound.ui.vm.data.LocalSoundListData
 import com.example.colorsound.ui.vm.data.MaskData
 import com.example.colorsound.ui.vm.data.SearchBarData
+import com.example.colorsound.util.Injecter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 
-class LocalSoundListService(
-    private val repository: LocalRepository,
-    private val maskData: MutableStateFlow<MaskData>,
-    private val localSoundListData: MutableStateFlow<LocalSoundListData>,
-    private val searchBarData: MutableStateFlow<SearchBarData>,
-    private val highlightData: MutableStateFlow<HighlightData>,
-) : ViewModel() {
+class LocalSoundListService : ViewModel() {
+    private val repository: LocalRepository = Injecter.instance().get("DatabaseRepository")
+    private val maskData: MutableStateFlow<MaskData> = Injecter.instance().get("MaskData")
+    private val localSoundListData: MutableStateFlow<LocalSoundListData> =
+        Injecter.instance().get("LocalSoundListData")
+    private val searchBarData: MutableStateFlow<SearchBarData> =
+        Injecter.instance().get("SearchBarData")
+    private val highlightData: MutableStateFlow<HighlightData> =
+        Injecter.instance().get("HighlightData")
 
     init {
         freshLocalSoundsList()
@@ -81,20 +84,5 @@ class LocalSoundListService(
     private fun deleteAudio(fileUrl: String) {
         val file = File(fileUrl)
         file.delete()
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application =
-                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as ColorSoundApplication)
-                val localSoundListData = application.container.localSoundListData
-                val maskData = application.container.maskData
-                val searchBarData = application.container.searchBarData
-                val repository = application.container.databaseRepository
-                val highlightData = application.container.highlightData
-                LocalSoundListService(repository, maskData, localSoundListData, searchBarData, highlightData)
-            }
-        }
     }
 }

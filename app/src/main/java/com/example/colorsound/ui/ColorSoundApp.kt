@@ -15,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.colorsound.model.Sound
@@ -25,36 +24,45 @@ import com.example.colorsound.ui.screens.home.HomeScreenVM
 import com.example.colorsound.ui.screens.settings.SettingsScreenVM
 import com.example.colorsound.ui.screens.world.WorldScreenVM
 import com.example.colorsound.ui.theme.ColorSoundTheme
+import com.example.colorsound.ui.vm.data.*
 import com.example.colorsound.ui.vm.service.*
+import com.example.colorsound.util.Injecter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun ColorSoundApp() {
-    val getDataService: GetDataService = viewModel(factory = GetDataService.Factory)
-    val recordService: RecordService = viewModel(factory = RecordService.Factory)
-    val localSoundListService: LocalSoundListService =
-        viewModel(factory = LocalSoundListService.Factory)
-    val playSoundService: PlaySoundService = viewModel(factory = PlaySoundService.Factory)
-    val worldService: WorldService = viewModel(factory = WorldService.Factory)
-    val upLoadSoundService: UpLoadSoundService = viewModel(factory = UpLoadSoundService.Factory)
-    val settingService: SettingService = viewModel(factory = SettingService.Factory)
-    val remoteSoundListService: RemoteSoundListService =
-        viewModel(factory = RemoteSoundListService.Factory)
+    val recordService = RecordService()
+    val localSoundListService = LocalSoundListService()
+    val playSoundService = PlaySoundService()
+    val worldService = WorldService()
+    val upLoadSoundService = UpLoadSoundService()
+    val settingService = SettingService()
+    val remoteSoundListService = RemoteSoundListService()
 
-    val saveSoundDialogData by getDataService.saveSoundDialogData.collectAsState()
-    val localSoundListData by getDataService.localSoundListData.collectAsState()
-    val worldData by getDataService.worldData.collectAsState()
-    val recordData by getDataService.recordData.collectAsState()
-    val searchBarData by getDataService.searchBarData.collectAsState()
-    val maskData by getDataService.maskData.collectAsState()
-    val playSoundData by getDataService.playSoundData.collectAsState()
-    val worldColorData by getDataService.worldColorData.collectAsState()
-    val configData by getDataService.config.collectAsState()
-    val highlightData by getDataService.highlightData.collectAsState()
+    val saveSoundDialogData by Injecter.instance()
+        .get<MutableStateFlow<SaveSoundDialogData>>("SaveSoundDialogData").collectAsState()
+    val localSoundListData by Injecter.instance()
+        .get<MutableStateFlow<LocalSoundListData>>("LocalSoundListData").collectAsState()
+    val worldData by Injecter.instance().get<MutableStateFlow<WorldData>>("WorldData")
+        .collectAsState()
+    val recordData by Injecter.instance().get<MutableStateFlow<RecordData>>("RecordData")
+        .collectAsState()
+    val searchBarData by Injecter.instance().get<MutableStateFlow<SearchBarData>>("SearchBarData")
+        .collectAsState()
+    val maskData by Injecter.instance().get<MutableStateFlow<MaskData>>("MaskData").collectAsState()
+    val playSoundData by Injecter.instance().get<MutableStateFlow<PlaySoundData>>("PlaySoundData")
+        .collectAsState()
+    val worldColorData by Injecter.instance()
+        .get<MutableStateFlow<WorldColorData>>("WorldColorData").collectAsState()
+    val configData by Injecter.instance().get<MutableStateFlow<ConfigData>>("ConfigData")
+        .collectAsState()
+    val highlightData by Injecter.instance().get<MutableStateFlow<HighlightData>>("HighlightData")
+        .collectAsState()
 
     val audioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
     val askPermission by lazy {
@@ -79,8 +87,7 @@ fun ColorSoundApp() {
             localSoundListService.exitHighlight()
             playSoundService.restorePlayerConfig()
         }
-        val screenBarVM = ScreenBarVM(
-            allScreen = colorSoundTabRowScreens,
+        val screenBarVM = ScreenBarVM(allScreen = colorSoundTabRowScreens,
             onTabSelected = { newScreen ->
                 navController.navigateSingleTopTo(newScreen.route)
             },
@@ -100,8 +107,7 @@ fun ColorSoundApp() {
             onUpdate = {},
             exitHighlight = exitHighlight,
             isPlaying = playSoundData.currentPlayingSound != null,
-            onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } }
-        )
+            onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } })
         val coroutineScope = rememberCoroutineScope()
         val routeContentHostVM = RouteContentHostVM(
             navController = navController, homeScreenVM = HomeScreenVM(

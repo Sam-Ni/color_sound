@@ -3,19 +3,18 @@ package com.example.colorsound.ui.vm.service
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.colorsound.ColorSoundApplication
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.vm.data.PlaySoundData
+import com.example.colorsound.util.Injecter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class PlaySoundService(private val playSoundData: MutableStateFlow<PlaySoundData>) : ViewModel() {
+class PlaySoundService : ViewModel() {
+    private val playSoundData: MutableStateFlow<PlaySoundData> =
+        Injecter.instance().get("PlaySoundData")
+
     private val mediaPlayer by lazy {
         MediaPlayer().apply {
             setAudioAttributes(
@@ -119,16 +118,4 @@ class PlaySoundService(private val playSoundData: MutableStateFlow<PlaySoundData
             }
         }
     }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as ColorSoundApplication)
-                val playSoundData = application.container.playSoundData
-                PlaySoundService(playSoundData)
-            }
-        }
-    }
-
-
 }
