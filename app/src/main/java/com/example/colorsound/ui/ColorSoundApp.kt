@@ -4,7 +4,9 @@ import android.Manifest
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -64,129 +67,147 @@ fun ColorSoundAppEntry() {
     }
     val isGranted = audioPermissionState.status.isGranted
 
-    ColorSoundTheme {
-        val systemUiController = rememberSystemUiController()
-        systemUiController.setStatusBarColor(
-            MaterialTheme.colorScheme.background,
-            darkIcons = !isSystemInDarkTheme()
-        )
 
-        val navController = rememberNavController()
-        val currentBackStack by navController.currentBackStackEntryAsState()
-        val currentDestination = currentBackStack?.destination
-        val currentScreen =
-            colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(
+        MaterialTheme.colorScheme.background,
+        darkIcons = !isSystemInDarkTheme()
+    )
 
-        val exitHighlight = {
-            localSoundListService.exitHighlight()
-            playSoundService.restorePlayerConfig()
+    val navController = rememberNavController()
+    val currentBackStack by navController.currentBackStackEntryAsState()
+    val currentDestination = currentBackStack?.destination
+    val currentScreen =
+        colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
+
+    val exitHighlight = {
+        localSoundListService.exitHighlight()
+        playSoundService.restorePlayerConfig()
+    }
+    val screenBarVM = ScreenBarVM(allScreen = colorSoundTabRowScreens,
+        onTabSelected = { newScreen ->
+            navController.navigateSingleTopTo(newScreen.route)
+        },
+        currentScreen = currentScreen,
+        onClick = recordService::onRecordBtnClick,
+        onLongClick = recordService::onRecordBtnLongClick,
+        recordState = recordData.recordState,
+        isGranted = isGranted,
+        askPermission = askPermission,
+        isHighlightMode = highlightData.highlightMode,
+        onDelete = {
+            playSoundData.currentPlayingSound?.let { playSoundService.stopPlayIfSoundIs(it) }
+            localSoundListService.onDelete()
+            exitHighlight()
+        },
+        onPush = upLoadSoundService::uploadSound,
+        onUpdate = {},
+        exitHighlight = exitHighlight,
+        isPlaying = playSoundData.currentPlayingSound != null,
+        onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } })
+    val coroutineScope = rememberCoroutineScope()
+    val homeScreenVM = HomeScreenVM(
+        onCardClick = { playSoundService.playOrPause(it) },
+        onCardLongClick = { sound: Sound ->
+            playSoundService.stopPlayIfSoundIs(sound)
+            localSoundListService.onCardLongClick(sound)
+        },
+        onSaveDialogSaveBtnClick = {
+            recordService.onSaveClick()
+            localSoundListService.scrollToTop(coroutineScope)
+        },
+        onSaveDialogCancelBtnClick = recordService::onCancelClick,
+        onSaveDialogSoundNameChanged = recordService::updateSaveName,
+        saveDialogChooseSoundColor = recordService::updateChoice,
+        onSearchBarValueChanged = localSoundListService::updateSearch,
+        searchBarText = searchBarData.search,
+        soundListState = localSoundListData.listState,
+        soundList = localSoundListData.soundList,
+        currentHighlightSound = highlightData.highlightSound,
+        isShowSaveDialog = saveSoundDialogData.showSaveDialog,
+        saveDialogSoundNameText = saveSoundDialogData.saveName,
+        saveDialogChosenColor = saveSoundDialogData.color,
+        currentPlayingSound = playSoundData.currentPlayingSound,
+        isPlayingPaused = playSoundData.isPaused,
+    )
+
+    val worldScreenVM = WorldScreenVM(
+        worldNetState = worldData.worldNetState,
+        retryAction = worldService::getRandomSounds,
+        onPlayOrPause = playSoundService::playOrPause,
+        playingSound = playSoundData.currentPlayingSound,
+        currentColor = worldColorData.currentColor,
+        chooseColor = { worldService.updateChoice(it) },
+        listState = worldData.listState,
+        isPlayingPaused = playSoundData.isPaused,
+        onCardLongClick = {
+            playSoundService.stopPlayIfSoundIs(it)
+            remoteSoundListService.onCardLongClick(it)
+        },
+        highlightSound = highlightData.highlightSound,
+    )
+    val settingScreenVM = SettingsScreenVM(
+        configData.isRepeatPlay, settingService::onIsRepeatPlayChanged
+    )
+    val routeContentHostVM = RouteContentHostVM(
+        navController = navController,
+        homeScreenVM = homeScreenVM,
+        worldScreenVM = worldScreenVM,
+        settingsScreenVM = settingScreenVM
+    )
+
+    Scaffold(
+        bottomBar = {
+            ScreenBar(screenBarVM)
+        },
+    ) { paddingValues ->
+        Column {
+            RouteContentHost(routeContentHostVM, modifier = Modifier.padding(paddingValues))
         }
-        val screenBarVM = ScreenBarVM(allScreen = colorSoundTabRowScreens,
-            onTabSelected = { newScreen ->
-                navController.navigateSingleTopTo(newScreen.route)
-            },
-            currentScreen = currentScreen,
-            onClick = recordService::onRecordBtnClick,
-            onLongClick = recordService::onRecordBtnLongClick,
-            recordState = recordData.recordState,
-            isGranted = isGranted,
-            askPermission = askPermission,
-            isHighlightMode = highlightData.highlightMode,
-            onDelete = {
-                playSoundData.currentPlayingSound?.let { playSoundService.stopPlayIfSoundIs(it) }
-                localSoundListService.onDelete()
-                exitHighlight()
-            },
-            onPush = upLoadSoundService::uploadSound,
-            onUpdate = {},
-            exitHighlight = exitHighlight,
-            isPlaying = playSoundData.currentPlayingSound != null,
-            onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } })
-        val coroutineScope = rememberCoroutineScope()
-        val homeScreenVM = HomeScreenVM(
-            onCardClick = { playSoundService.playOrPause(it) },
-            onCardLongClick = { sound: Sound ->
-                playSoundService.stopPlayIfSoundIs(sound)
-                localSoundListService.onCardLongClick(sound)
-            },
-            onSaveDialogSaveBtnClick = {
-                recordService.onSaveClick()
-                localSoundListService.scrollToTop(coroutineScope)
-            },
-            onSaveDialogCancelBtnClick = recordService::onCancelClick,
-            onSaveDialogSoundNameChanged = recordService::updateSaveName,
-            saveDialogChooseSoundColor = recordService::updateChoice,
-            onSearchBarValueChanged = localSoundListService::updateSearch,
-            searchBarText = searchBarData.search,
-            soundListState = localSoundListData.listState,
-            soundList = localSoundListData.soundList,
-            currentHighlightSound = highlightData.highlightSound,
-            isShowSaveDialog = saveSoundDialogData.showSaveDialog,
-            saveDialogSoundNameText = saveSoundDialogData.saveName,
-            saveDialogChosenColor = saveSoundDialogData.color,
-            currentPlayingSound = playSoundData.currentPlayingSound,
-            isPlayingPaused = playSoundData.isPaused,
-        )
 
-        val worldScreenVM = WorldScreenVM(
-            worldNetState = worldData.worldNetState,
-            retryAction = worldService::getRandomSounds,
-            onPlayOrPause = playSoundService::playOrPause,
-            playingSound = playSoundData.currentPlayingSound,
-            currentColor = worldColorData.currentColor,
-            chooseColor = { worldService.updateChoice(it) },
-            listState = worldData.listState,
-            isPlayingPaused = playSoundData.isPaused,
-            onCardLongClick = {
-                playSoundService.stopPlayIfSoundIs(it)
-                remoteSoundListService.onCardLongClick(it)
-            },
-            highlightSound = highlightData.highlightSound,
-        )
-        val settingScreenVM = SettingsScreenVM(
-            configData.isRepeatPlay, settingService::onIsRepeatPlayChanged
-        )
-        val routeContentHostVM = RouteContentHostVM(
-            navController = navController,
-            homeScreenVM = homeScreenVM,
-            worldScreenVM = worldScreenVM,
-            settingsScreenVM = settingScreenVM
-        )
-
-        Scaffold(
-            bottomBar = {
-                ScreenBar(screenBarVM)
-            },
-        ) { paddingValues ->
-            Column {
-                RouteContentHost(routeContentHostVM, modifier = Modifier.padding(paddingValues))
-            }
-
-            if (maskData.isMask) { //Mask
-                IconButton(
-                    enabled = false, onClick = { /*TODO*/ }, modifier = Modifier.fillMaxSize()
-                ) {}
-            }
+        if (maskData.isMask) { //Mask
+            IconButton(
+                enabled = false, onClick = { /*TODO*/ }, modifier = Modifier.fillMaxSize()
+            ) {}
         }
     }
+
 }
 
 @Composable
 fun ColorSoundApp() {
-    var launching by remember {
-        mutableStateOf(true)
+    var launchingState by remember {
+        mutableStateOf(0)
     }
     LaunchedEffect(key1 = Unit) {
         delay(1000)
-        launching = false
+        launchingState = 1
+        delay(1500)
+        launchingState = 2
     }
-    ColorSoundAppEntry()
-    AnimatedVisibility(
-        visible = launching,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        SplashScreen()
+
+    ColorSoundTheme {
+        ColorSoundAppEntry()
+
+        AnimatedVisibility(
+            visible = launchingState < 2,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            SplashScreen()
+        }
+
+        AnimatedVisibility(
+            visible = launchingState < 1,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {}
+        }
     }
 }
 
