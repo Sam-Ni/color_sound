@@ -127,7 +127,7 @@ fun SoundCard(
                             )
                         ) {
                             if (isPlaying) {
-                                Text(text = if (!isPlayingPaused) "正在播放..." else "正在暂停")
+                                Text(text = if (!isPlayingPaused) "正在播放..." else "暂停", color = frontColor)
                                 Spacer(modifier = Modifier.height(48.dp))
                             }
                         }

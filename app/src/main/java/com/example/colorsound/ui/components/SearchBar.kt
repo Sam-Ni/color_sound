@@ -12,9 +12,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -22,6 +26,8 @@ fun SearchBar(
     searchBarVM: SearchBarVM
 ) {
     searchBarVM.apply {
+        val focusRequester = remember { FocusRequester() }
+        val focusManager = LocalFocusManager.current
         Box(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
@@ -36,7 +42,9 @@ fun SearchBar(
                 decorationBox = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .focusRequester(focusRequester)
                     ) {
                         Spacer(modifier = Modifier.width(10.dp))
                         Icon(
@@ -46,18 +54,23 @@ fun SearchBar(
                         Box(
                             modifier = Modifier
                                 .padding(horizontal = 10.dp)
-                                .weight(1f), contentAlignment = Alignment.CenterStart
+                                .weight(1f),
+                            contentAlignment = Alignment.CenterStart
                         ) {
                             if (text.isEmpty()) {
                                 Text(
-                                    text = hint,
-                                    style = MaterialTheme.typography.labelMedium
+                                    text = hint, style = MaterialTheme.typography.labelMedium
                                 )
                             }
                             it()
                         }
                         if (text.isNotEmpty()) {
-                            IconButton(onClick = onDeleteBtnClick, modifier = Modifier.size(20.dp)) {
+                            IconButton(
+                                onClick = {
+                                    onDeleteBtnClick()
+                                    focusManager.clearFocus()
+                                }, modifier = Modifier.size(20.dp)
+                            ) {
                                 Icon(imageVector = Icons.Filled.Close, contentDescription = "")
                             }
                         }
