@@ -8,6 +8,7 @@ import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.vm.data.*
 import com.example.colorsound.util.Injecter
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File

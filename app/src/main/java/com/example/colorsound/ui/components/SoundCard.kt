@@ -200,17 +200,6 @@ fun SoundCard(
     }
 }
 
-private fun playbackStateListener() = object : Player.Listener {
-    override fun onPlaybackStateChanged(playbackState: Int) {
-        when (playbackState) {
-            ExoPlayer.STATE_IDLE -> {}
-            ExoPlayer.STATE_BUFFERING -> {}
-            ExoPlayer.STATE_READY -> {}
-            ExoPlayer.STATE_ENDED -> {}
-        }
-    }
-}
-
 private fun Sound.getDate(): String {
     return this.createTime.substring(0..9)
 }

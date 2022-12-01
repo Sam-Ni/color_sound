@@ -8,6 +8,8 @@ import com.example.colorsound.ui.vm.data.WorldColorData
 import com.example.colorsound.ui.vm.data.WorldData
 import com.example.colorsound.ui.vm.data.WorldNetState
 import com.example.colorsound.util.Injecter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -24,6 +26,12 @@ class WorldService : ViewModel() {
 
     fun updateChoice(color: Int) {
         worldColorData.update { it.copy(currentColor = color) }
+    }
+
+    fun scrollToTop(coroutineScope: CoroutineScope) {
+        coroutineScope.launch {
+            worldData.value.listState.animateScrollToItem(index = 0, scrollOffset = -1)
+        }
     }
 
     /**
