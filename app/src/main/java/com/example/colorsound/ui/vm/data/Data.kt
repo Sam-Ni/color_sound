@@ -2,7 +2,6 @@ package com.example.colorsound.ui.vm.data
 
 import android.content.Context
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.media3.exoplayer.ExoPlayer
 import com.example.colorsound.model.Sound
 
 enum class RecordState {
@@ -10,7 +9,7 @@ enum class RecordState {
 }
 
 sealed interface WorldNetState {
-    data class Success(val sounds: List<Sound>) : WorldNetState
+    object Success : WorldNetState
     object Error : WorldNetState
     object Loading : WorldNetState
 }
@@ -43,8 +42,9 @@ data class RecordData(
 
 data class WorldData(
     val worldNetState: WorldNetState = WorldNetState.Loading,
-    val soundsBuffer: List<Sound> = emptyList(),
+    val soundList: List<Sound> = emptyList(),
     val listState: LazyListState = LazyListState(),
+    val previousColor: Int = -1,
 )
 
 data class MaskData(
@@ -54,8 +54,8 @@ data class MaskData(
 data class PlaySoundData(
     val currentPlayingSound: Sound? = null,
     val isPaused: Boolean = false,
+    val isPreparing: Map<Sound, Boolean> = mapOf(),
     val previousLoopState: Boolean = false,
-    val currentPlayer: ExoPlayer? = null,
 )
 
 data class WorldColorData(

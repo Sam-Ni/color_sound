@@ -3,7 +3,6 @@ package com.example.colorsound
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.activity.compose.setContent
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.data.local.impl.DatabaseRepository
 import com.example.colorsound.data.remote.RemoteRepository
@@ -36,10 +35,12 @@ class ColorSoundApplication : Application() {
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(BASE_URL)
-        .client(OkHttpClient.Builder()
-            .readTimeout(5, TimeUnit.SECONDS)
-            .connectTimeout(5, TimeUnit.SECONDS)
-            .build())
+        .client(
+            OkHttpClient.Builder()
+                .readTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .build()
+        )
         .build()
 
     @ExperimentalSerializationApi
@@ -91,21 +92,12 @@ class ColorSoundApplication : Application() {
         Injecter.add(contextData)
 
 
-        val recordService = RecordService()
-        val localSoundListService = LocalSoundListService()
-        val playSoundService = PlaySoundService()
-        val worldService = WorldService()
-        val upLoadSoundService = UpLoadSoundService()
-        val settingService = SettingService()
-        val remoteSoundListService = RemoteSoundListService()
-
-
-        Injecter.addService(recordService)
-        Injecter.addService(localSoundListService)
-        Injecter.addService(playSoundService)
-        Injecter.addService(worldService)
-        Injecter.addService(upLoadSoundService)
-        Injecter.addService(settingService)
-        Injecter.addService(remoteSoundListService)
+        Injecter.addService(PlaySoundService(context = applicationContext))
+        Injecter.addService(LocalSoundListService())
+        Injecter.addService(RecordService())
+        Injecter.addService(WorldService())
+        Injecter.addService(UpLoadSoundService())
+        Injecter.addService(SettingService())
+        Injecter.addService(RemoteSoundListService())
     }
 }

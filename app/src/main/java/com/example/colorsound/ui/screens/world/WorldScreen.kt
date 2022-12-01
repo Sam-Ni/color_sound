@@ -9,14 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.media3.exoplayer.ExoPlayer
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.ColorChooseRow
 import com.example.colorsound.ui.components.ColorChooseRowVM
 import com.example.colorsound.ui.components.SoundCardListVM
 import com.example.colorsound.ui.components.SoundList
 import com.example.colorsound.ui.vm.data.WorldNetState
-import com.example.colorsound.util.BASE_URL
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -27,7 +25,18 @@ fun WorldScreen(
     worldScreenVM.apply {
         val colorChooseRowVM = ColorChooseRowVM(currentColor, chooseColor, canCancelSelected = true)
         val loadContentVM =
-            LoadContentVM(onPlayOrPause, worldNetState, retryAction, playingSound, isPlayingPaused, listState, onCardLongClick, highlightSound, attachSound, detachSound, resetToBegin)
+            LoadContentVM(
+                onPlayOrPause,
+                worldNetState,
+                retryAction,
+                playingSound,
+                isPlayingPaused,
+                listState,
+                onCardLongClick,
+                highlightSound,
+                soundList,
+                isPreparing
+            )
 
         Column {
             ColorChooseRow(colorChooseRowVM, modifier = Modifier.padding(20.dp))
@@ -44,9 +53,7 @@ fun LoadContent(
         when (worldNetState) {
             is WorldNetState.Loading -> LoadingScreen()
             is WorldNetState.Success -> {
-                val sounds = worldNetState.sounds.map { sound ->
-                    sound.copy(url = BASE_URL + sound.url)
-                }
+                val sounds = soundList
                 val soundCardListVM = SoundCardListVM(
                     listState = listState,
                     soundList = sounds,
@@ -55,9 +62,7 @@ fun LoadContent(
                     currentHighlightSound = highlightSound,
                     currentPlayingSound = playingSound,
                     isPlayingPaused = isPlayingPaused,
-                    attachSound = attachSound,
-                    detachSound = detachSound,
-                    resetToBegin = resetToBegin
+                    isPreparing = isPreparing
                 )
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(worldNetState == WorldNetState.Loading),
@@ -80,9 +85,8 @@ data class LoadContentVM(
     val listState: LazyListState,
     val onCardLongClick: (Sound) -> Unit,
     val highlightSound: Sound?,
-    val attachSound: (Sound, ExoPlayer) -> Unit,
-    val detachSound: (Sound) -> Unit,
-    val resetToBegin: (ExoPlayer) -> Unit,
+    val soundList: List<Sound>,
+    val isPreparing: Map<Sound, Boolean>,
 )
 
 data class WorldScreenVM(
@@ -96,9 +100,8 @@ data class WorldScreenVM(
     val listState: LazyListState,
     val onCardLongClick: (Sound) -> Unit,
     val highlightSound: Sound?,
-    val attachSound: (Sound, ExoPlayer) -> Unit,
-    val detachSound: (Sound) -> Unit,
-    val resetToBegin: (ExoPlayer) -> Unit,
+    val soundList: List<Sound>,
+    val isPreparing: Map<Sound, Boolean>,
 )
 
 @Composable

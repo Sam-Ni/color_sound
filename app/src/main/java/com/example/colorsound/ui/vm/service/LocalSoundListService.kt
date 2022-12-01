@@ -10,7 +10,6 @@ import com.example.colorsound.ui.vm.data.MaskData
 import com.example.colorsound.ui.vm.data.SearchBarData
 import com.example.colorsound.util.Injecter
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -21,14 +20,18 @@ class LocalSoundListService : ViewModel() {
     private val localSoundListData = Injecter.getMutable<LocalSoundListData>()
     private val searchBarData = Injecter.getMutable<SearchBarData>()
     private val highlightData = Injecter.getMutable<HighlightData>()
+    private val playSoundService = Injecter.getService<PlaySoundService>()
 
     init {
         freshLocalSoundsList()
     }
 
-    private fun freshLocalSoundsList() {
+    fun freshLocalSoundsList() {
         viewModelScope.launch {
-            localSoundListData.update { it.copy(soundList = repository.getAllSounds()) }
+            val allLocalSounds = repository.getAllSounds()
+            //在加载的时候就prepare
+            allLocalSounds.forEach { playSoundService.prepareSoundPlayer(it) }
+            localSoundListData.update { it.copy(soundList = allLocalSounds) }
         }
     }
 
@@ -46,7 +49,7 @@ class LocalSoundListService : ViewModel() {
         highlightData.update { it.copy(highlightMode = mode, highlightSound = sound) }
     }
 
-    fun onCardLongClick(sound: Sound) {
+    fun enterHighlight(sound: Sound) {
         updateHighlightMode(true, sound)
         maskData.update { it.copy(isMask = true) }
     }

@@ -8,7 +8,6 @@ import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.vm.data.*
 import com.example.colorsound.util.Injecter
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -26,6 +25,7 @@ class RecordService : ViewModel() {
     private val maskData = Injecter.getMutable<MaskData>()
     private val listData = Injecter.getMutable<LocalSoundListData>()
     private val highlightData = Injecter.getMutable<HighlightData>()
+    private val localSoundListService = Injecter.getService<LocalSoundListService>()
 
     fun onSaveClick() {
         dialogData.update { it.copy(showSaveDialog = false) }
@@ -50,7 +50,7 @@ class RecordService : ViewModel() {
 
                 val original = listData.value.soundList.toMutableList()
                 original.add(0, sound)
-                updateSoundList(original)
+                localSoundListService.freshLocalSoundsList()
             }
             resetDialogInfo()
         }
@@ -59,7 +59,13 @@ class RecordService : ViewModel() {
     fun showDialogWithNameAndColor() {
         val highlightSound = highlightData.value.highlightSound
         if (highlightSound != null) {
-            dialogData.update { it.copy(showSaveDialog = true, color = highlightSound.color, saveName = highlightSound.name) }
+            dialogData.update {
+                it.copy(
+                    showSaveDialog = true,
+                    color = highlightSound.color,
+                    saveName = highlightSound.name
+                )
+            }
         } else {
             dialogData.update { it.copy(showSaveDialog = true) }
         }
@@ -112,10 +118,6 @@ class RecordService : ViewModel() {
     private fun deleteAudio(fileUrl: String) {
         val file = File(fileUrl)
         file.delete()
-    }
-
-    private fun updateSoundList(soundList: List<Sound>) {
-        listData.update { it.copy(soundList = soundList) }
     }
 
     private fun getCurrentDateTime(): String {

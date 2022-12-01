@@ -7,9 +7,9 @@ import com.example.colorsound.data.remote.RemoteRepository
 import com.example.colorsound.ui.vm.data.WorldColorData
 import com.example.colorsound.ui.vm.data.WorldData
 import com.example.colorsound.ui.vm.data.WorldNetState
+import com.example.colorsound.util.BASE_URL
 import com.example.colorsound.util.Injecter
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -19,6 +19,7 @@ class WorldService : ViewModel() {
     private val worldData = Injecter.getMutable<WorldData>()
     private val networkRepository = Injecter.get<RemoteRepository>()
     private val worldColorData = Injecter.getMutable<WorldColorData>()
+    private val playSoundService = Injecter.getService<PlaySoundService>()
 
     init {
         getRandomSounds()
@@ -45,14 +46,28 @@ class WorldService : ViewModel() {
                 try {
                     val result =
                         networkRepository.getRandomSounds(worldColorData.value.currentColor)
-                    val sounds = if (it.soundsBuffer.size < 20) {
-                        result.plus(it.soundsBuffer).distinctBy { sound -> sound.url }
-                    } else {
-                        result.plus(it.soundsBuffer.subList(0, 10))
-                            .distinctBy { sound -> sound.url }
-                    }
+                            .map { sound -> sound.copy(url = BASE_URL + sound.url) }
+
+                    val sounds =
+                        if (worldData.value.previousColor == worldColorData.value.currentColor) {
+                            if (it.soundList.size < 20) {
+                                result.plus(it.soundList).distinctBy { sound -> sound.url }
+                            } else {
+                                it.soundList.subList(10, it.soundList.size)
+                                    .forEach { sound -> playSoundService.removeSoundPlayer(sound) }
+                                result.plus(it.soundList.subList(0, 10))
+                                    .distinctBy { sound -> sound.url }
+                            }
+                        } else {
+                            it.soundList.forEach { sound -> playSoundService.removeSoundPlayer(sound) }
+                            result
+                        }
+
+                    sounds.forEach { sound -> playSoundService.prepareSoundPlayer(sound) }
                     it.copy(
-                        worldNetState = WorldNetState.Success(sounds), soundsBuffer = sounds
+                        worldNetState = WorldNetState.Success,
+                        soundList = sounds,
+                        previousColor = worldColorData.value.currentColor
                     )
                 } catch (e: IOException) {
                     Log.e("ColorSound", e.toString())

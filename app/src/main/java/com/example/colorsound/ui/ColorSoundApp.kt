@@ -1,12 +1,7 @@
 package com.example.colorsound.ui
 
 import android.Manifest
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,10 +9,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.colorsound.model.Sound
@@ -25,7 +21,6 @@ import com.example.colorsound.ui.components.bottomBar.ScreenBar
 import com.example.colorsound.ui.components.bottomBar.ScreenBarVM
 import com.example.colorsound.ui.screens.home.HomeScreenVM
 import com.example.colorsound.ui.screens.settings.SettingsScreenVM
-import com.example.colorsound.ui.screens.splash.SplashScreen
 import com.example.colorsound.ui.screens.world.WorldScreenVM
 import com.example.colorsound.ui.theme.ColorSoundTheme
 import com.example.colorsound.ui.vm.data.*
@@ -35,7 +30,15 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.delay
+
+
+@Composable
+fun ColorSoundApp() {
+    ColorSoundTheme {
+        ColorSoundAppEntry()
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -81,73 +84,70 @@ fun ColorSoundAppEntry() {
     val currentScreen =
         colorSoundTabRowScreens.find { it.route == currentDestination?.route } ?: Home
 
-        val exitHighlight = {
-            localSoundListService.exitHighlight()
-            playSoundService.restorePlayerConfig()
-        }
-        val screenBarVM = ScreenBarVM(allScreen = colorSoundTabRowScreens,
-            onTabSelected = { newScreen ->
-                navController.navigateSingleTopTo(newScreen.route)
-            },
-            currentScreen = currentScreen,
-            onClick = recordService::onRecordBtnClick,
-            onLongClick = recordService::onRecordBtnLongClick,
-            recordState = recordData.recordState,
-            isGranted = isGranted,
-            askPermission = askPermission,
-            isHighlightMode = highlightData.highlightMode,
-            onDelete = {
-                playSoundData.currentPlayingSound?.let { playSoundService.stopPlayIfSoundIs(it) }
-                localSoundListService.onDelete()
-                exitHighlight()
-            },
-            onPush = upLoadSoundService::uploadSound,
-            onPushResult = onPushResultData.result,
-            onUpdate = recordService::showDialogWithNameAndColor,
-            exitHighlight = exitHighlight,
-            isPlaying = playSoundData.currentPlayingSound != null,
-            onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } },
-            setUploadIdle = upLoadSoundService::setUploadIdle,
-            attachSound = { sound, exoPlayer -> playSoundService.attachSoundWithPlayer(sound, exoPlayer) },
-            detachSound = {playSoundService.detachSoundWithPlayer(it)}
-        )
-        val coroutineScope = rememberCoroutineScope()
-        val homeScreenVM = HomeScreenVM(
-            onCardClick = { playSoundService.playOrPause(it) },
-            onCardLongClick = { sound: Sound ->
-                playSoundService.stopPlayIfSoundIs(sound)
-                localSoundListService.onCardLongClick(sound)
-            },
-            onSaveDialogSaveBtnClick = {
-                if (!highlightData.highlightMode) {
-                    localSoundListService.scrollToTop(coroutineScope)
-                }
-                recordService.onSaveClick()
-            },
-            onSaveDialogCancelBtnClick = recordService::onCancelClick,
-            onSaveDialogSoundNameChanged = recordService::updateSaveName,
-            saveDialogChooseSoundColor = recordService::updateChoice,
-            onSearchBarValueChanged = localSoundListService::updateSearch,
-            searchBarText = searchBarData.search,
-            soundListState = localSoundListData.listState,
-            soundList = localSoundListData.soundList.filter { it.name.contains(searchBarData.search) },
-            currentHighlightSound = highlightData.highlightSound,
-            isShowSaveDialog = saveSoundDialogData.showSaveDialog,
-            saveDialogSoundNameText = saveSoundDialogData.saveName,
-            saveDialogChosenColor = saveSoundDialogData.color,
-            currentPlayingSound = playSoundData.currentPlayingSound,
-            isPlayingPaused = playSoundData.isPaused,
-            attachSound = {sound, exoPlayer -> playSoundService.attachSoundWithPlayer(sound, exoPlayer) },
-            detachSound = {playSoundService.detachSoundWithPlayer(it)},
-            resetToBegin = { playSoundService.resetToBegin(it) }
-        )
+    val exitHighlight = {
+        localSoundListService.exitHighlight()
+        playSoundService.restorePlayerConfig()
+    }
+    val screenBarVM = ScreenBarVM(
+        allScreen = colorSoundTabRowScreens,
+        onTabSelected = { newScreen ->
+            navController.navigateSingleTopTo(newScreen.route)
+        },
+        currentScreen = currentScreen,
+        onClick = recordService::onRecordBtnClick,
+        onLongClick = recordService::onRecordBtnLongClick,
+        recordState = recordData.recordState,
+        isGranted = isGranted,
+        askPermission = askPermission,
+        isHighlightMode = highlightData.highlightMode,
+        onDelete = {
+            playSoundData.currentPlayingSound?.let { playSoundService.stopPlayIfSoundIs(it) }
+            localSoundListService.onDelete()
+            exitHighlight()
+        },
+        onPush = upLoadSoundService::uploadSound,
+        onPushResult = onPushResultData.result,
+        onUpdate = recordService::showDialogWithNameAndColor,
+        exitHighlight = exitHighlight,
+        isPlaying = playSoundData.currentPlayingSound != null,
+        onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } },
+        setUploadIdle = upLoadSoundService::setUploadIdle,
+    )
+    val coroutineScope = rememberCoroutineScope()
+    val homeScreenVM = HomeScreenVM(
+        onCardClick = { playSoundService.playOrPause(it) },
+        onCardLongClick = { sound: Sound ->
+            playSoundService.stopPlayIfSoundIs(sound)
+            localSoundListService.enterHighlight(sound)
+        },
+        onSaveDialogSaveBtnClick = {
+            if (!highlightData.highlightMode) {
+                localSoundListService.scrollToTop(coroutineScope)
+            }
+            recordService.onSaveClick()
+        },
+        onSaveDialogCancelBtnClick = recordService::onCancelClick,
+        onSaveDialogSoundNameChanged = recordService::updateSaveName,
+        saveDialogChooseSoundColor = recordService::updateChoice,
+        onSearchBarValueChanged = localSoundListService::updateSearch,
+        searchBarText = searchBarData.search,
+        soundListState = localSoundListData.listState,
+        soundList = localSoundListData.soundList.filter { it.name.contains(searchBarData.search) },
+        currentHighlightSound = highlightData.highlightSound,
+        isShowSaveDialog = saveSoundDialogData.showSaveDialog,
+        saveDialogSoundNameText = saveSoundDialogData.saveName,
+        saveDialogChosenColor = saveSoundDialogData.color,
+        currentPlayingSound = playSoundData.currentPlayingSound,
+        isPlayingPaused = playSoundData.isPaused,
+        isPreparing = playSoundData.isPreparing,
+    )
 
     val worldScreenVM = WorldScreenVM(
         worldNetState = worldData.worldNetState,
         retryAction = {
             worldService.scrollToTop(coroutineScope)
             worldService.getRandomSounds()
-                      },
+        },
         onPlayOrPause = playSoundService::playOrPause,
         playingSound = playSoundData.currentPlayingSound,
         currentColor = worldColorData.currentColor,
@@ -159,9 +159,8 @@ fun ColorSoundAppEntry() {
             remoteSoundListService.onCardLongClick(it)
         },
         highlightSound = highlightData.highlightSound,
-        attachSound = {sound, exoPlayer -> playSoundService.attachSoundWithPlayer(sound, exoPlayer) },
-        detachSound = {playSoundService.detachSoundWithPlayer(it)},
-        resetToBegin = { playSoundService.resetToBegin(it) }
+        soundList = worldData.soundList,
+        isPreparing = playSoundData.isPreparing,
     )
     val settingScreenVM = SettingsScreenVM(
         configData.isRepeatPlay, settingService::onIsRepeatPlayChanged
@@ -182,27 +181,16 @@ fun ColorSoundAppEntry() {
             RouteContentHost(routeContentHostVM, modifier = Modifier.padding(paddingValues))
         }
 
-        if (maskData.isMask) { //Mask
-            IconButton(
-                enabled = false, onClick = { /*TODO*/ }, modifier = Modifier.fillMaxSize()
-            ) {}
-        }
+        Mask(isMask = maskData.isMask)
     }
 
 }
 
 @Composable
-fun ColorSoundApp() {
-    ColorSoundTheme {
-        ColorSoundAppEntry()
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    ColorSoundTheme {
-        ColorSoundApp()
+fun Mask(isMask: Boolean) {
+    if (isMask) { //Mask
+        IconButton(
+            enabled = false, onClick = { /*TODO*/ }, modifier = Modifier.fillMaxSize()
+        ) {}
     }
 }

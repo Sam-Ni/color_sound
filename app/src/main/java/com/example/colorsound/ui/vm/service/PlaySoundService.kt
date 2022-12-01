@@ -1,69 +1,105 @@
 package com.example.colorsound.ui.vm.service
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.common.Player
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.vm.data.PlaySoundData
 import com.example.colorsound.util.Injecter
+import com.example.colorsound.util.ObjectPool
+import com.example.colorsound.util.PlayerObject
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class PlaySoundService : ViewModel() {
+class PlaySoundService(context: Context) : ViewModel() {
     private val playSoundData = Injecter.getMutable<PlaySoundData>()
+    private val playSoundMap: MutableMap<Sound, PlayerObject> = mutableMapOf()
+    private val isPreparing: MutableMap<Sound, Boolean> = mutableMapOf()
 
-    private val playSoundMap: MutableMap<Sound, ExoPlayer?> = mutableMapOf()
 
+    private val players: ObjectPool<PlayerObject> =
+        ObjectPool(20) { PlayerObject(context = context) }
 
-    fun attachSoundWithPlayer(sound: Sound, exoPlayer: ExoPlayer) {
-        playSoundMap[sound] = exoPlayer
-        val mediaItem = MediaItem.Builder()
-            .setUri(sound.url)
-            .setMimeType(MimeTypes.AUDIO_MPEG)
-            .build()
-        exoPlayer.setMediaItem(mediaItem)
-        exoPlayer.prepare()
-        /* TODO setOnCompleteListener */
-//        Player.
-    }
+    fun prepareSoundPlayer(sound: Sound) {
+        if (!playSoundMap.containsKey(sound)) {
+            isPreparing[sound] = true
+            playSoundData.update { it.copy(isPreparing = isPreparing.toMap()) }
 
-//    fun onEndAction(mediaPlayer: ExoPlayer)
-
-    fun detachSoundWithPlayer(sound: Sound) {
-        playSoundMap.remove(sound)
-    }
-
-    private fun playSound(sound: Sound, mediaPlayer: ExoPlayer) {
-        playSoundData.update { it.copy(currentPlayingSound = sound, currentPlayer = mediaPlayer) }
-
-        viewModelScope.launch {
-            playSoundMap[sound]?.play()
+            playSoundMap[sound] = players.get()
+            playSoundMap[sound]?.player?.setMediaItem(
+                MediaItem.Builder()
+                    .setUri(sound.url)
+                    .setMimeType(MimeTypes.AUDIO_MPEG)
+                    .build()
+            )
+            playSoundMap[sound]?.player?.addListener(
+                object : Player.Listener {
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        when (playbackState) {
+                            Player.STATE_ENDED -> {
+                                stopCurrentSound()
+                            }
+                            Player.STATE_READY -> {
+                                isPreparing[sound] = false
+                                playSoundData.update { it.copy(isPreparing = isPreparing.toMap()) }
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+            )
+            playSoundMap[sound]?.player?.prepare()
         }
     }
 
-    private fun stopCurrentSound(mediaPlayer: ExoPlayer) {
-        if (playSoundData.value.currentPlayingSound != null) {
-            mediaPlayer.stop()
-            playSoundData.update {
-                it.copy(currentPlayingSound = null, isPaused = false, currentPlayer = null)
+    fun removeSoundPlayer(sound: Sound) {
+        players.release(playSoundMap[sound])
+        playSoundMap.remove(sound)
+
+        isPreparing.remove(sound)
+        playSoundData.update { it.copy(isPreparing = isPreparing.toMap()) }
+    }
+
+    private fun playSound(sound: Sound) {
+        viewModelScope.launch {
+            if (playSoundMap.containsKey(sound)) {
+                if (playSoundMap[sound]?.player?.playbackState == Player.STATE_READY) {
+                    playSoundData.update { it.copy(currentPlayingSound = sound) }
+                    playSoundMap[sound]?.player?.play()
+                }
+            } else {
+                Log.e("play service", "没有对应的player")
             }
         }
     }
 
-    private fun pausePlaySound(mediaPlayer: ExoPlayer) {
+    private fun stopCurrentSound() {
         if (playSoundData.value.currentPlayingSound != null) {
-            mediaPlayer.pause()
+            playSoundMap[playSoundData.value.currentPlayingSound]?.player?.pause()
+            playSoundMap[playSoundData.value.currentPlayingSound]?.player?.seekTo(0)
+
+            playSoundData.update {
+                it.copy(currentPlayingSound = null, isPaused = false)
+            }
+        }
+    }
+
+    private fun pausePlaySound() {
+        if (playSoundData.value.currentPlayingSound != null) {
+            playSoundMap[playSoundData.value.currentPlayingSound]?.player?.pause()
+
             playSoundData.update { it.copy(isPaused = true) }
         }
     }
 
-    private fun continuePlaySound(mediaPlayer: ExoPlayer) {
-        if (playSoundData.value.currentPlayer != null && playSoundData.value.isPaused) {
-            playSoundData.update { it.copy(isPaused = false) }
+    private fun continuePlaySound() {
+        if (playSoundData.value.isPaused) {
             viewModelScope.launch {
-                mediaPlayer.play()
+                playSoundMap[playSoundData.value.currentPlayingSound]?.player?.play()
                 playSoundData.update { it.copy(isPaused = false) }
             }
         }
@@ -73,37 +109,25 @@ class PlaySoundService : ViewModel() {
         return playSoundData.value.currentPlayingSound == sound
     }
 
-    fun resetToBegin(exoPlayer: ExoPlayer) {
-        exoPlayer.seekTo(0)
-        exoPlayer.pause()
-        playSoundData.update { it.copy(isPaused = true, currentPlayingSound = null) }
-    }
-
     fun stopPlayIfSoundIs(sound: Sound) {
-        val mediaPlayer = playSoundMap[sound]
         if (playSoundData.value.currentPlayingSound == sound) {
-            mediaPlayer?.stop()
-            playSoundData.update { it.copy(currentPlayingSound = null, isPaused = false) }
+            stopCurrentSound()
         }
     }
 
     fun playOrPause(sound: Sound) {
-        val mediaPlayer = playSoundMap[sound]
-        val currentPlayer = playSoundData.value.currentPlayer
-        if (mediaPlayer != null) {
-            if (mediaPlayer == currentPlayer) {
-                if (mediaPlayer.isPlaying) {
-                    pausePlaySound(mediaPlayer)
-                } else {
-                    playSoundData.update { it.copy(currentPlayingSound = sound, currentPlayer = mediaPlayer) }
-                    continuePlaySound(mediaPlayer)
-                }
+        val currentSound = playSoundData.value.currentPlayingSound
+        val isPaused = playSoundData.value.isPaused
+
+        if (sound == currentSound) {
+            if (isPaused) {
+                continuePlaySound()
             } else {
-                if (currentPlayer != null) {
-                    stopCurrentSound(currentPlayer)
-                }
-                playSound(sound, mediaPlayer)
+                pausePlaySound()
             }
+        } else {
+            stopCurrentSound()
+            playSound(sound)
         }
     }
 

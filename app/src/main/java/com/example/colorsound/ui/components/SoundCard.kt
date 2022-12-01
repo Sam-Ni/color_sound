@@ -16,7 +16,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -25,10 +24,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.example.colorsound.R
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
@@ -43,14 +38,10 @@ data class SoundCardVM(
     val isHighlight: Boolean = false,
     val isPlaying: Boolean = false,
     val isPlayingPaused: Boolean = false,
-    val attachSound: (Sound, ExoPlayer) -> Unit,
-    val detachSound: (Sound) -> Unit,
-    val resetToBegin: (ExoPlayer) -> Unit,
+    val isPreparing: Boolean,
 )
 
-@OptIn(
-    ExperimentalFoundationApi::class
-)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SoundCard(
     soundCardVM: SoundCardVM,
@@ -58,33 +49,6 @@ fun SoundCard(
 ) {
     soundCardVM.apply {
         val isSystemInDarkTheme = isSystemInDarkTheme()
-
-        val context = LocalContext.current
-        DisposableEffect(key1 = soundInfo.url) {
-            val trackSelector = DefaultTrackSelector(context).apply {
-                setParameters(buildUponParameters())
-            }
-            val player = ExoPlayer.Builder(context)
-                .setTrackSelector(trackSelector)
-                .build()
-            player.addListener(object : Player.Listener {
-                override fun onPlaybackStateChanged(playbackState: Int) {
-                    when (playbackState) {
-                        Player.STATE_IDLE -> {}
-                        Player.STATE_BUFFERING -> {}
-                        Player.STATE_READY -> {}
-                        Player.STATE_ENDED -> {
-                            resetToBegin(player)
-                        }
-                    }
-                }
-            })
-            attachSound(soundInfo, player)
-            onDispose {
-                player.release()
-                detachSound(soundInfo)
-            }
-        }
 
         //高亮动画
         val transition = updateTransition(isHighlight, label = "2")
@@ -125,14 +89,18 @@ fun SoundCard(
         //触摸动画 TODO
         var isTouched by remember { mutableStateOf(false) }
         val transition3 = updateTransition(isTouched, label = "2")
-        val contentSize by transition3.animateFloat(label = "2", transitionSpec = { spring(Spring.DampingRatioNoBouncy, Spring.StiffnessMedium) }) {
+        val contentSize by transition3.animateFloat(
+            label = "2",
+            transitionSpec = { spring(Spring.DampingRatioNoBouncy, Spring.StiffnessMedium) }) {
             if (it) 0.9f
             else 1f
         }
 
-        Row(modifier = modifier.padding(
-            start = 20.dp, top = 10.dp, bottom = 15.dp, end = 20.dp
-        )) {
+        Row(
+            modifier = modifier.padding(
+                start = 20.dp, top = 10.dp, bottom = 15.dp, end = 20.dp
+            )
+        ) {
             Card(
                 modifier = modifier.scale(contentSize),
                 elevation = CardDefaults.cardElevation(defaultElevation = elevation),
@@ -154,15 +122,15 @@ fun SoundCard(
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(
-                        start = 12.dp, top = 20.dp, bottom = 20.dp, end = 12.dp
-                    )
+                            start = 12.dp, top = 20.dp, bottom = 20.dp, end = 12.dp
+                        )
                     ) {
                         ColorCircle(soundInfo.color)
                         Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row {
                                 SoundName(
-                                    name = soundInfo.name,
+                                    name = if (isPreparing) "正在准备中" else soundInfo.name,
                                     frontColor,
                                     fontSize = fontSize.sp,
                                     width = nameWidth
@@ -180,7 +148,10 @@ fun SoundCard(
                                 )
                             ) {
                                 if (isPlaying) {
-                                    Text(text = if (!isPlayingPaused) "正在播放..." else "暂停", color = frontColor)
+                                    Text(
+                                        text = if (!isPlayingPaused) "正在播放..." else "暂停",
+                                        color = frontColor
+                                    )
                                     Spacer(modifier = Modifier.height(48.dp))
                                 }
                             }
@@ -247,25 +218,5 @@ private fun SoundDuration(duration: String, color: Color) {
         color = color,
         modifier = Modifier.padding(end = 10.dp)
     )
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun SoundCardPreview() {
-    ColorSoundTheme {
-        SoundCard(
-            SoundCardVM(
-                soundInfo = SoundInfoFactory(),
-                onClick = { },
-                onLongClick = {},
-                isPlaying = true,
-                attachSound = {_, _ ->},
-                detachSound = {},
-                resetToBegin = {},
-            ),
-
-            )
-    }
 }
 
