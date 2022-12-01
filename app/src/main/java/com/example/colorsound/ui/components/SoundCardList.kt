@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.media3.exoplayer.ExoPlayer
 import com.example.colorsound.data.DataSource
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
@@ -36,7 +37,10 @@ fun SoundList(
                     onLongClick = onCardLongClick,
                     isHighlight = if (currentHighlightSound != null) item.url == currentHighlightSound.url else false,
                     isPlaying = if (currentPlayingSound != null) item.url == currentPlayingSound.url else false,
-                    isPlayingPaused = isPlayingPaused
+                    isPlayingPaused = isPlayingPaused,
+                    attachSound = attachSound,
+                    detachSound = detachSound,
+                    resetToBegin = resetToBegin,
                 )
                 SoundCard(
                     soundCardVM = soundCardVM,
@@ -60,7 +64,10 @@ fun SoundListPreview() {
                 onCardLongClick = {},
                 currentHighlightSound = null,
                 currentPlayingSound = null,
-                isPlayingPaused = false
+                isPlayingPaused = false,
+                attachSound = { _, _ -> },
+                detachSound = {},
+                resetToBegin = {},
             )
         )
     }
@@ -77,7 +84,10 @@ fun DarkSoundListPreview() {
                 onCardLongClick = {},
                 currentHighlightSound = null,
                 currentPlayingSound = null,
-                isPlayingPaused = false
+                isPlayingPaused = false,
+                attachSound = { _, _ -> },
+                detachSound = {},
+                resetToBegin = {},
             )
         )
     }
@@ -91,4 +101,7 @@ data class SoundCardListVM(
     val currentHighlightSound: Sound?,
     val currentPlayingSound: Sound?,
     val isPlayingPaused: Boolean,
+    val attachSound: (Sound, ExoPlayer) -> Unit,
+    val detachSound: (Sound) -> Unit,
+    val resetToBegin: (ExoPlayer) -> Unit,
 )

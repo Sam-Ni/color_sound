@@ -71,6 +71,7 @@ class ColorSoundApplication : Application() {
             )
         }
         val onPushResultData = MutableStateFlow(OnPushResultData())
+        val contextData = ContextData(applicationContext)
 
         Injecter.add<LocalRepository>(databaseRepository)
         Injecter.add(networkRepository)
@@ -86,6 +87,7 @@ class ColorSoundApplication : Application() {
         Injecter.add(highlightData)
         Injecter.add(configData)
         Injecter.add(onPushResultData)
+        Injecter.add(contextData)
 
 
         val recordService = RecordService()

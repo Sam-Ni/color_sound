@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.media3.exoplayer.ExoPlayer
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.*
 
@@ -31,7 +32,10 @@ fun HomeScreen(
             onCardLongClick = onCardLongClick,
             currentHighlightSound = currentHighlightSound,
             currentPlayingSound = currentPlayingSound,
-            isPlayingPaused = isPlayingPaused
+            isPlayingPaused = isPlayingPaused,
+            attachSound = attachSound,
+            detachSound = detachSound,
+            resetToBegin = resetToBegin,
         )
         val saveDialogVM = SaveDialogVM(
             onSaveClick = onSaveDialogSaveBtnClick,
@@ -77,4 +81,8 @@ data class HomeScreenVM(
     val currentHighlightSound: Sound?,
     val currentPlayingSound: Sound?,
     val isPlayingPaused: Boolean,
+
+    val attachSound: (Sound, ExoPlayer) -> Unit,
+    val detachSound: (Sound) -> Unit,
+    val resetToBegin: (ExoPlayer) -> Unit,
 )

@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -24,6 +25,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.example.colorsound.R
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.theme.ColorSoundTheme
@@ -38,6 +43,9 @@ data class SoundCardVM(
     val isHighlight: Boolean = false,
     val isPlaying: Boolean = false,
     val isPlayingPaused: Boolean = false,
+    val attachSound: (Sound, ExoPlayer) -> Unit,
+    val detachSound: (Sound) -> Unit,
+    val resetToBegin: (ExoPlayer) -> Unit,
 )
 
 @OptIn(
@@ -50,6 +58,33 @@ fun SoundCard(
 ) {
     soundCardVM.apply {
         val isSystemInDarkTheme = isSystemInDarkTheme()
+
+        val context = LocalContext.current
+        DisposableEffect(key1 = soundInfo.url) {
+            val trackSelector = DefaultTrackSelector(context).apply {
+                setParameters(buildUponParameters())
+            }
+            val player = ExoPlayer.Builder(context)
+                .setTrackSelector(trackSelector)
+                .build()
+            player.addListener(object : Player.Listener {
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    when (playbackState) {
+                        Player.STATE_IDLE -> {}
+                        Player.STATE_BUFFERING -> {}
+                        Player.STATE_READY -> {}
+                        Player.STATE_ENDED -> {
+                            resetToBegin(player)
+                        }
+                    }
+                }
+            })
+            attachSound(soundInfo, player)
+            onDispose {
+                player.release()
+                detachSound(soundInfo)
+            }
+        }
 
         //高亮动画
         val transition = updateTransition(isHighlight, label = "2")
@@ -165,6 +200,17 @@ fun SoundCard(
     }
 }
 
+private fun playbackStateListener() = object : Player.Listener {
+    override fun onPlaybackStateChanged(playbackState: Int) {
+        when (playbackState) {
+            ExoPlayer.STATE_IDLE -> {}
+            ExoPlayer.STATE_BUFFERING -> {}
+            ExoPlayer.STATE_READY -> {}
+            ExoPlayer.STATE_ENDED -> {}
+        }
+    }
+}
+
 private fun Sound.getDate(): String {
     return this.createTime.substring(0..9)
 }
@@ -224,7 +270,10 @@ fun SoundCardPreview() {
                 soundInfo = SoundInfoFactory(),
                 onClick = { },
                 onLongClick = {},
-                isPlaying = true
+                isPlaying = true,
+                attachSound = {_, _ ->},
+                detachSound = {},
+                resetToBegin = {},
             ),
 
             )

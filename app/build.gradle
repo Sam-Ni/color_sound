@@ -99,4 +99,9 @@ dependencies {
 
     //lottie
     implementation 'com.airbnb.android:lottie-compose:5.2.0'
+
+    //
+    implementation "androidx.media3:media3-exoplayer:$mediaVersion"
+    implementation "androidx.media3:media3-ui:$mediaVersion"
+    implementation "androidx.media3:media3-exoplayer-dash:$mediaVersion"
 }

@@ -1,6 +1,8 @@
 package com.example.colorsound.ui.vm.data
 
+import android.content.Context
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.media3.exoplayer.ExoPlayer
 import com.example.colorsound.model.Sound
 
 enum class RecordState {
@@ -53,6 +55,7 @@ data class PlaySoundData(
     val currentPlayingSound: Sound? = null,
     val isPaused: Boolean = false,
     val previousLoopState: Boolean = false,
+    val currentPlayer: ExoPlayer? = null,
 )
 
 data class WorldColorData(
@@ -65,4 +68,8 @@ enum class PushState {
 
 data class OnPushResultData(
     val result: PushState = PushState.Idle,
+)
+
+data class ContextData(
+    val context: Context,
 )

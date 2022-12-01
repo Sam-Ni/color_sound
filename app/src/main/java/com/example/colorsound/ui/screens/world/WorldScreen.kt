@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.media3.exoplayer.ExoPlayer
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.ColorChooseRow
 import com.example.colorsound.ui.components.ColorChooseRowVM
@@ -26,7 +27,7 @@ fun WorldScreen(
     worldScreenVM.apply {
         val colorChooseRowVM = ColorChooseRowVM(currentColor, chooseColor, canCancelSelected = true)
         val loadContentVM =
-            LoadContentVM(onPlayOrPause, worldNetState, retryAction, playingSound, isPlayingPaused, listState, onCardLongClick, highlightSound)
+            LoadContentVM(onPlayOrPause, worldNetState, retryAction, playingSound, isPlayingPaused, listState, onCardLongClick, highlightSound, attachSound, detachSound, resetToBegin)
 
         Column {
             ColorChooseRow(colorChooseRowVM, modifier = Modifier.padding(20.dp))
@@ -53,7 +54,10 @@ fun LoadContent(
                     onCardLongClick = onCardLongClick,
                     currentHighlightSound = highlightSound,
                     currentPlayingSound = playingSound,
-                    isPlayingPaused = isPlayingPaused
+                    isPlayingPaused = isPlayingPaused,
+                    attachSound = attachSound,
+                    detachSound = detachSound,
+                    resetToBegin = resetToBegin
                 )
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(worldNetState == WorldNetState.Loading),
@@ -76,6 +80,9 @@ data class LoadContentVM(
     val listState: LazyListState,
     val onCardLongClick: (Sound) -> Unit,
     val highlightSound: Sound?,
+    val attachSound: (Sound, ExoPlayer) -> Unit,
+    val detachSound: (Sound) -> Unit,
+    val resetToBegin: (ExoPlayer) -> Unit,
 )
 
 data class WorldScreenVM(
@@ -89,6 +96,9 @@ data class WorldScreenVM(
     val listState: LazyListState,
     val onCardLongClick: (Sound) -> Unit,
     val highlightSound: Sound?,
+    val attachSound: (Sound, ExoPlayer) -> Unit,
+    val detachSound: (Sound) -> Unit,
+    val resetToBegin: (ExoPlayer) -> Unit,
 )
 
 @Composable

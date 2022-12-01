@@ -107,7 +107,9 @@ fun ColorSoundAppEntry() {
             exitHighlight = exitHighlight,
             isPlaying = playSoundData.currentPlayingSound != null,
             onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } },
-            setUploadIdle = upLoadSoundService::setUploadIdle
+            setUploadIdle = upLoadSoundService::setUploadIdle,
+            attachSound = { sound, exoPlayer -> playSoundService.attachSoundWithPlayer(sound, exoPlayer) },
+            detachSound = {playSoundService.detachSoundWithPlayer(it)}
         )
         val coroutineScope = rememberCoroutineScope()
         val homeScreenVM = HomeScreenVM(
@@ -133,6 +135,9 @@ fun ColorSoundAppEntry() {
             saveDialogChosenColor = saveSoundDialogData.color,
             currentPlayingSound = playSoundData.currentPlayingSound,
             isPlayingPaused = playSoundData.isPaused,
+            attachSound = {sound, exoPlayer -> playSoundService.attachSoundWithPlayer(sound, exoPlayer) },
+            detachSound = {playSoundService.detachSoundWithPlayer(it)},
+            resetToBegin = { playSoundService.resetToBegin(it) }
         )
 
     val worldScreenVM = WorldScreenVM(
@@ -149,6 +154,9 @@ fun ColorSoundAppEntry() {
             remoteSoundListService.onCardLongClick(it)
         },
         highlightSound = highlightData.highlightSound,
+        attachSound = {sound, exoPlayer -> playSoundService.attachSoundWithPlayer(sound, exoPlayer) },
+        detachSound = {playSoundService.detachSoundWithPlayer(it)},
+        resetToBegin = { playSoundService.resetToBegin(it) }
     )
     val settingScreenVM = SettingsScreenVM(
         configData.isRepeatPlay, settingService::onIsRepeatPlayChanged

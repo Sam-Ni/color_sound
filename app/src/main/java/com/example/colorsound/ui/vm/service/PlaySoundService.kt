@@ -1,10 +1,13 @@
 package com.example.colorsound.ui.vm.service
 
-import android.media.AudioAttributes
-import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.example.colorsound.model.Sound
+import com.example.colorsound.ui.vm.data.ContextData
 import com.example.colorsound.ui.vm.data.PlaySoundData
 import com.example.colorsound.util.Injecter
 import kotlinx.coroutines.flow.update
@@ -13,54 +16,56 @@ import kotlinx.coroutines.launch
 class PlaySoundService : ViewModel() {
     private val playSoundData = Injecter.getMutable<PlaySoundData>()
 
-    private val mediaPlayer by lazy {
-        MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_MEDIA).build()
-            )
-        }
+    private val playSoundMap: MutableMap<Sound, ExoPlayer?> = mutableMapOf()
+
+
+    fun attachSoundWithPlayer(sound: Sound, exoPlayer: ExoPlayer) {
+        playSoundMap[sound] = exoPlayer
+        val mediaItem = MediaItem.Builder()
+            .setUri(sound.url)
+            .setMimeType(MimeTypes.AUDIO_MPEG)
+            .build()
+        exoPlayer.setMediaItem(mediaItem)
+        exoPlayer.prepare()
+        /* TODO setOnCompleteListener */
+//        Player.
     }
 
-    init {
-        mediaPlayer.setOnCompletionListener { onCompletion() }
+//    fun onEndAction(mediaPlayer: ExoPlayer)
+
+    fun detachSoundWithPlayer(sound: Sound) {
+        playSoundMap.remove(sound)
     }
 
-    private fun onCompletion() {
-        playSoundData.update { it.copy(currentPlayingSound = null) }
-    }
-
-    private fun playSound(sound: Sound) {
-        playSoundData.update { it.copy(currentPlayingSound = sound) }
+    private fun playSound(sound: Sound, mediaPlayer: ExoPlayer) {
+        playSoundData.update { it.copy(currentPlayingSound = sound, currentPlayer = mediaPlayer) }
 
         viewModelScope.launch {
-            mediaPlayer.reset()
-            mediaPlayer.setDataSource(sound.url)
-            mediaPlayer.prepare()
-            mediaPlayer.start()
+            playSoundMap[sound]?.play()
         }
     }
 
-    private fun stopCurrentSound() {
+    private fun stopCurrentSound(mediaPlayer: ExoPlayer) {
         if (playSoundData.value.currentPlayingSound != null) {
             mediaPlayer.stop()
-            mediaPlayer.reset()
-            playSoundData.update { it.copy(currentPlayingSound = null, isPaused = false) }
+            playSoundData.update {
+                it.copy(currentPlayingSound = null, isPaused = false, currentPlayer = null)
+            }
         }
     }
 
-    private fun pausePlaySound() {
+    private fun pausePlaySound(mediaPlayer: ExoPlayer) {
         if (playSoundData.value.currentPlayingSound != null) {
             mediaPlayer.pause()
             playSoundData.update { it.copy(isPaused = true) }
         }
     }
 
-    private fun continuePlaySound() {
-        if (playSoundData.value.currentPlayingSound != null && playSoundData.value.isPaused) {
+    private fun continuePlaySound(mediaPlayer: ExoPlayer) {
+        if (playSoundData.value.currentPlayer != null && playSoundData.value.isPaused) {
             playSoundData.update { it.copy(isPaused = false) }
             viewModelScope.launch {
-                mediaPlayer.start()
+                mediaPlayer.play()
                 playSoundData.update { it.copy(isPaused = false) }
             }
         }
@@ -70,50 +75,56 @@ class PlaySoundService : ViewModel() {
         return playSoundData.value.currentPlayingSound == sound
     }
 
+    fun resetToBegin(exoPlayer: ExoPlayer) {
+        exoPlayer.seekTo(0)
+        exoPlayer.pause()
+        playSoundData.update { it.copy(isPaused = true, currentPlayingSound = null) }
+    }
+
     fun stopPlayIfSoundIs(sound: Sound) {
+        val mediaPlayer = playSoundMap[sound]
         if (playSoundData.value.currentPlayingSound == sound) {
-            mediaPlayer.stop()
-            mediaPlayer.reset()
+            mediaPlayer?.stop()
             playSoundData.update { it.copy(currentPlayingSound = null, isPaused = false) }
         }
     }
 
     fun playOrPause(sound: Sound) {
-        if (mediaPlayer.isPlaying) { //正在播放
-            if (isPlaying(sound)) { //点击的是正在播放的声音
-                pausePlaySound() //暂停播放
+        val mediaPlayer = playSoundMap[sound]
+        val currentPlayer = playSoundData.value.currentPlayer
+        if (mediaPlayer != null) {
+            if (mediaPlayer == currentPlayer) {
+                if (mediaPlayer.isPlaying) {
+                    pausePlaySound(mediaPlayer)
+                } else {
+                    playSoundData.update { it.copy(currentPlayingSound = sound, currentPlayer = mediaPlayer) }
+                    continuePlaySound(mediaPlayer)
+                }
             } else {
-                stopCurrentSound() //暂停播放
-                playSound(sound) //播放这个声音
+                if (currentPlayer != null) {
+                    stopCurrentSound(currentPlayer)
+                }
+                playSound(sound, mediaPlayer)
             }
-        } else if (playSoundData.value.isPaused) { //正在暂停
-            if (isPlaying(sound)) { //如果点击的是当前播放的声音
-                continuePlaySound() //继续播放
-            } else {
-                stopCurrentSound() //暂停原来的声音
-                playSound(sound) //播放这个声音
-            }
-        } else { //什么事都没干
-            playSound(sound) //直接播放
         }
     }
 
     fun restorePlayerConfig() {
-        mediaPlayer.isLooping = playSoundData.value.previousLoopState
+//        mediaPlayer.isLooping = playSoundData.value.previousLoopState
     }
 
     fun loopPlay(sound: Sound) {
-        playSoundData.update {
-            it.copy(previousLoopState = mediaPlayer.isLooping, currentPlayingSound = sound)
-        }
-        viewModelScope.launch {
-            mediaPlayer.apply {
-                reset()
-                isLooping = true
-                setDataSource(sound.url)
-                prepare()
-                start()
-            }
-        }
+//        playSoundData.update {
+//            it.copy(previousLoopState = mediaPlayer.isLooping, currentPlayingSound = sound)
+//        }
+//        viewModelScope.launch {
+//            mediaPlayer.apply {
+//                reset()
+//                isLooping = true
+//                setDataSource(sound.url)
+//                prepare()
+//                start()
+//            }
+//        }
     }
 }
