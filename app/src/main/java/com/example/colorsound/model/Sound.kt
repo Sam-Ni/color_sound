@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 @kotlinx.serialization.Serializable
 data class Sound(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val color: Int,
-    val name: String,
+    var color: Int,
+    var name: String,
     val createTime: String,
     val url: String,
     val duration: String,

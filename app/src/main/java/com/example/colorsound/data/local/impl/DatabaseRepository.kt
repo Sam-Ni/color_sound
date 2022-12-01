@@ -11,7 +11,6 @@ import kotlinx.coroutines.withContext
 class DatabaseRepository(
     private val soundDao: SoundDao
 ) : LocalRepository {
-    private val sounds = MutableStateFlow<List<Sound>>(listOf())
 
     override suspend fun getAllSounds(): List<Sound> {
         return withContext(Dispatchers.IO) {
@@ -20,14 +19,20 @@ class DatabaseRepository(
     }
 
     override suspend fun insertSound(sound: Sound) {
-        soundDao.insert(sound)
+        withContext(Dispatchers.IO) {
+            soundDao.insert(sound)
+        }
     }
-
-    override fun observeSounds(): Flow<List<Sound>> = sounds
 
     override suspend fun deleteSound(sound: Sound) {
         withContext(Dispatchers.IO) {
             soundDao.delete(sound)
+        }
+    }
+
+    override suspend fun updateSound(sound: Sound) {
+        withContext(Dispatchers.IO) {
+            soundDao.update(sound)
         }
     }
 }

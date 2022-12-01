@@ -77,4 +77,12 @@ class LocalSoundListService : ViewModel() {
         val file = File(fileUrl)
         file.delete()
     }
+
+    fun onUpdate(color: Int, name: String) {
+        viewModelScope.launch {
+            val original = highlightData.value.highlightSound
+            val newSound = original?.copy(color = color, name = name)
+            highlightData.update { it.copy(highlightSound = newSound) }
+        }
+    }
 }

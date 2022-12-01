@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.example.colorsound.model.Sound
 import kotlinx.coroutines.flow.Flow
 
@@ -18,4 +19,7 @@ interface SoundDao {
 
     @Delete
     suspend fun delete(sound: Sound)
+
+    @Update
+    suspend fun update(sound: Sound)
 }

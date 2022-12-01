@@ -103,7 +103,7 @@ fun ColorSoundAppEntry() {
             },
             onPush = upLoadSoundService::uploadSound,
             onPushResult = onPushResultData.result,
-            onUpdate = {},
+            onUpdate = recordService::showDialogWithNameAndColor,
             exitHighlight = exitHighlight,
             isPlaying = playSoundData.currentPlayingSound != null,
             onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } },

@@ -24,26 +24,44 @@ class RecordService : ViewModel() {
     private val dialogData = Injecter.getMutable<SaveSoundDialogData>()
     private val maskData = Injecter.getMutable<MaskData>()
     private val listData = Injecter.getMutable<LocalSoundListData>()
+    private val highlightData = Injecter.getMutable<HighlightData>()
 
     fun onSaveClick() {
         dialogData.update { it.copy(showSaveDialog = false) }
-        getDuration()
         viewModelScope.launch {
-            val sound = Sound(
-                0,
-                dialogData.value.color,
-                dialogData.value.saveName,
-                getCurrentDateTime(),
-                filePath,
-                getDuration()
-            )
-            repository.insertSound(sound)
+            if (highlightData.value.highlightMode) {
+                val original = highlightData.value.highlightSound
+                if (original != null) {
+                    original.color = dialogData.value.color
+                    original.name = dialogData.value.saveName
+                }
+                original?.let { repository.updateSound(it) }
+            } else {
+                val sound = Sound(
+                    0,
+                    dialogData.value.color,
+                    dialogData.value.saveName,
+                    getCurrentDateTime(),
+                    filePath,
+                    getDuration()
+                )
+                repository.insertSound(sound)
 
-            val original = listData.value.soundList.toMutableList()
-            original.add(0, sound)
-            updateSoundList(original)
+                val original = listData.value.soundList.toMutableList()
+                original.add(0, sound)
+                updateSoundList(original)
+            }
+            resetDialogInfo()
         }
-        resetDialogInfo()
+    }
+
+    fun showDialogWithNameAndColor() {
+        val highlightSound = highlightData.value.highlightSound
+        if (highlightSound != null) {
+            dialogData.update { it.copy(showSaveDialog = true, color = highlightSound.color, saveName = highlightSound.name) }
+        } else {
+            dialogData.update { it.copy(showSaveDialog = true) }
+        }
     }
 
     fun onCancelClick() {
