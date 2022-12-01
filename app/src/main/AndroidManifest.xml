@@ -4,9 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:name=".ColorSoundApplication"
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,18 +14,16 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_color_sound_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ColorSound"
-        tools:targetApi="31"
+        android:theme="@style/Theme.AppSplash"
+        android:usesCleartextTraffic="true"
         tools:remove="android:appComponentFactory"
-        >
+        tools:targetApi="31">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.ColorSound">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

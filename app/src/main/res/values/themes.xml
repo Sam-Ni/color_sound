@@ -2,7 +2,9 @@
 <resources>
 
     <style name="Theme.ColorSound" parent="android:Theme.Material.Light.NoActionBar">
-<!--        <item name="android:statusBarColor">@color/black</item>-->
-<!--        <item name="android:windowBackground">@color/black</item>-->
+<!--        <item name="android:windowFullscreen">true</item>-->
+<!--        <item name="android:windowDisablePreview">true</item>-->
+<!--        <item name="windowNoTitle">true</item>-->
     </style>
+
 </resources>

@@ -3,6 +3,7 @@ package com.example.colorsound
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.activity.compose.setContent
 import com.example.colorsound.data.local.LocalRepository
 import com.example.colorsound.data.local.impl.DatabaseRepository
 import com.example.colorsound.data.remote.RemoteRepository

@@ -4,10 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
-import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.colorsound.model.Sound
-import com.example.colorsound.ui.vm.data.ContextData
 import com.example.colorsound.ui.vm.data.PlaySoundData
 import com.example.colorsound.util.Injecter
 import kotlinx.coroutines.flow.update
