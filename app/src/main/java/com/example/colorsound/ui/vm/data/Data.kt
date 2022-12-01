@@ -73,3 +73,12 @@ data class OnPushResultData(
 data class ContextData(
     val context: Context,
 )
+
+enum class Language {
+    Chinese, English
+}
+
+data class SettingData(
+    val selectedOptionText: String,
+    val expanded: Boolean,
+)

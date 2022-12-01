@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.media3.exoplayer.ExoPlayer
+import com.example.colorsound.R
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.components.*
 
@@ -19,7 +22,7 @@ fun HomeScreen(
 ) {
     homeScreenVM.apply {
         val searchBarVM = SearchBarVM(
-            hint = "Search...",
+            hint = stringResource(R.string.search),
             text = searchBarText,
             onValueChange = onSearchBarValueChanged,
             onDeleteBtnClick = { onSearchBarValueChanged("") },

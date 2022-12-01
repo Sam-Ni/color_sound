@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">留声</string>
+    <string name="search">搜索..</string>
+    <string name="upload_success">上传成功!</string>
+    <string name="upload_fail">上传失败! 再试一次:)</string>
+    <string name="uploading">上传中...</string>
+    <string name="sound_name">声音名</string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+    <string name="playing">正在播放...</string>
+    <string name="paused">暂停</string>
+    <string name="is_loop_play">循环播放:</string>
+    <string name="load_fail">加载错误</string>
+    <string name="retry">重新加载</string>
+    <string name="chinese">中文</string>
+    <string name="english">English</string>
+    <string name="language">语言</string>
+    <string name="preparing">正在准备中</string>
+</resources>

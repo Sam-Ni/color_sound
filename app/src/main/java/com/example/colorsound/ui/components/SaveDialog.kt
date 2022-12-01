@@ -7,9 +7,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.colorsound.R
 import com.example.colorsound.ui.theme.ColorSoundTheme
 
 
@@ -19,9 +21,9 @@ fun SaveDialog(
 ) {
     saveDialogVM.apply {
         val inputBarVM =
-            InputBarVM("Sound Name", saveName, { onNameChanged(it) }, { onNameChanged("") })
-        val modifierButtonVM = ModifierButtonVM(text = "Save", onClick = onSaveClick)
-        val modifierOutlinedButtonVM = ModifierButtonVM(text = "Cancel", onClick = onCancelClick)
+            InputBarVM(stringResource(R.string.sound_name), saveName, { onNameChanged(it) }, { onNameChanged("") })
+        val modifierButtonVM = ModifierButtonVM(text = stringResource(R.string.save), onClick = onSaveClick)
+        val modifierOutlinedButtonVM = ModifierButtonVM(text = stringResource(R.string.cancel), onClick = onCancelClick)
 
         Dialog(onDismissRequest = { /*TODO*/ }) {
             Surface(

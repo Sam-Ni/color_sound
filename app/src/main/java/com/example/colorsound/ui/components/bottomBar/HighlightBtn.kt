@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.colorsound.R
 import com.example.colorsound.ui.Home
@@ -45,14 +46,12 @@ fun HighlightBtn(
                         when (onPushResult) {
                             PushState.Idle -> {}
                             PushState.Success -> {
-                                Snackbar() {
-                                    Text(text = "Upload successfully!")
-                                }
-                                emitMessage(context, "Upload successfully!")
+                                emitMessage(context, stringResource(R.string.upload_success))
                                 setUploadIdle()
                             }
                             PushState.Failure -> {
-                                emitMessage(context, "Upload failed!\nTry again:)")
+                                emitMessage(context, message = stringResource(R.string.upload_fail)
+                                )
                                 setUploadIdle()
                             }
                             PushState.Uploading -> {
@@ -61,7 +60,7 @@ fun HighlightBtn(
                                     contentAlignment = Alignment.CenterStart
                                 ) {
                                     Text(
-                                        text = "Uploading...",
+                                        text = stringResource(R.string.uploading),
                                         style = MaterialTheme.typography.labelMedium
                                     )
                                 }
@@ -96,7 +95,6 @@ data class HighlightBtnVM(
     val onDelete: () -> Unit,
     val onPush: () -> Unit,
     val onUpdate: () -> Unit,
-//    val exitHighlight: () -> Unit,
     val onLoop: () -> Unit,
     val currentScreen: RouteDestination,
     val onPushResult: PushState,

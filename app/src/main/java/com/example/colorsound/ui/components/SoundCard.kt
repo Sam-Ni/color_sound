@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -130,7 +131,7 @@ fun SoundCard(
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row {
                                 SoundName(
-                                    name = if (isPreparing) "正在准备中" else soundInfo.name,
+                                    name = if (isPreparing) stringResource(R.string.preparing) else soundInfo.name,
                                     frontColor,
                                     fontSize = fontSize.sp,
                                     width = nameWidth
@@ -148,10 +149,8 @@ fun SoundCard(
                                 )
                             ) {
                                 if (isPlaying) {
-                                    Text(
-                                        text = if (!isPlayingPaused) "正在播放..." else "暂停",
-                                        color = frontColor
-                                    )
+                                    Text(text = if (!isPlayingPaused) stringResource(R.string.playing) else stringResource(
+                                                                            R.string.paused), color = frontColor)
                                     Spacer(modifier = Modifier.height(48.dp))
                                 }
                             }

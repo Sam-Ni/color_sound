@@ -163,7 +163,9 @@ fun ColorSoundAppEntry() {
         isPreparing = playSoundData.isPreparing,
     )
     val settingScreenVM = SettingsScreenVM(
-        configData.isRepeatPlay, settingService::onIsRepeatPlayChanged
+        configData.isRepeatPlay, settingService::onIsRepeatPlayChanged,
+        settingService::onLanguageSelect,
+        language = configData.language,
     )
     val routeContentHostVM = RouteContentHostVM(
         navController = navController,

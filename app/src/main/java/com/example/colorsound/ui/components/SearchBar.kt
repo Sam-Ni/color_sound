@@ -19,7 +19,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.colorsound.R
 
 @Composable
 fun SearchBar(
@@ -88,7 +90,7 @@ fun SearchBar(
 }
 
 data class SearchBarVM(
-    val hint: String = "Search..",
+    val hint: String = "Search...",
     val text: String,
     val onValueChange: (String) -> Unit,
     val onDeleteBtnClick: () -> Unit

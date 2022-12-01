@@ -67,8 +67,13 @@ class ColorSoundApplication : Application() {
         val configData: MutableStateFlow<ConfigData> by lazy {
             MutableStateFlow(
                 ConfigData(
-                    isRepeatPlay = sharedPreferences.getBoolean(ConfigName.isRepeatPlay, false),
-                    fileDir = applicationContext.filesDir.path
+                    isRepeatPlay = sharedPreferences.getBoolean("IsRepeatPlay", false),
+                    fileDir = applicationContext.filesDir.path,
+                    language = when (sharedPreferences.getString("locale", "zh")) {
+                        "zh" -> Language.Chinese
+                        "en" -> Language.English
+                        else -> Language.Chinese
+                    }
                 )
             )
         }
@@ -97,7 +102,10 @@ class ColorSoundApplication : Application() {
         Injecter.addService(RecordService())
         Injecter.addService(WorldService())
         Injecter.addService(UpLoadSoundService())
-        Injecter.addService(SettingService())
+        Injecter.addService(
+            SettingService().apply {
+                onIsRepeatPlayChanged(configData.value.isRepeatPlay)
+        })
         Injecter.addService(RemoteSoundListService())
     }
 }

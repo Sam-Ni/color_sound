@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.example.colorsound.model.Sound
 import com.example.colorsound.ui.vm.data.PlaySoundData
 import com.example.colorsound.util.Injecter
@@ -23,6 +24,10 @@ class PlaySoundService(context: Context) : ViewModel() {
 
     private val players: ObjectPool<PlayerObject> =
         ObjectPool(20) { PlayerObject(context = context) }
+
+    fun setRepeatMode(repeatMode: Int) {
+        players.forEach { it.player.repeatMode = repeatMode }
+    }
 
     fun prepareSoundPlayer(sound: Sound) {
         if (!playSoundMap.containsKey(sound)) {

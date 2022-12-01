@@ -9,6 +9,7 @@ import com.example.colorsound.ui.vm.data.WorldData
 import com.example.colorsound.ui.vm.data.WorldNetState
 import com.example.colorsound.util.BASE_URL
 import com.example.colorsound.util.Injecter
+import com.example.colorsound.util.URL_NGINX
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -46,7 +47,7 @@ class WorldService : ViewModel() {
                 try {
                     val result =
                         networkRepository.getRandomSounds(worldColorData.value.currentColor)
-                            .map { sound -> sound.copy(url = BASE_URL + sound.url) }
+                            .map { sound -> sound.copy(url = URL_NGINX + sound.url) }
 
                     val sounds =
                         if (worldData.value.previousColor == worldColorData.value.currentColor) {
@@ -70,10 +71,8 @@ class WorldService : ViewModel() {
                         previousColor = worldColorData.value.currentColor
                     )
                 } catch (e: IOException) {
-                    Log.e("ColorSound", e.toString())
                     it.copy(worldNetState = WorldNetState.Error)
                 } catch (e: HttpException) {
-                    Log.e("ColorSound", e.toString())
                     it.copy(worldNetState = WorldNetState.Error)
                 }
             }

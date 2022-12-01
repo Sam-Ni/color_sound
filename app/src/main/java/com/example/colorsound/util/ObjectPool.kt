@@ -49,4 +49,8 @@ class ObjectPool<T>(size: Int, val initT: () -> T) where T : IPoolable {
             Log.w("op", "在pool中找不到obj： $obj")
         }
     }
+
+    fun forEach(f:(T) -> Unit) {
+        objects.forEach { f(it.obj) }
+    }
 }

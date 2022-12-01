@@ -45,3 +45,5 @@ fun indexToBackColor(index: Int, isSystemInDarkTheme: Boolean): Color {
 const val COLOR_NUMBER = 7
 
 const val BASE_URL = "http://43.139.148.247:8082/"
+
+const val URL_NGINX = "http://43.139.148.247:8083/"
