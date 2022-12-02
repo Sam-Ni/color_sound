@@ -91,7 +91,8 @@ class PlaySoundService(context: Context) : ViewModel() {
         }
     }
 
-    private fun stopCurrentSound() {
+
+    fun stopCurrentSound() {
         if (playSoundData.value.currentPlayingSound != null) {
             playSoundMap[playSoundData.value.currentPlayingSound]?.player?.pause()
             playSoundMap[playSoundData.value.currentPlayingSound]?.player?.seekTo(0)
@@ -152,7 +153,12 @@ class PlaySoundService(context: Context) : ViewModel() {
 
     fun loopPlay(sound: Sound) {
         val player = playSoundMap[sound]!!.player
-        playSoundData.update { it.copy(previousLoopState = player.repeatMode, currentPlayingSound = sound) }
+        playSoundData.update {
+            it.copy(
+                previousLoopState = player.repeatMode,
+                currentPlayingSound = sound
+            )
+        }
         player.repeatMode = Player.REPEAT_MODE_ALL
         player.play()
     }

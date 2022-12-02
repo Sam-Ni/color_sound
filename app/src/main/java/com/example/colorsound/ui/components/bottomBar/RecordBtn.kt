@@ -8,7 +8,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.ripple.rememberRipple
@@ -16,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.example.colorsound.ui.vm.data.RecordState
@@ -31,13 +31,13 @@ fun RecordBtn(
             enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(),
             exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally()
         ) {
-            val imageVector = when (recordState) {
-                RecordState.Normal -> Icons.Filled.Add
-                RecordState.Recording -> Icons.Filled.Star
-                RecordState.Pausing -> Icons.Filled.ArrowBack
+            val imageId = when (recordState) {
+                RecordState.Normal -> com.example.colorsound.R.drawable.record_start
+                RecordState.Recording -> com.example.colorsound.R.drawable.record_pause
+                RecordState.Pausing -> com.example.colorsound.R.drawable.record_continue
             }
             Icon(
-                imageVector = imageVector,
+                painter = painterResource(id = imageId),
                 contentDescription = null,
                 modifier = Modifier
                     .combinedClickable(
@@ -50,7 +50,7 @@ fun RecordBtn(
                             radius = 20.dp
                         )
                     )
-                    .size(24.dp)
+                    .size(30.dp)
             )
         }
     }

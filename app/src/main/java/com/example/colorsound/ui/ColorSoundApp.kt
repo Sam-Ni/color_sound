@@ -110,7 +110,10 @@ fun ColorSoundAppEntry() {
         onUpdate = recordService::showDialogWithNameAndColor,
         exitHighlight = exitHighlight,
         isPlaying = playSoundData.currentPlayingSound != null,
-        onLoop = { highlightData.highlightSound?.let { playSoundService.loopPlay(it) } },
+        onLoop = {
+            playSoundService.stopCurrentSound()
+            highlightData.highlightSound?.let { playSoundService.loopPlay(it) }
+        },
         setUploadIdle = upLoadSoundService::setUploadIdle,
     )
     val coroutineScope = rememberCoroutineScope()

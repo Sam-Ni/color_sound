@@ -45,7 +45,8 @@ fun ScreenBar(
         val navBtnVM = NavBtnVM(
             visible = recordState == RecordState.Normal && !isHighlightMode,
             allScreen = allScreen,
-            onTabSelected = onTabSelected
+            onTabSelected = onTabSelected,
+            currentScreen = currentScreen,
         )
 
         val backBtnVM = BackBtnVM(
