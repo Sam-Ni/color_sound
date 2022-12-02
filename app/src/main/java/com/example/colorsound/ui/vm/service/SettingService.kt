@@ -41,4 +41,14 @@ class SettingService : ViewModel() {
             apply()
         }
     }
+
+    fun onIsBackPlayChanged(value: Boolean) {
+        configData.update { it.copy(backgroundPlay = value) }
+        sharedPreferences.edit().apply {        //再把config存到sharedPreferences中
+            putBoolean(
+                "BackgroundPlay", value
+            )
+            apply()
+        }
+    }
 }

@@ -81,15 +81,23 @@ fun SettingsScreen(
                     }
                 }
             }
+            Row(verticalAlignment = CenterVertically) {
+                Text(text = stringResource(R.string.background_play), style = MaterialTheme.typography.headlineLarge)
+                Spacer(modifier = Modifier.weight(1f))
+                Switch(checked = isBackPlay, onCheckedChange = onIsBackPlayChanged)
+            }
         }
     }
 }
 
 
 data class SettingsScreenVM(
-    val isRepeatPlay: Boolean, val onIsRepeatedPlayChanged: (Boolean) -> Unit,
+    val isRepeatPlay: Boolean,
+    val onIsRepeatedPlayChanged: (Boolean) -> Unit,
     val onLanguageSelect: (Language) -> Unit,
     val language: Language,
+    val isBackPlay: Boolean,
+    val onIsBackPlayChanged: (Boolean) -> Unit,
 )
 
 fun Context.getActivity(): ComponentActivity? = when (this) {

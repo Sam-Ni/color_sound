@@ -25,6 +25,10 @@ class PlaySoundService(context: Context) : ViewModel() {
     private val players: ObjectPool<PlayerObject> =
         ObjectPool(20) { PlayerObject(context = context) }
 
+    fun stopAllPlayer() {
+        pausePlaySound()
+    }
+
     fun setRepeatMode(repeatMode: Int) {
         players.forEach { it.player.repeatMode = repeatMode }
     }

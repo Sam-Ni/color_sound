@@ -73,7 +73,8 @@ class ColorSoundApplication : Application() {
                         "zh" -> Language.Chinese
                         "en" -> Language.English
                         else -> Language.Chinese
-                    }
+                    },
+                    backgroundPlay = sharedPreferences.getBoolean("BackgroundPlay", false),
                 )
             )
         }
