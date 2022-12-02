@@ -12,4 +12,8 @@ data class Sound(
     val createTime: String,
     val url: String,
     val duration: String,
-)
+) {
+    override fun hashCode(): Int {
+        return url.hashCode()
+    }
+}

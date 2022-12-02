@@ -25,8 +25,12 @@ class PlaySoundService(context: Context) : ViewModel() {
     private val players: ObjectPool<PlayerObject> =
         ObjectPool(20) { PlayerObject(context = context) }
 
-    fun stopAllPlayer() {
+    fun stopPlayer() {
         pausePlaySound()
+    }
+
+    fun resumePlayer() {
+        continuePlaySound()
     }
 
     fun setRepeatMode(repeatMode: Int) {
@@ -141,21 +145,14 @@ class PlaySoundService(context: Context) : ViewModel() {
     }
 
     fun restorePlayerConfig() {
-//        mediaPlayer.isLooping = playSoundData.value.previousLoopState
+        val sound = playSoundData.value.currentPlayingSound
+        playSoundMap[sound]?.player?.repeatMode = playSoundData.value.previousLoopState
     }
 
     fun loopPlay(sound: Sound) {
-//        playSoundData.update {
-//            it.copy(previousLoopState = mediaPlayer.isLooping, currentPlayingSound = sound)
-//        }
-//        viewModelScope.launch {
-//            mediaPlayer.apply {
-//                reset()
-//                isLooping = true
-//                setDataSource(sound.url)
-//                prepare()
-//                start()
-//            }
-//        }
+        val player = playSoundMap[sound]!!.player
+        playSoundData.update { it.copy(previousLoopState = player.repeatMode, currentPlayingSound = sound) }
+        player.repeatMode = Player.REPEAT_MODE_ALL
+        player.play()
     }
 }

@@ -2,6 +2,7 @@ package com.example.colorsound.ui.vm.data
 
 import android.content.Context
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.media3.common.Player
 import com.example.colorsound.model.Sound
 
 enum class RecordState {
@@ -55,7 +56,7 @@ data class PlaySoundData(
     val currentPlayingSound: Sound? = null,
     val isPaused: Boolean = false,
     val isPreparing: Map<Sound, Boolean> = mapOf(),
-    val previousLoopState: Boolean = false,
+    val previousLoopState: Int = Player.REPEAT_MODE_OFF,
 )
 
 data class WorldColorData(

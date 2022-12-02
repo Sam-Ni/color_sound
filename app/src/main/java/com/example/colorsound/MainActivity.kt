@@ -36,9 +36,15 @@ class MainActivity : ComponentActivity() {
         val configData = Injecter.getMutable<ConfigData>()
         if (!configData.value.backgroundPlay) {
             val playSoundService = Injecter.getService<PlaySoundService>()
-            playSoundService.stopAllPlayer()
+            playSoundService.stopPlayer()
         }
         super.onStop()
+    }
+
+    override fun onResume() {
+        val playSoundService = Injecter.getService<PlaySoundService>()
+        playSoundService.resumePlayer()
+        super.onResume()
     }
 }
 

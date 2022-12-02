@@ -73,7 +73,9 @@ class RecordService : ViewModel() {
 
     fun onCancelClick() {
         dialogData.update { it.copy(showSaveDialog = false) }
-        deleteAudio(filePath)
+        if (!highlightData.value.highlightMode) {
+            deleteAudio(filePath)
+        }
         resetDialogInfo()
     }
 
