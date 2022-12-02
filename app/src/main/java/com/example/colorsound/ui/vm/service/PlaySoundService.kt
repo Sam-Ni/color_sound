@@ -16,6 +16,7 @@ import com.example.colorsound.util.PlayerObject
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+
 class PlaySoundService(context: Context) : ViewModel() {
     private val playSoundData = Injecter.getMutable<PlaySoundData>()
     private val playSoundMap: MutableMap<Sound, PlayerObject> = mutableMapOf()
@@ -78,15 +79,15 @@ class PlaySoundService(context: Context) : ViewModel() {
     }
 
     private fun playSound(sound: Sound) {
-        viewModelScope.launch {
-            if (playSoundMap.containsKey(sound)) {
-                if (playSoundMap[sound]?.player?.playbackState == Player.STATE_READY) {
-                    playSoundData.update { it.copy(currentPlayingSound = sound) }
-                    playSoundMap[sound]?.player?.play()
-                }
-            } else {
-                Log.e("play service", "没有对应的player")
+        if (playSoundMap.containsKey(sound)) {
+            Log.e("silly", "2")
+            if (playSoundMap[sound]?.player?.playbackState == Player.STATE_READY) {
+                playSoundData.update { it.copy(currentPlayingSound = sound) }
+                playSoundMap[sound]?.player?.play()
+                Log.e("silly", "1")
             }
+        } else {
+            Log.e("play service", "没有对应的player")
         }
     }
 

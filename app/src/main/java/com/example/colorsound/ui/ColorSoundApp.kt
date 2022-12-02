@@ -163,9 +163,10 @@ fun ColorSoundAppEntry() {
         isPreparing = playSoundData.isPreparing,
     )
     val settingScreenVM = SettingsScreenVM(
-        configData.isRepeatPlay, settingService::onIsRepeatPlayChanged,
-        settingService::onLanguageSelect,
-        language = configData.language,
+        isRepeatPlay = configData.isRepeatPlay,
+        onIsRepeatedPlayChanged = settingService::onIsRepeatPlayChanged,
+        onClickLanguageButton = settingService::changeLanguage,
+        currentLanguageText = configData.language.name,
         isBackPlay = configData.backgroundPlay,
         onIsBackPlayChanged = { settingService.onIsBackPlayChanged(it) },
     )

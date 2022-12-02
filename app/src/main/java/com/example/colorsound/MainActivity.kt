@@ -11,8 +11,7 @@ import com.example.colorsound.ui.ColorSoundApp
 import com.example.colorsound.ui.vm.data.ConfigData
 import com.example.colorsound.ui.vm.service.PlaySoundService
 import com.example.colorsound.util.Injecter
-import com.example.colorsound.util.MyContextWrapper
-import java.util.Locale
+import java.util.*
 
 
 class MainActivity : ComponentActivity() {
@@ -44,6 +43,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         val playSoundService = Injecter.getService<PlaySoundService>()
         playSoundService.resumePlayer()
+        installSplashScreen()
         super.onResume()
     }
 }

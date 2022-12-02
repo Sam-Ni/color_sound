@@ -12,7 +12,6 @@ import com.example.colorsound.network.ColorApiService
 import com.example.colorsound.ui.vm.data.*
 import com.example.colorsound.ui.vm.service.*
 import com.example.colorsound.util.BASE_URL
-import com.example.colorsound.util.ConfigName
 import com.example.colorsound.util.Injecter
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.coroutines.CoroutineScope
@@ -69,9 +68,9 @@ class ColorSoundApplication : Application() {
                 ConfigData(
                     isRepeatPlay = sharedPreferences.getBoolean("IsRepeatPlay", false),
                     fileDir = applicationContext.filesDir.path,
-                    language = when (sharedPreferences.getString("locale", "zh")) {
-                        "zh" -> Language.Chinese
-                        "en" -> Language.English
+                    language = when (sharedPreferences.getString("locale", Language.Chinese.locate)) {
+                        Language.Chinese.locate -> Language.Chinese
+                        Language.English.locate -> Language.English
                         else -> Language.Chinese
                     },
                     backgroundPlay = sharedPreferences.getBoolean("BackgroundPlay", false),
@@ -79,7 +78,7 @@ class ColorSoundApplication : Application() {
             )
         }
         val onPushResultData = MutableStateFlow(OnPushResultData())
-        val contextData = ContextData(applicationContext)
+        val contextData = MutableStateFlow(ContextData(applicationContext))
 
         Injecter.add<LocalRepository>(databaseRepository)
         Injecter.add(networkRepository)
@@ -96,6 +95,7 @@ class ColorSoundApplication : Application() {
         Injecter.add(configData)
         Injecter.add(onPushResultData)
         Injecter.add(contextData)
+
 
 
         Injecter.addService(PlaySoundService(context = applicationContext))

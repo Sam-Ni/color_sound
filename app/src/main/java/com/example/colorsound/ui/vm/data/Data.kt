@@ -75,11 +75,11 @@ data class ContextData(
     val context: Context,
 )
 
-enum class Language {
-    Chinese, English
-}
 
-data class SettingData(
-    val selectedOptionText: String,
-    val expanded: Boolean,
-)
+sealed class Language(
+    val name: String,
+    val locate: String,
+) {
+    object Chinese : Language(name = "中文", locate = "zh")
+    object English : Language(name = "English", locate = "en")
+}

@@ -10,7 +10,7 @@
     <string name="cancel">取消</string>
     <string name="playing">正在播放...</string>
     <string name="paused">暂停</string>
-    <string name="is_loop_play">循环播放:</string>
+    <string name="is_loop_play">循环播放</string>
     <string name="load_fail">加载错误</string>
     <string name="retry">重新加载</string>
     <string name="chinese">中文</string>
@@ -18,4 +18,5 @@
     <string name="language">语言</string>
     <string name="preparing">正在准备中</string>
     <string name="background_play">后台播放</string>
+    <string name="setting_title">设置</string>
 </resources>
