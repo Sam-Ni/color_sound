@@ -11,7 +11,7 @@
 
 App 系统架构概览
 
-![App Architecture Overview](./README_SAM_PHOTO/uiLayer.png)
+![App Architecture Overview](./README_SAM_PHOTO/overview.png)
 
 UI 层
 
