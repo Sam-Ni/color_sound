@@ -1,25 +1,27 @@
-# 项目背景
+# ColorSound(留声)
+
+## 项目背景
 
 现在人们可以在各类社交平台上分享自己的生活，比如微信朋友圈可以分享图文信息，国外的Instagram专注于分享图片，
 这些App都关注用户的视觉感受。在平时我们很在意视觉的感受，却经常会忽略听觉的感受，于是我们想做一款用户可以
-记录自己的声音的App。同时，我们想保有上述这些已有的社交软件的分享功能。在我们的App中，用户可以记录自己的声音，
+记录自己的声音的App。同时，我们想保有上述这些已有的社交软件的分享功能。在我们的App中，用户可以记录生活中的声音，
 同时也可以将自己录制的声音分享到网络，以及聆听其他人的分享。
 
-# 系统架构
+## 系统架构
 
-App Architecture Overview
+App 系统架构概览
 
-![App Architecture Overview](https://github.com/Sam-Ni/color_sound/blob/master/README_SAM_PHOTO/overview.png)
+![App Architecture Overview](./README_SAM_PHOTO/uiLayer.png)
 
-UI Layer
+UI 层
 
 ![UI Layer](./README_SAM_PHOTO/uiLayer.png)
 
-Data Layer
+Data 层
 
 ![Data Layer](./README_SAM_PHOTO/dataLayer.png)
 
-# 实现方法
+## 实现方法
 
 UI使用Android Jetpack Compose进行编写。Compose是一种声明式UI框架，可以通过写kotlin函数的方式声明UI，
 而不是传统的通过编辑layout的xml文件来绘制UI。使用Compose可以方便地开发 单Activity App, 单Activity相对于
@@ -32,7 +34,7 @@ Compose使用示例
 
 ![Compose Result](./README_SAM_PHOTO/composeResult.png)
 
-UI层与Data层通过Android Jetpack ViewModel进行沟通，来达到UI层与Data层的分离。
+UI层与Data层通过Android Jetpack ViewModel进行沟通，实现UI层与Data层的分离。
 
 ![viewModel](./README_SAM_PHOTO/viewModel.png)
 
@@ -43,3 +45,9 @@ UI层与Data层通过Android Jetpack ViewModel进行沟通，来达到UI层与Da
 数据发生变化的UI组件。
 
 Data层主要有两个接口，一个是本地录音数据库的Room接口，还有一个是网络音频服务的Retrofit接口
+
+## 总结和展望
+
+目前的ColorSound实现了简单的本地录音、上传音频以及播放本地和网络音频相关的功能，搭配有简约美观的
+UI界面。ColorSound不足的地方是与用户的交互还较为简单，可能会缺少用户的黏性，未来可能会通过用户的
+账号系统进行这方面不足的完善。
