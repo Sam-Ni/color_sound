@@ -62,6 +62,24 @@ MVVM
 
 <img src="README-Lisery.assets/image-20221209103120961.png" alt="image-20221209103120961" style="zoom:67%;" />
 
+### 实现方法
+
+使用自己定义的Injecter来进行依赖注入。首先在开始的Application的onCreate方法中进行依赖项初始化。
+
+<img src="README-Lisery.assets/image-20221209104455656.png" alt="image-20221209104455656" style="zoom:67%;" />
+
+之后再service中和UI层中接入用Injecter进行注入data和service
+
+<img src="README-Lisery.assets/image-20221209104608134.png" alt="image-20221209104608134" style="zoom: 60%;" />
+
+
+
+
+
+
+
+
+
 
 
 
