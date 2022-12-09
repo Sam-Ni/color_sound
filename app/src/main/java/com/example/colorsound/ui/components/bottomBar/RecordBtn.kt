@@ -41,7 +41,12 @@ fun RecordBtn(
                 contentDescription = null,
                 modifier = Modifier
                     .combinedClickable(
-                        onClick = if (isGranted) onClick else askPermission,
+                        onClick = if (isGranted) {
+                            {
+                                stopCurrentSound()
+                                onClick()
+                            }
+                        } else askPermission,
                         onLongClick = if (isGranted) onLongClick else askPermission,
                         role = Role.Button,
                         interactionSource = remember { MutableInteractionSource() },
@@ -63,4 +68,5 @@ data class RecordBtnVM(
     val isGranted: Boolean,
     val askPermission: () -> Unit,
     val visible: Boolean,
+    val stopCurrentSound: () -> Unit,
 )

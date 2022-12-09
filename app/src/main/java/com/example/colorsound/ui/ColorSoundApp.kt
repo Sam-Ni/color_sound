@@ -115,6 +115,7 @@ fun ColorSoundAppEntry() {
             highlightData.highlightSound?.let { playSoundService.loopPlay(it) }
         },
         setUploadIdle = upLoadSoundService::setUploadIdle,
+        stopCurrentSound = playSoundService::stopCurrentSound,
     )
     val coroutineScope = rememberCoroutineScope()
     val homeScreenVM = HomeScreenVM(
