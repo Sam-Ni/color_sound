@@ -9,7 +9,7 @@
 
 App Architecture Overview
 
-![App Architecture Overview](./README_SAM_PHOTO/overview.png)
+![App Architecture Overview](https://github.com/Sam-Ni/color_sound/blob/master/README_SAM_PHOTO/overview.png)
 
 UI Layer
 
